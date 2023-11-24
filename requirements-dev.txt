@@ -1,0 +1,12 @@
+# Load all project requirements
+-r requirements.txt
+
+# Setup source directories as editable/development distributions
+-e .
+
+jsonschema==3.2.0
+tox==3.24.5
+pytest==6.2.5
+pytest-cov==3.0.0
+pyflakes==2.4.0
+flake8==4.0.1

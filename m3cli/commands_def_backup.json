@@ -1,0 +1,2527 @@
+{
+  "domain_parameters": {
+    "tenantName": {
+      "alias": "tn",
+      "help": "Tenant name",
+      "required": true,
+      "validation": {
+        "type": "string"
+      },
+      "case": "upper"
+    },
+    "serviceName": {
+      "help": "Service name",
+      "alias": "sn",
+      "required": true,
+      "validation": {
+        "type": "string"
+      }
+    },
+    "region": {
+      "alias": "r",
+      "help": "The region name",
+      "required": true,
+      "validation": {
+        "type": "string"
+      },
+      "case": "upper"
+    },
+    "cloud": {
+      "alias": "c",
+      "help": "Cloud. Allowed values: [AWS, AZURE, CSA, ENTERPRISE, EXOSCALE, GOOGLE, HARDWARE, HPOO, OPEN_STACK, VMWARE, VSPHERE, YANDEX]",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "allowed_values": [
+          "AWS",
+          "AZURE",
+          "CSA",
+          "ENTERPRISE",
+          "EXOSCALE",
+          "GOOGLE",
+          "HARDWARE",
+          "HPOO",
+          "OPEN_STACK",
+          "VMWARE",
+          "VSPHERE",
+          "YANDEX"
+        ]
+      },
+      "case": "upper"
+    },
+    "email": {
+      "alias": "e",
+      "help": "The email of the related user",
+      "required": true,
+      "validation": {
+        "type": "string"
+      }
+    },
+    "case": "lower"
+  },
+  "commands": {
+    "health-check": {
+      "api_action": "M3_STATUS",
+      "help": "Describes system status",
+      "alias": "status",
+      "integration_response": true,
+      "parameters": {
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "serverAvailable",
+          "mails",
+          "ownership",
+          "terraform",
+          "cliLatestVersion"
+        ]
+      }
+    },
+    "describe-instances": {
+      "api_action": "DESCRIBE_INSTANCE",
+      "alias": "din",
+      "help_file": true,
+      "help": "Use this command to return information about instances that you own. \n\nExamples:\n1. Describes all available instances for the certain tenant in the specified region \n\tm3 describe-images -tn <tenantName> -r <region>\n2. Describes all instances for the certain tenant in region with specified instance ID\n\tm3 describe-images -tn <tenantName> -r <region> -ids <instanceId>\n3. Describes an instances with specified IDs\n\tm3 describe-images -tn <tenantName> -r <region> -id <instanceId1,instanceId2>",
+      "related_commands": [
+        "stop-instances",
+        "terminate-instances",
+        "reboot-instances",
+        "start-instances"
+      ],
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceIds": {
+          "alias": "ids",
+          "help": "Instances IDs",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "resourceTag": {
+          "alias": "tag",
+          "help": "Names of the resource tag: test1key:test1value",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "instances",
+        "response_table_headers": [
+          "instanceId",
+          "tenant",
+          "state",
+          "shape",
+          "privateIpAddress",
+          "keyName",
+          "imageId",
+          "owner",
+          "platform",
+          "publicDnsName"
+        ]
+      }
+    },
+    "activate-platform-service": {
+      "api_action": "ACTIVATE_PLATFORM_SERVICE",
+      "help": "Activate platform service",
+      "integration_request": true,
+      "integration_response": true,
+      "alias": "actpfs",
+      "parameters": {
+        "serviceName": {
+          "parent": "serviceName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "params": {
+          "help": "Parameters: test1key:test1value",
+          "alias": "params",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "serviceId",
+          "stackId",
+          "templateName",
+          "serviceName",
+          "serviceUrl",
+          "owner",
+          "creationDate",
+          "state"
+        ]
+      }
+    },
+    "deactivate-platform-service": {
+      "api_action": "DEACTIVATE_PLATFORM_SERVICE",
+      "help": "Deactivate platform service",
+      "integration_response": true,
+      "alias": "dactpfs",
+      "parameters": {
+        "serviceId": {
+          "help": "Service ID",
+          "alias": "sid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
+      }
+    },
+    "describe-platform-service": {
+      "api_action": "DESCRIBE_PLATFORM_SERVICE",
+      "help": "Describe platform service",
+      "integration_response": true,
+      "alias": "dpfs",
+      "parameters": {
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "serviceId": {
+          "help": "Service ID",
+          "alias": "sid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "help": "Region name",
+          "alias": "r",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "serviceId",
+          "stackId",
+          "templateName",
+          "serviceName",
+          "serviceUrl",
+          "owner",
+          "creationDate",
+          "state"
+        ]
+      }
+    },
+    "describe-platform-service-definition": {
+      "api_action": "DESCRIBE_PLATFORM_SERVICE_DEFINITION",
+      "help": "Describes platform service definition",
+      "alias": "dpfsdef",
+      "parameters": {
+        "serviceName": {
+          "parent": "serviceName"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "name",
+          "discoverableUrl",
+          "databagName",
+          "templateName"
+        ]
+      }
+    },
+    "run-instances": {
+      "api_action": "RUN_INSTANCE",
+      "alias": "run",
+      "help_file": true,
+      "help": "Use this command to run instances. \n\nExamples:\n1. Describes all available instances for the certain tenant in the specified region \n\tm3 run-instances -tn <tenantName> -r <region> -in <instanceName> -sh <shape> -key <keyName> -c <instanceNumber>",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceName": {
+          "help": "Name of the instance",
+          "alias": "in",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "imageId": {
+          "help": "ID of the image that will be used to the instance configuration",
+          "alias": "imid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "owner": {
+          "help": "Instance owner name",
+          "alias": "own",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "shape": {
+          "help": "Instance shape",
+          "alias": "sh",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "keyName": {
+          "help": "Name of the key pair",
+          "alias": "key",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "count": {
+          "help": "Number of the instances that will be run",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "number"
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "instances",
+        "response_table_headers": [
+          "cloud",
+          "instanceId",
+          "instanceName",
+          "instanceType",
+          "owner",
+          "region",
+          "state",
+          "tenant"
+        ]
+      }
+    },
+    "stop-instances": {
+      "api_action": "STOP_INSTANCE",
+      "alias": "stop",
+      "help": "Stops EC2 instance",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "help": "Id of the instance",
+          "alias": "iid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "instances",
+        "response_table_headers": [
+          "cloud",
+          "instanceId",
+          "instanceName",
+          "region",
+          "state",
+          "tenant"
+        ]
+      }
+    },
+    "terminate-instance": {
+      "api_action": "TERMINATE_INSTANCE",
+      "alias": "kill",
+      "help": "Terminates EC2 instance",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "help": "Id of the instance",
+          "alias": "iid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "instances",
+        "response_table_headers": [
+          "cloud",
+          "instanceId",
+          "instanceName",
+          "region",
+          "state",
+          "tenant"
+        ]
+      }
+    },
+    "describe-images": {
+      "api_action": "DESCRIBE_IMAGE",
+      "help": "Describes images",
+      "integration_response": true,
+      "alias": "dim",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "name",
+          "description",
+          "createdDate",
+          "imageId",
+          "osType",
+          "imageType",
+          "imageState",
+          "minStorageSizeGb"
+        ]
+      }
+    },
+    "describe-volumes": {
+      "api_action": "DESCRIBE_VOLUME",
+      "help": "Describes instance volumes",
+      "alias": "dvol",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "volumeIds": {
+          "alias": "vid",
+          "help": "Volumes IDs",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "instanceId",
+          "sizeLabel",
+          "state",
+          "system",
+          "volumeId",
+          "volumeName"
+        ]
+      }
+    },
+    "describe-schedules": {
+      "api_action": "DESCRIBE_SCHEDULES",
+      "help": "Describes instance schedules",
+      "alias": "dsch",
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "action",
+          "cloud",
+          "nextRun",
+          "region",
+          "scheduleName",
+          "scheduleType",
+          "tenantName"
+        ]
+      }
+    },
+    "create-schedule": {
+      "api_action": "CREATE_SCHEDULE",
+      "alias": "csch",
+      "help": "Use this command to create schedules. \n\nExamples:\n1.",
+      "related_commands": [
+        "describe-schedules",
+        "delete-schedule"
+      ],
+      "request_wrapper": "schedule",
+      "integration_request": true,
+      "integration_response": true,
+      "parameters": {
+        "region": {
+          "parent": "region"
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "displayName": {
+          "alias": "dn",
+          "help": "The display name of the schedule",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cron": {
+          "alias": "crn",
+          "help": "CRON that will describe rule for the schedule",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "alias": "desc",
+          "help": "Description of the schedule",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "action": {
+          "alias": "act",
+          "help": "Action for the schedule. Allowed values: [START, STOP]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "START",
+              "STOP"
+            ]
+          }
+        },
+        "scheduleType": {
+          "alias": "type",
+          "help": "Schedule type. Allowed values: [Specified instances, My instances with tag, All my instances in region]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "Specified instances",
+              "My instances with tag",
+              "All my instances in region"
+            ]
+          }
+        },
+        "scheduleOwner": {
+          "alias": "owner",
+          "help": "Owner of the schedule",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "instances": {
+          "alias": "inst",
+          "help": "Description of the instances",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "tagKey": {
+          "alias": "tag_k",
+          "help": "Tag description. Required for schedule type \"My instances with tag\"",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tagValue": {
+          "alias": "tag_v",
+          "help": "Tag description. Required for schedule type \"My instances with tag\"",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "resourceGroup": {
+          "alias": "rg",
+          "help": "Resource group name",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "availabilityZone": {
+          "alias": "az",
+          "help": "Availability zone name",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "action",
+          "cloud",
+          "nextRun",
+          "region",
+          "scheduleName",
+          "scheduleType",
+          "tenantName"
+        ]
+      }
+    },
+    "delete-schedule": {
+      "api_action": "DELETE_SCHEDULE",
+      "alias": "delsch",
+      "help": "Use this command to delete schedule. \n\nExamples:\n1.",
+      "related_commands": [
+        "describe-schedules",
+        "create-schedule"
+      ],
+      "parameters": {
+        "region": {
+          "parent": "region"
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "scheduleName": {
+          "alias": "scn",
+          "help": "The name of the schedule",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+          "action",
+          "cloud",
+          "nextRun",
+          "region",
+          "scheduleName",
+          "scheduleType",
+          "tenantName"
+        ]
+      }
+    },
+    "set-private-tag": {
+      "api_action": "UPDATE_TAGS",
+      "help": "Sets tag for the instance. This command is working only for Private Clouds!",
+      "alias": "settag",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "alias": "tgs",
+          "help": "The list of tags. Can be specified multiple tags. The syntax is: [\"test1key=test1value\"]",
+          "required": true,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "volumeIds": {
+          "alias": "vid",
+          "help": "Id of the volume",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "describe-private-tags": {
+      "api_action": "DESCRIBE_TAGS",
+      "help": "Describes instance tags. This command is working only for Private Clouds!",
+      "alias": "dtag",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "key",
+          "value"
+        ]
+      }
+    },
+    "delete-private-tag": {
+      "api_action": "DELETE_TAGS",
+      "help": "Removes tag from the instance. This command is working only for Private Clouds!",
+      "alias": "deltag",
+      "parameters": {
+        "region": {
+          "parent": "region"
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "alias": "tgs",
+          "help": "Tag`s names",
+          "required": true,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "total-report": {
+      "api_action": "GET_TOTAL_BILLING_REPORT",
+      "help": "Gets total billing report",
+      "alias": "treport",
+      "integration_request": true,
+      "integration_response": true,
+      "parameters": {
+        "from": {
+          "alias": "fr",
+          "help": "The start range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "help": "The end range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "email": {
+          "alias": "e",
+          "help": "Email",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tag": {
+          "alias": "t",
+          "help": "Collect only records with specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "reportFormat": {
+          "alias": "rf",
+          "help": "Report format. Allowed values: [email, json]",
+          "required": true,
+          "validation": {
+            "allowed_values": [
+              "email",
+              "json"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "tenant": {
+          "alias": "tn",
+          "help": "Tenant name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "clouds": {
+          "alias": "c",
+          "help": "List of the cloud names. Should be specified if you need TENANT_AND_CLOUD reportUnit.",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name. Should be specified if you need TENANT reportUnit.",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "projectCode",
+          "zone",
+          "productName",
+          "recordType",
+          "totalPrice",
+          "currencyCode"
+        ]
+      }
+    },
+    "subtotal-report": {
+      "api_action": "GET_SUBTOTAL_BILLING_REPORT",
+      "help": "Gets subtotal billing report",
+      "alias": "streport",
+      "integration_request": true,
+      "integration_response": true,
+      "parameters": {
+        "from": {
+          "alias": "fr",
+          "help": "The start range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "help": "The end range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "email": {
+          "alias": "e",
+          "help": "Email",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tag": {
+          "alias": "t",
+          "help": "Collect only records with specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "reportFormat": {
+          "alias": "rf",
+          "help": "Report format. Allowed values: [email, json]",
+          "required": true,
+          "validation": {
+            "allowed_values": [
+              "email",
+              "json"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "tenant": {
+          "alias": "tn",
+          "help": "Tenant name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name. (Can not be used with '--clouds' parameter)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "clouds": {
+          "alias": "c",
+          "help": "List of the cloud names. (Can not be used with '--region' parameter)",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "projectCode",
+          "zone",
+          "productName",
+          "usageType",
+          "quantity",
+          "recordType",
+          "totalPrice",
+          "currencyCode"
+        ]
+      }
+    },
+    "resource-report": {
+      "api_action": "GET_RESOURCE_BILLING_REPORT",
+      "help": "Gets resource billing report",
+      "alias": "resreport",
+      "integration_request": true,
+      "integration_response": true,
+      "parameters": {
+        "from": {
+          "alias": "fr",
+          "help": "The start range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "help": "The end range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "email": {
+          "alias": "e",
+          "help": "Email",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tag": {
+          "alias": "t",
+          "help": "Collect only records with specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tenant": {
+          "alias": "tn",
+          "help": "Tenant name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name. Should be specified if you need TENANT reportUnit.",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "reportFormat": {
+          "alias": "rf",
+          "help": "Report format. Allowed values: [email, json]",
+          "required": true,
+          "validation": {
+            "allowed_values": [
+              "email",
+              "json"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "projectCode",
+          "zone",
+          "productName",
+          "recordType",
+          "totalPrice",
+          "currencyCode"
+        ]
+      }
+    },
+    "hourly-report": {
+      "api_action": "GET_HOURLY_BILLING_REPORT",
+      "help": "Gets hourly billing report",
+      "alias": "hreport",
+      "integration_request": true,
+      "parameters": {
+        "date": {
+          "alias": "d",
+          "help": "The date. Format \"dd.mm.yyyy\".",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "email": {
+          "alias": "e",
+          "help": "Email",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tag": {
+          "alias": "t",
+          "help": "Collect only records with specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tenant": {
+          "alias": "tn",
+          "help": "Tenant name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name. Should be specified if you need TENANT reportUnit.",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
+      }
+    },
+    "multiproject-report": {
+      "api_action": "GET_MULTIPROJECT_BILLING_REPORT",
+      "help": "Gets multiproject billing report",
+      "alias": "mreport",
+      "integration_request": true,
+      "parameters": {
+        "from": {
+          "alias": "fr",
+          "help": "The start range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "help": "The end range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "email": {
+          "alias": "e",
+          "help": "Email",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tag": {
+          "alias": "t",
+          "help": "Collect only records with specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "nativeCurrency": {
+          "alias": "nc",
+          "help": "Flag. If specified the native currency is used",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "accountId": {
+          "alias": "aid",
+          "help": "Account ID",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "region": {
+          "alias": "r",
+          "help": "Region name",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "reportType": {
+          "alias": "type",
+          "help": "The type of the report. Allowed values: [ACTIVE, INACTIVE, UPSA_INACTIVE, ACCOUNT, ALL_PERSONAL, CUSTOMERS, UNITS, BSS, BSS_CUSTOMERS, ADJUSTMENT, AZURE_CSP, AZURE_CSP_DETAILED, AZURE_CSP_CUSTOMERS]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "ACTIVE",
+              "INACTIVE",
+              "UPSA_INACTIVE",
+              "ACCOUNT",
+              "ALL_PERSONAL",
+              "CUSTOMERS",
+              "UNITS",
+              "BSS",
+              "BSS_CUSTOMERS",
+              "ADJUSTMENT",
+              "AZURE_CSP",
+              "AZURE_CSP_DETAILED",
+              "AZURE_CSP_CUSTOMERS"
+            ]
+          }
+        },
+        "cloudTarget": {
+          "alias": "ct",
+          "help": "The cloud target. Allowed values: [SINGLE, PUBLIC, PRIVATE]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "SINGLE",
+              "PUBLIC",
+              "PRIVATE"
+            ]
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
+      }
+    },
+    "management-console": {
+      "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
+      "help": "AWS management console access",
+      "alias": "mc",
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "alias": "c",
+          "help": "Cloud. Allowed values: [AWS, AZURE, GOOGLE]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          },
+          "case": "upper"
+        },
+        "email": {
+          "alias": "e",
+          "help": "The email of the related user",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "accessType": {
+          "alias": "at",
+          "help": "Access type. Allowed values: [DEFAULT, ASSUME_ROLE, FEDERATED_USER, CLOUD_ADMIN_USER, IAM_USER]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "DEFAULT",
+              "ASSUME_ROLE",
+              "FEDERATED_USER",
+              "CLOUD_ADMIN_USER",
+              "IAM_USER"
+            ]
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
+      }
+    },
+    "upload-script": {
+      "api_action": "UPLOAD_SCRIPT",
+      "help": "Uploads init script",
+      "alias": "upscr",
+      "integration_request": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "email": {
+          "parent": "email"
+        },
+        "filepath": {
+          "alias": "fp",
+          "help": "Path to the file what will be used as a source of the script",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "tenantDisplayName",
+          "fileName",
+          "owner",
+          "content"
+        ]
+      }
+    },
+    "delete-script": {
+      "api_action": "REMOVE_SCRIPT",
+      "help": "Removes init script",
+      "alias": "delscr",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "email": {
+          "parent": "email"
+        },
+        "fileName": {
+          "alias": "fn",
+          "help": "List of file names",
+          "required": true,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "describe-script": {
+      "api_action": "DESCRIBE_SCRIPT",
+      "help": "Describes init script",
+      "alias": "dscr",
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "email": {
+          "parent": "email"
+        },
+        "fileName": {
+          "alias": "fn",
+          "help": "File name. If this parameter is specified the content of the script will be returned",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "tenantDisplayName",
+          "fileName",
+          "owner",
+          "content"
+        ]
+      }
+    },
+    "price": {
+      "api_action": "GET_PRICING_POLICY",
+      "help": "Describes pricing policy",
+      "alias": "price",
+      "parameters": {
+        "from": {
+          "alias": "fr",
+          "help": "The start range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "help": "The end range date. Format \"dd.mm.yyyy\"",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "zoneName": {
+          "alias": "zone",
+          "help": "Zone name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "policyType": {
+          "alias": "pt",
+          "help": "The type of the policy",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "pricingPolicy",
+        "response_table_headers": [
+          "type",
+          "id",
+          "applyFor",
+          "targetGroup",
+          "priceMode"
+        ]
+      }
+    },
+    "create-image": {
+      "api_action": "CREATE_IMAGE",
+      "integration_response": true,
+      "help": "Creates image",
+      "alias": "cim",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "alias": "n",
+          "help": "Name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "alias": "desc",
+          "help": "Description",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "owner": {
+          "alias": "own",
+          "help": "Instance owner",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "imageId",
+          "name",
+          "osType",
+          "imageType",
+          "imageState",
+          "createdDate",
+          "attachedVolumes"
+        ]
+      }
+    },
+    "delete-image": {
+      "api_action": "DELETE_IMAGE",
+      "help": "Deletes image",
+      "alias": "delim",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "imageId": {
+          "help": "ID of the image",
+          "alias": "imid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "imageId",
+          "imageState"
+        ]
+      }
+    },
+    "delete-keypair": {
+      "api_action": "DELETE_KEY",
+      "help": "Deletes key",
+      "alias": "delkey",
+      "parameters": {
+        "email": {
+          "parent": "email"
+        },
+        "name": {
+          "alias": "n",
+          "help": "Name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+        ]
+      }
+    },
+    "describe-keypair": {
+      "api_action": "DESCRIBE_KEYS",
+      "help": "Describes key",
+      "alias": "dkey",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "help": "Cloud",
+          "alias": "c",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "email": {
+          "alias": "e",
+          "help": "Email",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "alias": "n",
+          "help": "Name",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "name",
+          "cloud",
+          "tenant",
+          "region",
+          "email"
+        ]
+      }
+    },
+    "import-keypair": {
+      "api_action": "ADD_KEY",
+      "help": "Import SSH keys",
+      "alias": "ikey",
+      "integration_request": true,
+      "parameters": {
+        "email": {
+          "parent": "email"
+        },
+        "name": {
+          "alias": "n",
+          "help": "Name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "filepath": {
+          "alias": "fp",
+          "help": "Path to the file with public key",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tenantName": {
+          "alias": "tn",
+          "help": "Tenant name. Should be specified with cloud and region parameters",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cloud": {
+          "help": "Cloud. Should be specified with tenantName and region parameters. \n Allowed values: [AWS, AZURE, CSA, ENTERPRISE, EXOSCALE, GOOGLE, HARDWARE, HPOO, OPEN_STACK, VMWARE, VSPHERE, YANDEX]",
+          "alias": "c",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "CSA",
+              "ENTERPRISE",
+              "EXOSCALE",
+              "GOOGLE",
+              "HARDWARE",
+              "HPOO",
+              "OPEN_STACK",
+              "VMWARE",
+              "VSPHERE",
+              "YANDEX"
+            ]
+          }
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name. Should be specified with tenantName and cloud parameters",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+        ]
+      }
+    },
+    "describe-aws-stack-events": {
+      "api_action": "GET_EVENTS",
+      "integration_response": true,
+      "alias": "dawsse",
+      "help": "Get event",
+      "parameters": {
+        "eventId": {
+          "help": "Event id",
+          "alias": "evid",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "searchType": {
+          "help": "Search type. Allowed values: [ALL, BILLING, CLOUD_FORMATION, MANAGEMENT, RELATED, SECURITY, TERRAFORM]",
+          "alias": "srchtp",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "ALL",
+              "BILLING",
+              "CLOUD_FORMATION",
+              "MANAGEMENT",
+              "RELATED",
+              "SECURITY",
+              "TERRAFORM"
+            ]
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name.",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "resourceId": {
+          "help": "Resource id",
+          "alias": "resid",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "latestEventDate": {
+          "alias": "evdt",
+          "help": "The latest event date. Format \"dd.mm.yyyy\"",
+          "required": false,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "count": {
+          "help": "count",
+          "alias": "cnt",
+          "required": true,
+          "validation": {
+            "type": "number",
+            "min_value": 0
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "eventId",
+          "tenant",
+          "user",
+          "group",
+          "eventDescription",
+          "dateDescription",
+          "timestamp"
+        ]
+      }
+    },
+    "terraform-describe-template": {
+      "api_action": "DESCRIBE_TERRAFORM_TEMPLATE",
+      "alias": "terdt",
+      "help": "Describes terraform template",
+      "integration_request": true,
+      "integration_response": true,
+      "parameters": {
+        "cloud": {
+          "help": "Cloud. Allowed values: [AWS, GOOGLE, AZURE, OPEN_STACK]",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "GOOGLE",
+              "AZURE",
+              "OPEN_STACK"
+            ]
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "templateNames": {
+          "help": "Names of templates",
+          "alias": "tempn",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "templateName",
+          "tenantName",
+          "cloud",
+          "owner",
+          "status",
+          "templateType",
+          "templateUuid",
+          "terraformVersion",
+          "templateFormat"
+        ]
+      }
+    },
+    "reboot-instances": {
+      "api_action": "REBOOT_INSTANCE",
+      "alias": "reboot",
+      "help": "Reboots specified EC2 instance",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "instances",
+        "response_table_headers": [
+          "cloud",
+          "instanceId",
+          "instanceName",
+          "region",
+          "state",
+          "tenant"
+        ]
+      }
+    },
+    "start-instances": {
+      "api_action": "START_INSTANCE",
+      "alias": "start",
+      "help": "Starts specified EC2 instance",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "instanceId": {
+          "alias": "iid",
+          "help": "Id of the instance",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "unmap_key": "instances",
+        "response_table_headers": [
+          "cloud",
+          "instanceId",
+          "instanceName",
+          "region",
+          "state",
+          "tenant"
+        ]
+      }
+    },
+    "terraform-delete-template": {
+      "api_action": "DELETE_TERRAFORM_TEMPLATE",
+      "alias": "terdl",
+      "help": "Deletes terraform template",
+      "integration_response": true,
+      "parameters": {
+        "cloud": {
+          "help": "Cloud. Allowed values: [AWS, GOOGLE, AZURE, OPEN_STACK]",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "GOOGLE",
+              "AZURE",
+              "OPEN_STACK"
+            ]
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "templateName": {
+          "help": "The name of the template to be deleted",
+          "alias": "tempn",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "userEmail": {
+          "parent": "email"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "status"
+        ]
+      }
+    },
+    "terraform-plan-template": {
+      "api_action": "EXECUTE_TERRAFORM_TASK",
+      "alias": "terpt",
+      "help": "Plans terraform template",
+      "integration_request": true,
+      "parameters": {
+        "cloud": {
+          "help": "Cloud. Allowed values: [AWS, GOOGLE, AZURE, OPEN_STACK]",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "GOOGLE",
+              "AZURE",
+              "OPEN_STACK"
+            ]
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "templateName": {
+          "help": "The name of the template to be planed",
+          "alias": "tempn",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "taskInitiatorEmail": {
+          "parent": "email"
+        },
+        "variables": {
+          "help": "Parameters with values. Format - key:value for string; key:\"value1, value2, value3\" for list; key1:\"key2=value2\" for object",
+          "alias": "var",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+        ]
+      }
+    },
+    "terraform-apply-template": {
+      "api_action": "START_APPROVAL_PROCESS_FOR_APPLY_TEMPLATE",
+      "alias": "terapt",
+      "help": "Applies terraform template",
+      "integration_request": true,
+      "parameters": {
+        "cloud": {
+          "help": "Cloud. Allowed values: [AWS, GOOGLE, AZURE, OPEN_STACK]",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "GOOGLE",
+              "AZURE",
+              "OPEN_STACK"
+            ]
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "templateName": {
+          "help": "The name of the template to be planed",
+          "alias": "tempn",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "taskInitiatorEmail": {
+          "parent": "email"
+        },
+        "variables": {
+          "help": "Parameters with values. Format - key:value for string; key:\"value1, value2, value3\" for list; key1:\"key2=value2\" for object",
+          "alias": "var",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+          "status"
+        ]
+      }
+    },
+    "terraform-destroy-template": {
+      "api_action": "EXECUTE_TERRAFORM_TASK",
+      "alias": "terdes",
+      "help": "Destroys resources related with terraform template",
+      "integration_request": true,
+      "parameters": {
+        "cloud": {
+          "help": "Cloud. Allowed values: [AWS, GOOGLE, AZURE, OPEN_STACK]",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "GOOGLE",
+              "AZURE",
+              "OPEN_STACK"
+            ]
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "templateName": {
+          "help": "The name of the template which resources will be destroyed",
+          "alias": "tempn",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "taskInitiatorEmail": {
+          "parent": "email"
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "create-instance-quota": {
+      "api_action": "UPDATE_INSTANCE_QUOTA",
+      "help": "Creates instance quota",
+      "alias": "cinstq",
+      "integration_request": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "creationIntervalHours": {
+          "help": "Period in hours during which the set count of instances can be created",
+          "alias": "hours",
+          "required": true,
+          "validation": {
+            "type": "number"
+          }
+        },
+        "creationIntervalCount": {
+          "help": "The number of instances one can create during creation interval",
+          "alias": "count",
+          "required": true,
+          "validation": {
+            "type": "number"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "get-instance-quota": {
+      "api_action": "GET_INSTANCE_QUOTA",
+      "help": "Describes instance quota",
+      "alias": "getinstq",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "creationIntervalHours",
+          "creationIntervalCount"
+        ]
+      }
+    },
+    "delete-instance-quota": {
+      "api_action": "REMOVE_INSTANCE_QUOTA",
+      "help": "Removes instance quota",
+      "alias": "delinstq",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "create-volume-quota": {
+      "api_action": "UPDATE_VOLUME_QUOTA",
+      "help": "Creates volume quota",
+      "alias": "cvolq",
+      "integration_request": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "maxSize": {
+          "help": "The maximum size of volume for create",
+          "alias": "size",
+          "required": true,
+          "validation": {
+            "type": "number"
+          }
+        },
+        "creationIntervalHours": {
+          "help": "Period in hours during which the set count of volumes can be created",
+          "alias": "hours",
+          "required": true,
+          "validation": {
+            "type": "number"
+          }
+        },
+        "creationIntervalCount": {
+          "help": "The number of volumes one can create during creation interval",
+          "alias": "count",
+          "required": true,
+          "validation": {
+            "type": "number"
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "get-volume-quota": {
+      "api_action": "GET_VOLUME_QUOTA",
+      "help": "Describes volume quota",
+      "alias": "getvolq",
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "maxSizeGb",
+          "creationIntervalHours",
+          "creationIntervalCount"
+        ]
+      }
+    },
+    "delete-volume-quota": {
+      "api_action": "REMOVE_VOLUME_QUOTA",
+      "help": "Removes volume quota",
+      "alias": "delvolq",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": []
+      }
+    },
+    "create-keypair": {
+      "api_action": "ADD_KEY",
+      "alias": "ckey",
+      "help": "Creates keypair",
+      "parameters": {
+        "email": {
+          "parent": "email"
+        },
+        "name": {
+          "alias": "n",
+          "help": "Name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cloud": {
+          "help": "Cloud",
+          "alias": "c",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tenantName": {
+          "alias": "tn",
+          "help": "Tenant name. (Can not be used without '--cloud' and '--region' parameters)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "region": {
+          "alias": "r",
+          "help": "The region name. (Can not be used without '--cloud' and '--tenantName' parameters)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "name",
+          "publicPart",
+          "privatePart",
+          "email"
+        ]
+      }
+    },
+    "update-keypair-region": {
+      "api_action": "UPDATE_KEYS",
+      "alias": "ukey",
+      "help": "Use to add or remove the SSH key from the region",
+      "integration_request": true,
+      "parameters": {
+        "email": {
+          "parent": "email"
+        },
+        "name": {
+          "alias": "n",
+          "help": "Name",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "state": {
+          "alias": "s",
+          "help": "Action to be done with a keypair. Allowed values: [ADD, REMOVE]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "ADD",
+              "REMOVE"
+            ]
+          }
+        },
+        "cloud": {
+          "alias": "c",
+          "help": "The cloud name. Allowed_values: [AWS,AZURE,GOOGLE]",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          },
+          "case": "upper"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+        ]
+      }
+    },
+    "describe-tenants": {
+      "api_action": "DESCRIBE_TENANTS",
+      "alias": "dtn",
+      "help": "Outputs the list of tenants",
+      "integration_response": true,
+      "parameters": {
+        "inactive": {
+          "alias": "i",
+          "help": "Flag. If specified the inactive tenants will be displayed",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenantNames": {
+          "alias": "tns",
+          "help": "List of tenants",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "tenantName",
+          "cloud",
+          "region",
+          "activationDate",
+          "tenantManagerContacts"
+        ]
+      }
+    },
+    "describe-regions": {
+      "api_action": "DESCRIBE_REGIONS",
+      "alias": "dr",
+      "help": "Outputs the list of regions",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "inactive": {
+          "alias": "i",
+          "help": "Flag. If specified the inactive regions are shown",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "includeHidded": {
+          "alias": "ih",
+          "help": "Flag. If specified the hidden regions are shown",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "cloud": {
+          "parent": "cloud"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "region",
+          "nativeName",
+          "cloud",
+          "active",
+          "hidden"
+        ]
+      }
+    },
+    "describe-shapes": {
+      "api_action": "LIST_REGION_SHAPES",
+      "alias": "dsh",
+      "integration_response": true,
+      "help": "Outputs the list of shapes in region",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "region": {
+          "parent": "region"
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "name",
+          "shape",
+          "cpuCount",
+          "memoryGb",
+          "storageGb"
+        ]
+      }
+    },
+    "add-schedule-instances": {
+      "api_action": "SCHEDULE_ADD_INSTANCES",
+      "alias": "addschin",
+      "help": "Adds existing schedule to instances",
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "scheduleName": {
+          "alias": "scn",
+          "help": "The name of the schedule",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "instanceIds": {
+          "alias": "ids",
+          "help": "Instances IDs",
+          "required": true,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "Instance",
+          "Status",
+          "Reason"
+        ]
+      }
+    },
+    "delete-schedule-instances": {
+      "api_action": "SCHEDULE_REMOVE_INSTANCES",
+      "alias": "delschin",
+      "help": "Removes existing schedule to instances",
+      "integration_response": true,
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "parent": "cloud"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "scheduleName": {
+          "alias": "scn",
+          "help": "The name of the schedule",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "instanceIds": {
+          "alias": "ids",
+          "help": "Instances IDs",
+          "required": true,
+          "validation": {
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "Instance",
+          "Status",
+          "Reason"
+        ]
+      }
+    },
+    "set-public-tag": {
+      "api_action": "UPDATE_INSTANCE_TAGS",
+      "alias": "utag",
+      "help": "Updates instance tags",
+      "parameters": {
+        "tenantName": {
+          "parent": "tenantName"
+        },
+        "cloud": {
+          "help": "Cloud. Allowed values: [AWS, GOOGLE, AZURE]",
+          "alias": "c",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          }
+        },
+        "region": {
+          "parent": "region"
+        },
+        "tags": {
+          "alias": "tgs",
+          "help": "The tag format - test1key:test1value",
+          "required": true,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "instanceId": {
+          "help": "Id of the instance",
+          "alias": "iid",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "availabilityZone": {
+          "alias": "az",
+          "help": "Availability zone name (for Azure)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "resourceGroup": {
+          "alias": "rg",
+          "help": "Resource group name (for Google)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+        ]
+      }
+    }
+  },
+  "version": "3.3"
+}

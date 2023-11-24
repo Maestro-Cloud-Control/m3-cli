@@ -1,0 +1,31 @@
+tests-for-sonar:
+  extends: tests-py38
+  allow_failure: true
+  artifacts:
+    untracked: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      changes:
+        - ./**
+
+sonar:
+  stage: sonar
+  allow_failure: true
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    SONAR_HOST_URL: ${SONAR_URL}
+    SONAR_PROJECT: 'm3-cli'
+    GIT_DEPTH: 0
+  needs: [tests-for-sonar]
+  script:
+    - |
+      sonar-scanner -X \
+      -Dsonar.projectKey=${SONAR_PROJECT} \
+      -Dsonar.sonar.python.codeCoveragePlugin=cobertura \
+      -Dsonar.sonar.python.coverage.reportPaths=coverage.xml \
+      -Dsonar.qualitygate.wait=true
+#      -Dsonar.python.xunit.reportPath=report.xml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      changes:
+        - ./**
