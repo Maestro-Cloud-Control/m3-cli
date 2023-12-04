@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.101.3] - 2023-12-04 
+* Add:
+  * Metadata 'description' and 'long_description' (sourced from README.md).
+  * Specified 'long_description_content_type' as markdown.
+  * Project 'url' field pointing to GitHub repository in metadata.
+
 ## [3.101.2] - 2023-12-01
 * Update command `m3 mreport --help`:
   * Disable validation for the `region` parameter
