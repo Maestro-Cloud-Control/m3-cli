@@ -5037,23 +5037,10 @@
         "region": {
           "alias": "r",
           "api_param_name": "reportZoneType",
-          "help": "The cloud providers or the region or the report family. Allowed values: [AWS, AWS_UNREACHABLE, AZURE, AZURE_NATIVE, ENTERPRISE, PRIVATE, GOOGLE, HARDWARE, MOBILE, SWIFT_STACK, WORKSPACE]",
+          "help": "The cloud providers or the region or the report family. Allowed values: [HARDWARE, AWS, AWS_UNREACHABLE, AZURE, AZURE_NATIVE, GOOGLE, MOBILE, ENTERPRISE, SWIFT_STACK, REPORT_PORTAL, WORKSPACES, AWS_WORKSPACES, AZURE_WORKSPACES, AWS_PAAS, AWS_ATLAS, AZURE_PAAS, GOOGLE_PAAS, PRIVATE_PAAS, PRIVATE]",
           "required": false,
           "validation": {
-            "type": "string",
-            "allowed_values": [
-              "AWS",
-              "AWS_UNREACHABLE",
-              "AZURE",
-              "AZURE_NATIVE",
-              "ENTERPRISE",
-              "PRIVATE",
-              "GOOGLE",
-              "HARDWARE",
-              "MOBILE",
-              "SWIFT_STACK",
-              "WORKSPACE"
-            ]
+            "type": "string"
           },
           "case": "upper"
         },

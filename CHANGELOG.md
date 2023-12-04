@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.101.2] - 2023-12-01
+* Update command `m3 mreport --help`:
+  * Disable validation for the `region` parameter
+  * Update help text for the `region` parameter
+
+## [3.101.1] - 2023-11-28
+* Fix deprecated `pkg_resources`
+
 ## [3.101.0] - 2023-11-22
 * Add `--tenant-group` parameter to `multitenant-report`
 * Add `ANNUAL` option to `--report-type` parameter to `multitenant-report`

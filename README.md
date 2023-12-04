@@ -7,9 +7,9 @@ automate them through scripts.
 
 # Synopsis
 
-`m3-cli <command> [parameters]`
+`m3 <command> [parameters]`
 
-Use m3-cli command help for information on a specific command. The synopsis for each
+Use m3 command help for information on a specific command. The synopsis for each
 command shows its parameters and their usage. Required parameters are marked
 with the star (*) character.
 
@@ -55,14 +55,14 @@ Create: `virtualenv -p python3 .venv`
 
 Activate: `source .venv/bin/activate`
 
-### To install m3cli tool use the command listed below installation command.
+### To install m3-cli tool use the command listed below installation command.
 
 ##### ![#f03c15](pics/0000.png) NOTE: Replace tool version with the version number you need (see `CHANGELOG.md` or `setup.py`).
 
 `pip install m3-cli`
 ## Configuration
 
-Before using m3 cli execute commnad `m3-cli access` to set up all needed settings.
+Before using m3 cli execute commnad `m3 access` to set up all needed settings.
 
 In case you want to configure all needed settings manually, please set up the
 following environmnet variables:
@@ -72,11 +72,11 @@ following environmnet variables:
   This is essentially the "password" for the access key.
 * `M3SDK_ADDRESS`: Specifies the address of the Maestro3 environment.
 
-Or you can set credentials non-interactively using `m3-cli access` command with
+Or you can set credentials non-interactively using `m3 access` command with
 specified parameters:
 
 ```
-m3-cli access --access_key <access_key> --secret_key <_secret_key> --api_address <api_address>
+m3 access --access_key <access_key> --secret_key <_secret_key> --api_address <api_address>
 ```
 
 After this a `default.cr` file with the access parameters you provided will be 
@@ -125,7 +125,7 @@ variables, the m3 cli is ready to be used.
 
 ##### ![#f03c15](pics/0000.png) NOTE: The development of the Maestro3 CLI is still in progress. Examples below contain demo data. Will be updated.
 
-To get information about the available commands/parameters just run the `m3-cli` as
+To get information about the available commands/parameters just run the `m3` as
 it is displayed below:
 
 Root help contains data about all available commands:
@@ -260,7 +260,7 @@ Use this command to run instance.
 
 Examples:
 1. Describes all available instances for the certain tenant in the specified region
-    m3-cli run-instance -tn <tenant-name> -r <region> -iname <instance-name> -shname <shape-name> -key <key-name> -count <number-of-instances>
+    m3 run-instance -tn <tenant-name> -r <region> -iname <instance-name> -shname <shape-name> -key <key-name> -count <number-of-instances>
 """
 ```
 
@@ -272,7 +272,7 @@ The related commands look like this:
 Related commands:
 
 1. Deletes a schedule from your tenants schedule library:
-        m3-cli delete-schedule -r <region> -tn <tenant> -n <name>
+        m3 delete-schedule -r <region> -tn <tenant> -n <name>
 ```
 
 There are two ways a command can be added to a list of related commands of the other command.
