@@ -16,5 +16,5 @@ class CustomInstallCommand(install):
 setup(
     cmdclass={
         'install': CustomInstallCommand
-    },
+    }
 )

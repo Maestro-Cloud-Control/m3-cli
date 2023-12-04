@@ -6,7 +6,6 @@ from getpass import getpass
 from pathlib import Path
 
 import click
-import pkg_resources
 from packaging import version
 
 from m3cli.utils import (ACCESS_KEY, SECRET_KEY, ADDRESS, FOLDERS_SEPARATOR,
@@ -155,8 +154,8 @@ def check_update():
 
 
 def get_current_cli_version():
-    return pkg_resources.require('m3')[0].version
-
+    from importlib.metadata import version as lib_version
+    return lib_version('m3-cli')
 
 def perform_version_check(invoked_command, is_help_invoked,
                           view_type, detailed):

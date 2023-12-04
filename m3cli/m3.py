@@ -35,9 +35,11 @@ def init_commands_service():
 def print_version(ctx, value):
     if not value or ctx.resilient_parsing:
         return
-    import pkg_resources  # part of setuptools
-    version = pkg_resources.require('m3')[0].version
-    click.echo(f'Maestro CLI version: {version}')
+
+    from importlib.metadata import version as lib_version
+
+    version_m3 = lib_version('m3-cli')
+    click.echo(f'Maestro CLI version: {version_m3}')
     commands_meta_version = CMD_SERVICE.get_commands_def_version()
     click.echo(f'Commands version: {commands_meta_version}')
     ctx.exit()
