@@ -5051,7 +5051,8 @@
           "required": false,
           "validation": {
             "type": "list"
-          }
+          },
+          "case": "upper"
         }
       },
       "output_configuration": {

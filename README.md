@@ -1,4 +1,4 @@
-![m3cli logo](pics/maestro3_cli_logo.png)
+![m3cli logo](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/maestro3_cli_logo.png)
 
 The Maestro3 Command Line Interface (CLI) is a unified tool to manage your
 Maestro services and resources. With just one tool to download and configure,
@@ -34,7 +34,7 @@ Use the following commands to install the tools in case they are not installed.
 
 ## Installation
 
-##### ![#f03c15](pics/0000.png) NOTE: Due to the best Python practices, it is recommended to use virtual environment to protect against dependency breakage. You can perfrom m3cli tool installation without this step. Need to mention that in case you want to install the to the created virtual environment you will need to activate the virtual environment with installed M3CLI before using it.
+##### ![#f03c15](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/0000.png) NOTE: Due to the best Python practices, it is recommended to use virtual environment to protect against dependency breakage. You can perfrom m3cli tool installation without this step. Need to mention that in case you want to install the to the created virtual environment you will need to activate the virtual environment with installed M3CLI before using it.
 
 The guide how to install and activate virtualenv you can find below for the
 supported platforms:
@@ -57,7 +57,7 @@ Activate: `source .venv/bin/activate`
 
 ### To install m3-cli tool use the command listed below installation command.
 
-##### ![#f03c15](pics/0000.png) NOTE: Replace tool version with the version number you need (see `CHANGELOG.md` or `setup.py`).
+##### ![#f03c15](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/0000.png) NOTE: Replace tool version with the version number you need (see `CHANGELOG.md` or `setup.py`).
 
 `pip install m3-cli`
 ## Configuration
@@ -88,20 +88,20 @@ To get your credentials please login to the Maestro3 and follow the guide below:
 
 1. Switch to My Account page:
 
-![generate_creds_1](pics/generate_creds_0.png)
+![generate_creds_1](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/generate_creds_0.png)
 
 *2*. Start the 'CLI/SDK Access' wizard:
 
-![generate_creds_1](pics/generate_creds_1.png)
+![generate_creds_1](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/generate_creds_1.png)
 
 *3*. Specify the expiration time for the credentials:
 
-![generate_creds_1](pics/generate_creds_2.png)
+![generate_creds_1](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/generate_creds_2.png)
 
 *4*. Obtain your credentials and export access key to environment variable
 M3SDK_ACCESS_KEY, and secret key to M3SDK_SECRET_KEY
 
-![generate_creds_1](pics/generate_creds_3.png)
+![generate_creds_1](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/generate_creds_3.png)
 
 ### Optional configuration
 
@@ -123,33 +123,33 @@ cli uses:
 After you have installed the tool and set the credentials as environment
 variables, the m3 cli is ready to be used.
 
-##### ![#f03c15](pics/0000.png) NOTE: The development of the Maestro3 CLI is still in progress. Examples below contain demo data. Will be updated.
+##### ![#f03c15](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/0000.png) NOTE: The development of the Maestro3 CLI is still in progress. Examples below contain demo data. Will be updated.
 
 To get information about the available commands/parameters just run the `m3` as
 it is displayed below:
 
 Root help contains data about all available commands:
 
-![m3cli sequence diagram](pics/usage_sample_0.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_0.png)
 
 Command `--help` contains abbreviated data about parameters:<br>
-![m3cli sequence diagram](pics/usage_sample_1_1.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_1_1.png)
 
 Use `--full-help` command for all available options:
 
-![m3cli sequence diagram](pics/usage_sample_1_2.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_1_2.png)
 
 Command result in `--table` output mode (default output mode) :
 
-![m3cli sequence diagram](pics/usage_sample_2.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_2.png)
 
 Command result in `--json` output mode (default output mode) :
 
-![m3cli sequence diagram](pics/usage_sample_3.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_3.png)
 
 Command result in `--full` output mode (default output mode) :
 
-![m3cli sequence diagram](pics/usage_sample_4.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_4.png)
 
 `--verbose` parameter writes command result to the terminal.
 
@@ -161,7 +161,7 @@ based on commands configuration declared in `commands_def.json` file.
 ### The tool DOES NOT perform any business logic related to management of resources Maestro3 provides. For now :)
 
 The sequence diagram is displayed below.  
-![m3cli sequence diagram](pics/sequence_diagram.png)
+![m3cli sequence diagram](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/sequence_diagram.png)
 
 ## Commands definition file:
 
@@ -252,7 +252,7 @@ Here is a full example of attributes found in the definition file:
 }
 ```
 
-##### ![#f03c15](pics/0000.png) NOTE: Commands help values can be stored into the file named ``commands_help.py``. The format of the such storing type is Python native. Example:
+##### ![#f03c15](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/0000.png) NOTE: Commands help values can be stored into the file named ``commands_help.py``. The format of the such storing type is Python native. Example:
 
 ```
 run-instance = """
@@ -466,7 +466,7 @@ To deactivate
 1. Execute command `sudo m3 disable-autocomplete`
 2. Restart terminal session
 
-##### ![#f03c15](pics/0000.png) NOTE: The type of the return value in the functions described above should be the same as the received parameter (`request/response`)
+##### ![#f03c15](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/0000.png) NOTE: The type of the return value in the functions described above should be the same as the received parameter (`request/response`)
 
 4) After successful plugins creation add an appropriate attributes to the
    command description in the file `commands_def.json`:
@@ -507,7 +507,7 @@ To force CLI to check for an update, invoke the `health-check` command manually.
 
 ## Resolving m3cli version for CLISDK Access wizard
 
-![Resolving m3cli version for CLISDK Access wizard](pics/resolving_m3cli_version_for_CLISDK_Access_wizard.png)
+![Resolving m3cli version for CLISDK Access wizard](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/resolving_m3cli_version_for_CLISDK_Access_wizard.png)
 
 ## Tests execution
 

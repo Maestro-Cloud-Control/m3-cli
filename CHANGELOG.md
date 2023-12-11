@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.101.5] - 2023-12-07
+* Update `README.md` to fix images not displaying on `PyPI`.
+
+## [3.101.4] - 2023-12-06
+* Update of the `m3 mreport` command: 
+  * Now the `tenant-region` parameter is by default converted to upper case.
+
 ## [3.101.3] - 2023-12-04 
 * Add:
   * Metadata 'description' and 'long_description' (sourced from README.md).
