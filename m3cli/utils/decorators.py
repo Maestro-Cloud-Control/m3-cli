@@ -136,12 +136,14 @@ def dynamic_dispatcher(func):
                   '--path') in ctx.args:
                 try:
                     access = get_non_interactive_access(
-                        *check_args_for_non_interactive_access(ctx))
+                        *check_args_for_non_interactive_access(ctx)
+                    )
                     click.echo(access)
                 except AssertionError as e:
                     action = f'The command \"{ctx.args[0]}\" failed'
-                    response = __prettify_error(action=action,
-                                                error=e)
+                    response = __prettify_error(
+                        action=action, error=e,
+                    )
                     click.echo(response, err=True)
                     raise e
             else:
@@ -192,8 +194,10 @@ def dynamic_dispatcher(func):
             command = 'health-check'
             parameters = {}
 
-        response = func(*args, command=command, parameters=parameters,
-                        view_type=view_type, detailed=detailed, raw_response=raw_response)
+        response = func(
+            *args, command=command, parameters=parameters, view_type=view_type,
+            detailed=detailed, raw_response=raw_response
+        )
         return response
 
     return wrapper

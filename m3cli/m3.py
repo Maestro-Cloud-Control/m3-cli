@@ -21,8 +21,7 @@ from m3cli.utils.utilities import perform_version_check
 
 sys.excepthook = exception_handler_formatter
 
-CONTEXT_SETTINGS = dict(allow_extra_args=True,
-                        ignore_unknown_options=True)
+CONTEXT_SETTINGS = dict(allow_extra_args=True, ignore_unknown_options=True)
 
 
 @cli_response(no_output=True)

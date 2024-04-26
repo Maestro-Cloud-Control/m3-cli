@@ -1,8 +1,9 @@
 import json
-from typing import List
+from typing import List, Mapping
 
 from m3cli.models.interactive_parameter import (
-    InteractiveParameter, NAME_ATTR)
+    InteractiveParameter, NAME_ATTR
+)
 from m3cli.services.request_service import BaseRequest, POST, SdkClient
 from m3cli.utils.interactivity_utils import get_interactivity_option
 
@@ -15,27 +16,38 @@ class RemoteValidationService:
     def __init__(self, interactive_options):
         self.interactive_options = interactive_options
 
-    def validate_parameters(self, parameters: List[InteractiveParameter]):
+    def validate_parameters(
+            self,
+            parameters: List[InteractiveParameter],
+            service_name: str,
+    ) -> Mapping[InteractiveParameter, str]:
         """
         Validates parameters entered by a user.
         :return: A list of invalid items.
         """
         api_action = get_interactivity_option(
             interactive_options=self.interactive_options,
-            option_name=VALIDATION_HANDLER_ATTRIBUTE)
-        payload = [param.to_raw_parameter()
-                   for param in parameters]
+            option_name=VALIDATION_HANDLER_ATTRIBUTE,
+        )
+        old_payload = [
+            param.to_raw_parameter() for param in parameters
+        ]
+        payload = {
+            'dtoList': old_payload,
+            'serviceName': service_name,
+        }
         validation_result = self._request_remote_validation(
-            api_action=api_action,
-            parameters=payload)
-        invalid_items = [validation_item
-                         for validation_item in validation_result
-                         if validation_item.get(ERROR_MESSAGE_ATTR)]
-
+            api_action=api_action, parameters=payload,
+        )
+        invalid_items = [
+            validation_item for validation_item in validation_result
+            if validation_item.get(ERROR_MESSAGE_ATTR)
+        ]
         invalid_parameters = {}
         for item in invalid_items:
-            parameter = next(param for param in parameters
-                             if param.name == item[NAME_ATTR])
+            parameter = next(
+                param for param in parameters if param.name == item[NAME_ATTR]
+            )
             invalid_parameters[parameter] = item[ERROR_MESSAGE_ATTR]
         return invalid_parameters
 
@@ -44,8 +56,9 @@ class RemoteValidationService:
         validate_params_request = BaseRequest(
             command='validate_parameters',
             api_action=api_action,
-            parameters=list(parameters),
-            method=POST)
+            parameters=parameters,
+            method=POST,
+        )
         request_mapping, responses = SdkClient().execute(
             request=validate_params_request)
         response_item = responses[0]

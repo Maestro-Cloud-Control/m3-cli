@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.112.4] - 2024-04-08
+* Add `--tag` parameter alias `-tag` to `m3 run-instances` command
+
+## [3.112.3] - 2024-04-05
+* Improve readability of commands: 
+  * m3 upload-script --help, m3 describe-script --help, m3 delete-scripts --help
+
+## [3.112.2] - 2024-04-02
+* Implement fixes related to commands `m3 delete-scripts` and `m3 upload-scripts`:
+  * Change `"maestro-user-identifier"` from `SYSTEM` to `UNKNOWN`
+  * Fix `"api_param_name"` for command `m3 delete-scripts`
+  * Remove `.` from the list of allowed symbols for the `-scname` parameter in 
+  `m3 upload-scripts` command
+  * Enhance help documentation for `m3 upload-scripts` command
+
+## [3.112.1] - 2024-04-01
+* Add `--script` parameter alias `-scname` to `m3 run-instances` command
+
+## [3.112.0] - 2024-03-19
+* Update the `payload` to include `dtoList` and `serviceName` in
+`get_interactivity_option` method for the action `VALIDATE_SERVICE_VARIABLES`
+in the `m3 activate-platform-service` command
+
+## [3.101.11] - 2024-03-15
+* Add command `m3 billing-region-types`
+* Improve the table view for the `m3 billing-region-types --table` command.
+
 ## [3.101.10] - 2024-02-14
 * Update of the `m3 mreport` command: 
   * Add optional parameter `--include-billing-source`

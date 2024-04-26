@@ -21,6 +21,7 @@ RESPONSE_ENDING_CHARS = b'}]}'
 _LOG = get_logger('request_service')
 
 USER_IDENTIFIER = 'SYSTEM'
+USER_UNKNOWN = 'UNKNOWN'
 CLIENT_IDENTIFIER = "api-server"
 
 POST = 'POST'
@@ -209,7 +210,7 @@ class SdkClient:
                 "Accept": "application/json",
                 "maestro-authentication": signature_resolved,
                 "maestro-request-identifier": CLIENT_IDENTIFIER,
-                "maestro-user-identifier": USER_IDENTIFIER,
+                "maestro-user-identifier": USER_UNKNOWN,
                 "maestro-date": str(date),
                 "maestro-accesskey": access_key,
                 "maestro-sdk-version": get_sdk_version(),

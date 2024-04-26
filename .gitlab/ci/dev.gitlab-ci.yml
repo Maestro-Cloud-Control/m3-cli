@@ -25,11 +25,11 @@
 .tox-execution-test-script: &tox-execution-test-script
   - python -m site
   - python -m pip install --upgrade pip setuptools wheel
-  - python -m pip install --upgrade virtualenv tox tox-gh-actions
+  - python -m pip install --upgrade virtualenv tox
 
 
 check-installation:
-  image: python:3.8
+  image: python:3.10
   stage: test
   <<: *only-default
   <<: *before-script-default
@@ -51,13 +51,13 @@ lint:
         - ./**
 
 # Uses in sonar.gitlab-ci.yml
-tests-py38:
+tests-py310:
   <<: *only-default
   <<: *before-script-default
   stage: test
   script:
     - *tox-execution-test-script
-    - tox -e py38
+    - tox -e py310
   coverage: '/TOTAL.*\s([.\d]+)%/'
   artifacts:
     paths:

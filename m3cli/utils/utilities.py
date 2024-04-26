@@ -47,19 +47,27 @@ def _set_credentials_interactively(credentials_path):
                                 m3sdk_secret_key, m3sdk_api_address)
 
 
-def _set_credentials_by_params(credentials_path, access_key: str = None,
-                               secret_key: str = None,
-                               api_address: str = None):
+def _set_credentials_by_params(
+        credentials_path,
+        access_key: str = None,
+        secret_key: str = None,
+        api_address: str = None,
+):
     api_address = DEFAULT_API_ADDRESS if not api_address else api_address
     os.environ[ACCESS_KEY] = access_key
     os.environ[SECRET_KEY] = secret_key
     os.environ[ADDRESS] = api_address
-    __write_credentials_to_file(credentials_path, access_key, secret_key,
-                                api_address)
+    __write_credentials_to_file(
+        credentials_path, access_key, secret_key, api_address,
+    )
 
 
-def __write_credentials_to_file(credentials_path: str, access_key: str,
-                                secret_key: str, api_address: str):
+def __write_credentials_to_file(
+        credentials_path: str,
+        access_key: str,
+        secret_key: str,
+        api_address: str,
+):
     data = {}
     if os.path.exists(credentials_path):
         with open(credentials_path, 'r') as file:
@@ -67,8 +75,8 @@ def __write_credentials_to_file(credentials_path: str, access_key: str,
                 data = json.load(file)
             except json.decoder.JSONDecodeError:
                 raise SyntaxError(
-                    f'{credentials_path} contains invalid JSON')
-
+                    f'{credentials_path} contains invalid JSON'
+                )
     with open(credentials_path, 'w') as file:
         data.update({ACCESS_KEY: access_key,
                      SECRET_KEY: secret_key,
@@ -86,16 +94,21 @@ def _get_credentials_file_path():
     return creds_path + FOLDERS_SEPARATOR + CREDENTIALS_FILE
 
 
-def get_non_interactive_access(access_key: str, secret_key: str,
-                               api_address=None, path=None):
+def get_non_interactive_access(
+        access_key: str,
+        secret_key: str,
+        api_address=None,
+        path=None,
+) -> str:
     if path:
         creds_filepath = Path(path)
         creds_filepath.mkdir(parents=True, exist_ok=True)
         creds_filepath = creds_filepath / CREDENTIALS_FILE
     else:
         creds_filepath = _get_credentials_file_path()
-    _set_credentials_by_params(creds_filepath, access_key, secret_key,
-                               api_address)
+    _set_credentials_by_params(
+        creds_filepath, access_key, secret_key, api_address,
+    )
     return f'Credentials have been successfully saved in: \n{creds_filepath}'
 
 
@@ -153,6 +166,7 @@ def check_update():
 def get_current_cli_version():
     from importlib.metadata import version as lib_version
     return lib_version('m3-cli')
+
 
 def perform_version_check(invoked_command, is_help_invoked,
                           view_type, detailed):
