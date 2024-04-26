@@ -17,6 +17,7 @@ _LOG = get_logger('validation_service')
 
 ROOT_DEFAULT = ''
 LIST_SEPARATOR = ','
+LIST_REGEX_PATTERN = r'''(?:"[^"]+"|[^,\s]+)\s*:\s*(?:"[^"]+"|[^,\s]+)|[^,]+'''
 
 VALIDATION_TYPE = 'type'
 VALIDATION_ALLOWED_VALUES = 'allowed_values'
@@ -404,10 +405,10 @@ class ValidationService:
 
     @staticmethod
     def adapt_object(actual_value):
-        values = actual_value.split(LIST_SEPARATOR)
+        values = re.findall(LIST_REGEX_PATTERN, actual_value)
         object_dict = {}
         for v in values:
-            key, val = v.split(':')
+            key, val = v.replace('"', '').split(':')
             object_dict[key] = val
         return object_dict
 

@@ -521,6 +521,12 @@ class CommandsService:
 
         # check parameters using validation attr
         for p_name, p_def in params_def.items():
+            if isinstance(incoming_params.get(p_name), list):
+                if not p_def.get("multiple_values"):
+                    parameters_errors.append(
+                        f'Can specify option only once: {p_name};')
+                incoming_params[p_name] = ",".join(incoming_params.get(p_name))
+
             validation_rules = p_def.get(VALIDATION_KEY)
             if not validation_rules:
                 continue

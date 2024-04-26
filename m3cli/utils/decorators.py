@@ -51,21 +51,24 @@ class TextColors:
 
 def __extract_parameters(parameters_list):
     parameters_dict = {}
-    params_values_count = len(parameters_list)
-    index = 0
-    while index < params_values_count:
-        key = parameters_list[index].replace('--', '')
-        # check key duplication
-        if key in parameters_dict.keys():
-            raise AssertionError(f'Can specify option {parameters_list[index]}'
-                                 f' only once')
-        if (index == params_values_count - 1 or
-                parameters_list[index + 1].startswith('-')):
-            parameters_dict[key] = None
-            index += 1
+    param_pfx = '-'
+    full_param_pfx = '--'
+
+    for index in range(len(parameters_list)):
+        if not parameters_list[index].startswith(param_pfx):
+            continue
+        key = parameters_list[index].replace(full_param_pfx, "")
+        if index < len(parameters_list)-1 and not parameters_list[index+1].startswith(param_pfx):
+            val = parameters_list[index+1]
         else:
-            parameters_dict[key] = parameters_list[index + 1]
-            index += 2
+            val = None
+        if key in parameters_dict:
+            if isinstance(parameters_dict[key], list):
+                parameters_dict[key].append(val)
+            else:
+                parameters_dict[key] = [parameters_dict[key], val]
+        else:
+            parameters_dict[key] = val
     return parameters_dict
 
 
