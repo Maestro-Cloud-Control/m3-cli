@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.101.10] - 2024-02-14
+* Update of the `m3 mreport` command: 
+  * Add optional parameter `--include-billing-source`
+
+## [3.101.8] - 2024-01-29
+* Fixed typo in the command `disassociate-ip`
+
+## [3.101.7] - 2024-01-17
+* Fix and update `m3 plantlp` and `m3 applytpl` commands:
+  * The `-var` field can take multiple values, examples are also given
+  * The `-var` field works according to the help and examples provided
+
+## [3.101.6] - 2023-12-14
+* Remove the `resource-group` parameter from command `delete-storage`.
+  * Command no longer requests or requires resource group information.
+
 ## [3.101.5] - 2023-12-07
 * Update `README.md` to fix images not displaying on `PyPI`.
 

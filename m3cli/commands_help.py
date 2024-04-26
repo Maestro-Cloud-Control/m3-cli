@@ -463,16 +463,19 @@ Applies a Terraform template
 Examples:
 
 1. Applies a Terraform template:
-        m3 apply-terraform-template --cloud <cloud_name> --templateName <name> --tenant <tenant_name>   
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name>   
 
 2. Applies a Terraform template with specific parameters for a string:
-        m3 apply-terraform-template --cloud <cloud_name> --templateName <name> --tenant <tenant_name> --variable <key:value> 
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value> 
 
 3. Applies a Terraform template with specific parameters for a list:
-        m3 apply-terraform-template --cloud <cloud_name> --templateName <name> --tenant <tenant_name> --variable <key:"value1, valueN"> 
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:"value1, valueN"> 
 
 4. Applies a Terraform template with specific parameters for an object:
-        m3 apply-terraform-template --cloud <cloud_name> --templateName <name> --tenant <tenant_name> --variable <key1:"key2=value2"> 
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key1:"key2=value2"> 
+
+5. Applies a Terraform template with multiple values, which can be a combination of strings, lists, and objects:
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value> --variable <key:"value1,valueN"> --variable <key1:"key2=value2">
 """
 
 delete_terraform_template = """
@@ -513,10 +516,13 @@ Examples:
         m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value>
 
 3. Plans a Terraform template with a specific value for a list:
-        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value1, valueN>
+        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:"value1,valueN">
 
 4. Plans a Terraform template with a specific value for an object:
-        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key1:"key2=value2"> 
+        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key1:"key2=value2">
+        
+5. Plans a Terraform template with multiple values, which can be a combination of strings, lists, and objects:
+        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value> --variable <key:"value1,valueN">
 """
 
 total_report = """
@@ -665,18 +671,18 @@ Example:
         m3 associate-ip --tenant <tenant_name> --region <region_name> --static-ip <ip> --instance-id <instance_id>
 """
 
-diassociate_ip = """
-Associate specific static IP with instance:
+disassociate_ip = """
+Disassociate specific static IP from the instance:
 
 Example:
-        m3 diassociate-ip --tenant <tenant_name> --region <region_name> --static-ip <ip>
+        m3 disassociate-ip --tenant <tenant_name> --region <region_name> --static-ip <ip>
 """
 
 multitenant_report = """
 Gets multitenant billing report
     
 Example:
-    m3 multitenant-report --from <dd.mm.yyyy> --to <dd.mm.yyyy> --region <region_zone> --report-type <report_type>
+    m3 multitenant-report --from <dd.mm.yyyy> --to <dd.mm.yyyy> --region <region_zone> --report-type <report_type> --include-billing-source
 """
 
 upload_terraform_template_from_git = """

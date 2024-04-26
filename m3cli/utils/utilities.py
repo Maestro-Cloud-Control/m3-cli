@@ -28,10 +28,7 @@ DEFAULT_API_ADDRESS = 'https://m3api.cloud.epam.com/maestro/api/v3'
 
 
 def inherit_dict(root_dict, child_dict):
-    if root_dict:
-        for root_key, root_value in root_dict.items():
-            if root_key not in child_dict:
-                child_dict[root_key] = root_value
+    child_dict.update({**root_dict, **child_dict})
     return child_dict
 
 

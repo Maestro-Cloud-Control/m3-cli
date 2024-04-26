@@ -7,12 +7,6 @@ def create_custom_request(request):
     cloud = region.split('-')[0]
 
     additional_params = {}
-    if cloud == 'AZURE':
-        resource_group = params.get('resourceGroup')
-        if not resource_group:
-            raise AssertionError(
-                'Parameter resource-group is required for AZURE cloud')
-        additional_params['resourceGroupName'] = resource_group
     if cloud == 'GCP' or cloud == 'GGL':
         availability_zone = params.get('availabilityZone')
         if not availability_zone:

@@ -1685,15 +1685,6 @@
           "validation": {
             "type": "string"
           }
-        },
-        "resource-group": {
-          "alias": "rgname",
-          "api_param_name": "resourceGroup",
-          "help": "The resource group name (for Azure)",
-          "required": false,
-          "validation": {
-            "type": "string"
-          }
         }
       },
       "output_configuration": {
@@ -3790,6 +3781,7 @@
           "api_param_name": "variables",
           "help": "The list of parameters with values. \nFormat - key:value for string; key:\"value1, value2, value3\" for list; key1:\"key2=value2\" for object",
           "required": false,
+          "multiple_values": true,
           "validation": {
             "type": "object",
             "properties": {
@@ -3847,6 +3839,7 @@
           "api_param_name": "variables",
           "help": "Parameters with values. \nFormat - key:value for string; key:\"value1, value2, value3\" for list; key1:\"key2=value2\" for object",
           "required": false,
+          "multiple_values": true,
           "validation": {
             "type": "object",
             "properties": {
@@ -5044,6 +5037,15 @@
           },
           "case": "upper"
         },
+        "include-billing-source": {
+          "alias": "ibs",
+          "api_param_name": "includeBillingSource",
+          "help": "A flag. Include billing source for public cloud providers",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
         "tenant-group": {
           "alias": "tg",
           "api_param_name": "tenantGroups",
@@ -5337,7 +5339,7 @@
       "api_action": "ASSOCIATE_IP",
       "alias": "asip",
       "help_file": true,
-      "help": "Associate static ip with instance",
+      "help": "Associate static IP with instance",
       "groups": [
         "instance-management",
         "email-on_run_instance-group"
@@ -5377,11 +5379,11 @@
         ]
       }
     },
-    "diassociate-ip": {
+    "disassociate-ip": {
       "api_action": "DISASSOCIATE_IP",
       "alias": "dsip",
       "help_file": true,
-      "help": "Diassociate static ip with instance",
+      "help": "Disassociate static IP from the instance",
       "groups": [
         "instance-management",
         "email-on_run_instance-group"
