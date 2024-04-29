@@ -13,8 +13,9 @@ class ParametersProvider:
     def __init__(self, interactive_options):
         self.interactive_options = interactive_options
 
-    def fetch_interactive_parameters(self, request_parameters) \
-            -> List[InteractiveParameter]:
+    def fetch_interactive_parameters(
+            self, request_parameters
+    ) -> List[InteractiveParameter]:
         """
         This function gets parameters for command's request
         which will be asked from user in Interactive mode.

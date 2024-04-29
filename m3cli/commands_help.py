@@ -386,10 +386,10 @@ Creates instances of the specified configuration
 Examples:
 
 1. Runs a single instance:
-        m3 run-instances --image <image_name> ---name <instance_name> --key-name <key_name> --number-of-instances <number> --cloud <cloud> --tenant <tenant_name> --region <region_name> --shape <shape_name>
+        m3 run-instances --image <image_name> ---name <instance_name> --key-name <key_name> --number-of-instances <number> --cloud <cloud> --tenant <tenant_name> --region <region_name> --shape <shape_name> --script <script_name> --tag <tag_key1:val1,tag_key2:val2>
 
 2. Runs several instances from one image:
-        m3 run-instances --image <image_nam> --name <instance_name> --key-name <key_name> --number-of-instances <number> --cloud <cloud> --tenant <tenant_name> --region <region_name> --shape <shape_name>
+        m3 run-instances --image <image_nam> --name <instance_name> --key-name <key_name> --number-of-instances <number> --cloud <cloud> --tenant <tenant_name> --region <region_name> --shape <shape_name> --script <script_name> --tag <tag_key1:val1,tag_key2:val2>
 """
 
 set_tags = """
@@ -683,6 +683,13 @@ Gets multitenant billing report
     
 Example:
     m3 multitenant-report --from <dd.mm.yyyy> --to <dd.mm.yyyy> --region <region_zone> --report-type <report_type> --include-billing-source
+"""
+
+billing_region_types = """
+Gets billing region types
+
+Example:
+    m3 billing-region-types --all
 """
 
 upload_terraform_template_from_git = """

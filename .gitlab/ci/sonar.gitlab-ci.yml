@@ -1,5 +1,5 @@
 tests-for-sonar:
-  extends: tests-py38
+  extends: tests-py310
   allow_failure: true
   artifacts:
     untracked: true

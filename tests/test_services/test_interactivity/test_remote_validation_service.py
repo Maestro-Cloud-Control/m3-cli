@@ -32,23 +32,26 @@ class TestRemoteValidationServiceValidateParameters(
         parameter3 = InteractiveParameter({'name': 'param3',
                                            'type': 'LIST'})
         parameters = [parameter1, parameter3]
-        result = self.service.validate_parameters(parameters)
+        result = self.service.validate_parameters(parameters, "TEST")
         self.request_remote_validation_mock.assert_has_calls(
             [call(api_action='API_ACTION',
-                  parameters=[
-                      {'name': 'param1',
-                       'value': None,
-                       'defaultValue': None,
-                       'type': 'LIST',
-                       'sensitive': False
-                       },
-                      {'name': 'param3',
-                       'value': None,
-                       'defaultValue': None,
-                       'type': 'LIST',
-                       'sensitive': False
-                       }
-                  ])
+                  parameters={
+                      'dtoList': [
+                          {'name': 'param1',
+                           'value': None,
+                           'defaultValue': None,
+                           'type': 'LIST',
+                           'sensitive': False
+                           },
+                          {'name': 'param3',
+                           'value': None,
+                           'defaultValue': None,
+                           'type': 'LIST',
+                           'sensitive': False
+                           }
+                      ],
+                      'serviceName': 'TEST'
+                  })
              ]
         )
         self.assertEqual(result, {
@@ -95,5 +98,5 @@ class TestRemoteValidationServiceRequestRemoveValidation(
         request = execute_kwargs['request']
         self.assertEqual(request.command, 'validate_parameters')
         self.assertEqual(request.api_action, self.api_action)
-        self.assertEqual(request.parameters, list(self.parameters))
+        self.assertEqual(request.parameters, self.parameters)
         self.assertEqual(request.method, 'POST')

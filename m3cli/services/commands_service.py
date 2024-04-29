@@ -2,6 +2,7 @@ import json
 import os
 from copy import copy
 from os.path import expanduser
+from typing import Any
 
 from tabulate import tabulate
 
@@ -395,7 +396,10 @@ class CommandsService:
                 return command_name, cmd_def
         return command_name, None
 
-    def get_secure_params(self, command):
+    def get_secure_params(
+            self,
+            command: str,
+    ) -> list[str | Any]:
         """
         Look for parameters to be encrypted.
 

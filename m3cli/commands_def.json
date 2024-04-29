@@ -1360,6 +1360,34 @@
             "min_value": 1,
             "max_value": 200
           }
+        },
+        "script": {
+          "alias": "scname",
+          "api_param_name": "User script",
+          "help": "The name of the script that will be applied",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "regex": "^[\\w\\-._ ]{6,32}$",
+            "regex_error": "Script name must be 6-32 characters long and can include only these characters in lower case: 'a-z', '0-9', .-_ "
+          }
+        },
+        "tag": {
+          "alias": "tag",
+          "api_param_name": "tags",
+          "help": "Tags. Pass several values in the following format: key1:val1,key2:val2,key3:val3",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
         }
       },
       "output_configuration": {
@@ -2684,10 +2712,11 @@
     },
     "upload-script": {
       "api_action": "UPLOAD_SCRIPT",
-      "help": "Uploads an init script to tenant's library in Maestro",
+      "help": "Uploads the user script to the specific tenant in Maestro",
       "help_file": true,
       "alias": "upscr",
       "integration_request": true,
+      "integration_response": true,
       "groups": [
         "init-script-management"
       ],
@@ -2701,7 +2730,7 @@
         "source-path": {
           "alias": "spath",
           "api_param_name": "filepath",
-          "help": "The path to the file that will be used as a source of the script",
+          "help": "The path to the script file. The file extension should be either '.sh', '.bat', 'cmd' or '.ps1'",
           "required": true,
           "validation": {
             "type": "file",
@@ -2716,12 +2745,12 @@
         "script": {
           "alias": "scname",
           "api_param_name": "fileName",
-          "help": "The name of the script that will be uploaded",
+          "help": "The name of the script to be uploaded. The file extension(.sh, .cmd, ...) will be taken from 'spath'",
           "required": true,
           "validation": {
             "type": "string",
-            "regex": "^[\\w\\-._ ]{6,32}$",
-            "regex_error": "Script name must be 6-32 characters long and can include only these characters in lower case: 'a-z', '0-9', .-_ "
+            "regex": "^[\\w\\-_ ]{6,32}$",
+            "regex_error": "Script name must be 6-32 characters long and can include only these characters in lower case: 'a-z', '0-9', -_ "
           }
         }
       },
@@ -2740,8 +2769,10 @@
     },
     "delete-scripts": {
       "api_action": "REMOVE_SCRIPT",
-      "help": "Deletes an init script from your library in Maestro",
+      "help": "Deletes the user script from the specific tenant in Maestro",
       "help_file": true,
+      "integration_request": true,
+      "integration_response": true,
       "alias": "delscr",
       "groups": [
         "init-script-management"
@@ -2755,7 +2786,7 @@
         },
         "script": {
           "alias": "scname",
-          "api_param_name": "fileName",
+          "api_param_name": "fileNames",
           "help": "List of the name of the file to be deleted. Pass several values in the following format: value1,value2,value3",
           "required": true,
           "validation": {
@@ -2770,7 +2801,7 @@
     },
     "describe-script": {
       "api_action": "DESCRIBE_SCRIPT",
-      "help": "Describes the script files uploaded to Maestro and available for your tenant",
+      "help": "Describes the script files uploaded to Maestro and available for the specific tenant",
       "help_file": true,
       "alias": "dscript",
       "integration_response": true,
@@ -5059,6 +5090,36 @@
       },
       "output_configuration": {
         "response_table_headers": []
+      }
+    },
+    "billing-region-types": {
+      "api_action": "GET_BILLING_REGION_TYPES",
+      "help": "Gets billing region types",
+      "help_file": true,
+      "alias": "brtypes",
+      "integration_request": false,
+      "integration_response": true,
+      "groups": [
+        "billing-reports",
+        "cli-price-help"
+      ],
+      "parameters": {
+        "all": {
+          "alias": "A",
+          "api_param_name": "all",
+          "help": "A flag. Includes inactive regions.",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "regionType",
+          "regions"
+        ],
+        "nullable": true
       }
     },
     "describe-user-permissions": {
