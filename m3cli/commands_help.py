@@ -178,7 +178,7 @@ Examples:
 
 generate_platform_service_varfile = """
 "Generates a file with variables for the specified platform service, or fills it with missing parameters if the file already exists. 
-The template is prefilled with default values if available."
+The template is prefilled with default values if available"
 
 Example:
         m3 generate-platform-service-varfile --cloud <cloud> --region <region> --tenant <tenant_name> --service <service_name>
@@ -442,7 +442,8 @@ upload_terraform_template = """
 Uploads a Terraform template
 
 Examples:
-        m3 upload-terraform-template --source-path <path> --terraform-version <version> --cloud <cloud> --tenant <tenant_name> --template <name>
+        m3 upload-terraform-template --source-path <path> --terraform-version <version> --cloud <cloud> --tenant <tenant_name> --template <name> 
+                                    --variables "key1:\\\"value1_1,value1_2\\\",key2:value2,key3:\\\"key3_1=value3_1\\\"" OR --variables-file <path_to_file>
 """
 export_terraform_template = """
 Exports a Terraform template as a signed URL
@@ -475,7 +476,31 @@ Examples:
         m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key1:"key2=value2"> 
 
 5. Applies a Terraform template with multiple values, which can be a combination of strings, lists, and objects:
-        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value> --variable <key:"value1,valueN"> --variable <key1:"key2=value2">
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variables "key1:\\\"value1_1,value1_2\\\",key2:value2,key3:\\\"key3_1=value3_1\\\""
+
+6. Applies a Terraform template with specific values in a JSON file. Supported types: STRING, LIST, MAP, NUMBER, BOOL:
+        m3 apply-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variables-file <path_to_file>
+"""
+
+lock_terraform_template = """
+Lock a Terraform template
+
+Example:
+    m3 lock-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --expiration <hours>
+"""
+
+prolong_terraform_template_lock = """
+Prolong a Terraform template lock
+
+Example:
+    m3 prolong-terraform-template-lock --cloud <cloud_name> --template <name> --tenant <tenant_name> --expiration <hours>
+"""
+
+unlock_terraform_template = """
+Unlock a Terraform template
+
+Example:
+    m3 unlock-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --expiration <hours>
 """
 
 delete_terraform_template = """
@@ -522,7 +547,10 @@ Examples:
         m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key1:"key2=value2">
         
 5. Plans a Terraform template with multiple values, which can be a combination of strings, lists, and objects:
-        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variable <key:value> --variable <key:"value1,valueN">
+        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variables "key1:\\\"value1_1,value1_2\\\",key2:value2,key3:\\\"key3_1=value3_1\\\""
+
+6. Plans a Terraform template with specific values in a JSON file. Supported types: STRING, LIST, MAP, NUMBER, BOOL:
+        m3 plan-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --variables-file <path_to_file>
 """
 
 total_report = """
@@ -555,7 +583,7 @@ Example:
 
 azure_management_console = """
 Provides access to Azure management console for the specified tenant. (Access type DEFAULT)
-The credentials are shared via an email.
+The credentials are shared via an email
 
 Example:
         m3 azure-management-console –-tenant-name <tenant_name>
@@ -696,10 +724,9 @@ upload_terraform_template_from_git = """
 Uploads a Terraform template from Git
 
 Example:
-    m3 upload-terraform-template-from-git --branch <branch_name> --cloud <cloud> 
-                                        --git-url <project_url> --storage <storage-type> --tenant <tenant>
-                                        --template <name> --terraform-version <version> --token <personal_access_token>
-                                        --webhook <action>
+    m3 upload-terraform-template-from-git --branch <branch_name> --cloud <cloud> --git-url <project_url> --storage <storage-type> --tenant <tenant>
+                                        --template <name> --terraform-version <version> --token <personal_access_token> --webhook <action> 
+                                        --variables "key1:\\\"value1_1,value1_2\\\",key2:value2,key3:\\\"key3_1=value3_1\\\"" OR --variables-file <path_to_file>
 """
 
 describe_user_permissions = """

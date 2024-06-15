@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [3.116.6] - 2024-05-31
+* Add functionality to use JSON file with variables for commands
+ Supported types for JSON file: STRING, LIST, MAP, NUMBER, BOOL
+ Supported types for console: STRING, LIST, MAP
+ This applies to the following commands:
+  * `apply-terraform-template`, `plan-terraform-template`
+  * `upload-terraform-template`, `upload-terraform-template-from-git`
+* Add functionality to use parameter `--variables` for commands:
+  * `upload-terraform-template`, `upload-terraform-template-from-git`
+* Add `lock-terraform-template`, `prolong-terraform-template-lock`,
+`unlock-terraform-template` commands to `group` with name `terraform-management`
+* Improve code readability and add typing in `docs_generator.py`
+* Fix typos in help
+* Update help for all commands according to this rule: use `.` between sentences,
+but do not use it at the end of the entire help message
+
+## [3.116.1] - 2024-05-14
+* Fix import for `m3 prolong-terraform-template-lock` command
+* Remove `--description` as a parameter from the following commands and 
+implement it as an auto-generated description:
+  * `m3 lock-terraform-template`
+  * `m3 prolong-terraform-template-lock`
+  * `m3 unlock-terraform-template`
+
+## [3.116.0] - 2024-05-09
+* Add commands:
+  * `m3 lock-terraform-template`
+  * `m3 prolong-terraform-template-lock`
+  * `m3 unlock-terraform-template`
+
 ## [3.112.4] - 2024-04-08
 * Add `--tag` parameter alias `-tag` to `m3 run-instances` command
 

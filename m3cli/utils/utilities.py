@@ -313,3 +313,56 @@ def is_not_empty_file(file_path):
 def timestamp_to_iso(timestamp):
     return datetime.fromtimestamp(int(timestamp / 1000),
                                   tz=timezone.utc).isoformat()
+
+
+def get_variable_type_and_value(value):
+    match value:
+        case str(value) if ',' in value and '=' in value:
+            value = value.replace(' ', '')
+            map_values = value.split(',')
+            if not all('=' in item for item in map_values):
+                raise AssertionError(
+                    "Non key-value element found in map variable."
+                )
+            value = dict(item.split('=') for item in map_values)
+            if not all(key for key in value.keys()):
+                raise AssertionError("Empty key found in map variable.")
+            return 'MAP', value
+        case str(value) if ',' in value:
+            value = value.replace(' ', '').strip('][').split(',')
+            return 'LIST', value
+        case str(value) if '=' in value:
+            temp = value.replace(' ', '').split('=')
+            if not temp[0]:
+                raise AssertionError("Empty key found in map variable.")
+            value = {temp[0]: temp[-1]}
+            return 'MAP', value
+        case str(value):
+            return 'STRING', value
+        case list(value):
+            return 'LIST', value
+        case dict(value):
+            return 'MAP', value
+        case bool(value):
+            return 'BOOL', value
+        case int(value):
+            return 'NUMBER', value
+        case _:
+            raise AssertionError(
+                "Unsupported variable type, please contact the administrator. "
+                "Supported types for JSON file: LIST, MAP, STRING, BOOL, "
+                "NUMBER. Supported types for console: LIST, MAP, STRING."
+            )
+
+
+def handle_variables(variables):
+    result = {}
+    for name, value in variables.items():
+        var_type, value = get_variable_type_and_value(value)
+        result[name] = {
+            'type': var_type,
+            'value': value,
+            'sensitive': True,
+            'name': name
+        }
+    return result
