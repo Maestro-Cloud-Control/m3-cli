@@ -4,6 +4,7 @@ import sys
 from datetime import datetime, date, timezone, timedelta
 from getpass import getpass
 from pathlib import Path
+from typing import Any
 
 import click
 from packaging import version
@@ -315,7 +316,7 @@ def timestamp_to_iso(timestamp):
                                   tz=timezone.utc).isoformat()
 
 
-def get_variable_type_and_value(value):
+def get_var_type_value_console(value: Any) -> tuple[str, Any]:
     match value:
         case str(value) if ',' in value and '=' in value:
             value = value.replace(' ', '')
@@ -339,6 +340,17 @@ def get_variable_type_and_value(value):
             return 'MAP', value
         case str(value):
             return 'STRING', value
+        case _:
+            raise AssertionError(
+                "Unsupported variable type, please contact the administrator. "
+                "Supported types for console: LIST, MAP, STRING"
+            )
+
+
+def get_var_type_value_file(value: Any) -> tuple[str, Any]:
+    match value:
+        case str(value):
+            return 'STRING', value
         case list(value):
             return 'LIST', value
         case dict(value):
@@ -350,19 +362,38 @@ def get_variable_type_and_value(value):
         case _:
             raise AssertionError(
                 "Unsupported variable type, please contact the administrator. "
-                "Supported types for JSON file: LIST, MAP, STRING, BOOL, "
-                "NUMBER. Supported types for console: LIST, MAP, STRING."
+                "Supported types for JSON file: LIST, MAP, STRING, BOOL, NUMBER"
             )
 
 
-def handle_variables(variables):
+def handle_variables(
+        variables: str | None,
+        path_to_file: str | None,
+) -> dict:
+    if variables and path_to_file:
+        raise AssertionError(
+            'Cannot use the "--variables" and "--variables-file" parameters '
+            'together'
+        )
+    if path_to_file:
+        if not os.path.isfile(path_to_file):
+            raise AssertionError(f'There is no file by path: "{path_to_file}"')
+        try:
+            with open(path_to_file, 'r') as file:
+                variables = json.load(file)
+        except json.JSONDecodeError:
+            raise ValueError(f'Invalid JSON format in file: "{path_to_file}"')
+
     result = {}
     for name, value in variables.items():
-        var_type, value = get_variable_type_and_value(value)
+        var_type, value = (
+            get_var_type_value_file(value) if path_to_file
+            else get_var_type_value_console(value)
+        )
         result[name] = {
             'type': var_type,
             'value': value,
             'sensitive': True,
-            'name': name
+            'name': name,
         }
     return result
