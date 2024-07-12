@@ -7,6 +7,9 @@ import json
 
 
 def create_custom_response(request, response):
+    if not response or response == 'null':
+        return 'There are no records to display'
+
     try:
         response = json.loads(response)
     except json.decoder.JSONDecodeError:
