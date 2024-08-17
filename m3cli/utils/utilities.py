@@ -25,7 +25,7 @@ CLI_MAC_OS_DISTRIBUTION_URL = 'cliMacOsDistributionUrl'
 
 CONFIRMATION_MESSAGE = 'Maestro CLI credentials have been already set.\n' \
                        'Do you want to set a new credentials? [y/n]: '
-DEFAULT_API_ADDRESS = 'https://m3api.cloud.epam.com/maestro/api/v3'
+DEFAULT_API_ADDRESS = 'https://api-mcc.cloud.epam.com/maestro/api/v3'
 
 
 def inherit_dict(root_dict, child_dict):

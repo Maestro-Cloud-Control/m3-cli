@@ -483,21 +483,21 @@ Examples:
 """
 
 lock_terraform_template = """
-Lock a Terraform template
+Lock a Terraform template to prevent any actions from other users
 
 Example:
     m3 lock-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --expiration <hours>
 """
 
 prolong_terraform_template_lock = """
-Prolong a Terraform template lock
+Prolong a Terraform template lock to prevent any actions from other users
 
 Example:
     m3 prolong-terraform-template-lock --cloud <cloud_name> --template <name> --tenant <tenant_name> --expiration <hours>
 """
 
 unlock_terraform_template = """
-Unlock a Terraform template
+Unlock a Terraform template to allow actions from other users
 
 Example:
     m3 unlock-terraform-template --cloud <cloud_name> --template <name> --tenant <tenant_name> --expiration <hours>
@@ -586,14 +586,14 @@ Provides access to Azure management console for the specified tenant. (Access ty
 The credentials are shared via an email
 
 Example:
-        m3 azure-management-console –-tenant-name <tenant_name>
+        m3 azure-management-console --tenant-name <tenant_name>
 """
 
 google_management_console = """
 Provides access to Google Cloud management console for the specified tenant. The credentials are shared via an email
 
 Example:
-        m3 google-management-console –-tenant-name <tenant_name>
+        m3 google-management-console --tenant-name <tenant_name>
 """
 
 cost_usage_report = """
@@ -754,12 +754,40 @@ describe_resources = """
 Describes resources existing in a specific region for a specific tenant
 
 Example:
-    describe-resources --region <region_name> --tenant <tenant_name>
+    m3 describe-resources --region <region_name> --tenant <tenant_name>
 """
 
 describe_insights = """
 Describes insights for an instance in specific region for a specific tenant
 
 Example:
-    describe-insights --instance-id <instance_id> --cloud <cloud_name> --region <region_name> --tenant <tenant_name> --availability_zone <required_for_google> --resource_group <required_for_azure>
+    m3 describe-insights --instance-id <instance_id> --cloud <cloud_name> --region <region_name> --tenant <tenant_name> --availability_zone <required_for_google> --resource_group <required_for_azure>
+"""
+
+describe_service_section = """
+Describes the section content of the certain published service
+
+Example:
+    m3 describe-service-section --service <service_name> --section <section_name> --block-title <title>
+"""
+
+manage_termination_protection = """
+Manages termination protection for public cloud instances
+
+Example:
+    m3 manage-termination-protection --tenant <tenant_name> --region <region_name> --instance-id <instance_id> --action <action>
+"""
+
+decrypt_password = """
+Decrypts the password for windows instances
+
+Example:
+    m3 decrypt-password --tenant <tenant_name> --region <region_name> --instance-id <instance_id> --private-key-path <private-key-path-to-file> --availability-zone <zone_name>
+"""
+
+backup = """
+Provides assistance with using the Backup Platform Service for data backup and recovery
+
+Example:
+    m3 backup --tenant <tenant_name> --region <region_name> --cloud <cloud> --service-id <service-id> --instance-id <instance-id> --backup-server-id <backup-server-id>
 """

@@ -605,6 +605,7 @@
     "describe-service-section": {
       "api_action": "DESCRIBE_PLATFORM_SERVICE_SECTION",
       "help": "Describes the section content of the certain published service",
+      "help_file": true,
       "alias": "dssec",
       "integration_response": true,
       "groups": [
@@ -1439,6 +1440,60 @@
         ]
       }
     },
+    "backup": {
+      "api_action": "BACKUP_PLATFORM_SERVICE",
+      "alias": "bkup",
+      "help": "Provides assistance with using the Backup Platform Service for data backup and recovery",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "groups": [
+        "platform-service-management"
+      ],
+      "parameters": {
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenant": {
+          "parent": "tenant"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "service-id": {
+          "parent": "service-id",
+          "required": false
+        },
+        "instance-id": {
+          "alias": "iid",
+          "api_param_name": "instances",
+          "help": "The IDs of the instances. \nFor several instances, specify the IDs one by one, separated by a comma without space (e.g., vmo00000001,vmo00000002)",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "backup-server-id": {
+          "alias": "bsid",
+          "api_param_name": "backupServer",
+          "help": "The ID of the backup server",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "instanceId",
+          "cloud",
+          "tenant",
+          "region",
+          "state",
+          "description"
+        ]
+      }
+    },
     "terminate-instances": {
       "api_action": "TERMINATE_INSTANCE",
       "alias": "kill",
@@ -1582,6 +1637,7 @@
     "create-attach-storage": {
       "api_action": "CREATE_AND_ATTACH_VOLUME",
       "help": "Creates the storage and attaches to the specified instance",
+      "help_file": true,
       "alias": "addattstor",
       "groups": [
         "volume-management"
@@ -1645,6 +1701,7 @@
     "detach-storage": {
       "api_action": "DETACH_VOLUME",
       "help": "Detaches the specified storage from instance",
+      "help_file": true,
       "alias": "detstor",
       "integration_response": true,
       "groups": [
@@ -1683,6 +1740,7 @@
     "delete-storage": {
       "api_action": "REMOVE_VOLUME",
       "help": "Deletes the specified storage",
+      "help_file": true,
       "alias": "delstor",
       "integration_request": true,
       "integration_response": true,
@@ -1722,6 +1780,7 @@
     "decrypt-password": {
       "api_action": "GET_INSTANCE_HASHED_PASSWORD",
       "help": "Decrypts the password for windows instances",
+      "help_file": true,
       "alias": "dp",
       "integration_request": true,
       "integration_response": true,
@@ -2272,6 +2331,7 @@
     "untagged-resource-report": {
       "api_action": "GET_RESOURCE_BILLING_REPORT",
       "help": "Gets untagged resource billing report",
+      "help_file": true,
       "integration_request": true,
       "integration_response": true,
       "alias": "untagresreport",
@@ -2643,6 +2703,7 @@
     "aws-management-console": {
       "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
       "help": "AWS management console access",
+      "help_file": true,
       "alias": "awsmc",
       "integration_request": true,
       "integration_response": true,
@@ -2677,6 +2738,7 @@
     "azure-management-console": {
       "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
       "help": "Azure management console access",
+      "help_file": true,
       "integration_request": true,
       "integration_response": true,
       "alias": "azuremc",
@@ -2695,6 +2757,7 @@
     "google-management-console": {
       "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
       "help": "Google management console access",
+      "help_file": true,
       "alias": "gcpmc",
       "integration_request": true,
       "integration_response": true,
@@ -3720,6 +3783,7 @@
     "manage-termination-protection": {
       "api_action": "MANAGE_TERMINATION_PROTECTION",
       "help": "Manages termination protection for public cloud instances",
+      "help_file": true,
       "integration_response": true,
       "parameters": {
         "tenant": {
@@ -3940,7 +4004,7 @@
     "lock-terraform-template": {
       "api_action": "LOCK_TERRAFORM_TEMPLATE",
       "alias": "locktpl",
-      "help": "Lock a Terraform template",
+      "help": "Lock a Terraform template to prevent any actions from other users",
       "help_file": true,
       "integration_request": true,
       "integration_response": true,
@@ -3957,7 +4021,7 @@
         "template": {
           "alias": "tpl",
           "api_param_name": "templateName",
-          "help": "The name of the Terraform template to lock",
+          "help": "The name of the Terraform template that is to be locked",
           "required": true,
           "validation": {
             "type": "string"
@@ -3985,7 +4049,7 @@
     "prolong-terraform-template-lock": {
       "api_action": "PROLONG_TERRAFORM_TEMPLATE_LOCK",
       "alias": "ptplock",
-      "help": "Prolong a Terraform template lock",
+      "help": "Prolong a Terraform template lock to prevent any actions from other users",
       "help_file": true,
       "integration_request": true,
       "integration_response": true,
@@ -4002,7 +4066,7 @@
         "template": {
           "alias": "tpl",
           "api_param_name": "templateName",
-          "help": "The name of the Terraform template to prolong locking",
+          "help": "The name of the Terraform template for which the lock is to be prolonged",
           "required": true,
           "validation": {
             "type": "string"
@@ -4030,7 +4094,7 @@
     "unlock-terraform-template": {
       "api_action": "UNLOCK_TERRAFORM_TEMPLATE",
       "alias": "unlocktpl",
-      "help": "Unlock a Terraform template",
+      "help": "Unlock a Terraform template to allow actions from other users",
       "help_file": true,
       "integration_request": true,
       "integration_response": true,
@@ -4047,7 +4111,7 @@
         "template": {
           "alias": "tpl",
           "api_param_name": "templateName",
-          "help": "The name of the Terraform template that needs to unlock",
+          "help": "The name of the Terraform template that needs to be unlocked",
           "required": true,
           "validation": {
             "type": "string"

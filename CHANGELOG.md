@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.120.3] - 2024-08-13
+* Add command `m3 backup`
+* Update `--full-help` for `lock-related` commands
+
+## [3.120.2] - 2024-08-09
+* Add docx/docs generator for `m3 reference guide` and `m3 usage guide`
+* Change links from `https://m3api.cloud.epam.com/maestro/api/v3` to
+`https://api-mcc.cloud.epam.com/maestro/api/v3`
+* Delete `docs` folder containing `Artifact ...`, `m3-cli-cicd...`, `Reset Cache...`
+* Update `m3cli/docs/README.md` with a more relevant `LaTeX` download link
+
+## [3.120.1] - 2024-08-07
+* Improve description message for commands:
+  * `m3 lock-terraform-template`
+  * `m3 prolong-terraform-template-lock`
+  * `m3 unlock-terraform-template`
+
+## [3.120.0] - 2024-07-24
+* Update `docs_generator.py` to meet requirements
+* Add missing examples to `commands_help.py` file for the following commands:
+  * `describe-service-section`, `decrypt-password`, `manage-termination-protection`
+* Add `"help_file": true` in the `commands_def.json` file for the following commands:
+  * `describe-service-section`, `create-attach-storage`, `manage-termination-protection`
+  * `delete-storage`, `decrypt-password`, `untagged-resource-report`, `detach-storage`
+  * `aws-management-console`, `azure-management-console`,  `google-management-console`
+
 ## [3.116.8] - 2024-07-19
 * Implement error handling for `'NoneType' object has no attribute 'get'` issue
 in `dstorquota` and `dinquota` commands. Update system to display user-friendly
@@ -753,8 +779,8 @@ ${command_name}_${integration_suffix}.py
     * `cloud-target`
   * Added the `target-name` parameter to the `multitenant-report` command
   * INACTIVE, UPSA_INACTIVE, ALL_PERSONAL, NOT_PMC, CUSTOMERS, UNITS, ADJUSTMENT types do not require additional parameters at all 
-  * ACCOUNT type may accept the optional parameters – `account-id`
-  * ACTIVE type may accept the optional parameters – `target-name`
+  * ACCOUNT type may accept the optional parameters - `account-id`
+  * ACTIVE type may accept the optional parameters - `target-name`
 * Updated the help field of the `terraform-version` parameter in the `terraform-upload-template` command
 
 ## [3.45.35] - 2021-10-07
