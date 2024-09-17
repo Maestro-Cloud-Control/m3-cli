@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.124.1] - 2024-09-06
+* Update table titles for `m3 reference guide` and `m3 usage guide`
+* Replace `uuid1` with `uuid4` 
+
+## [3.124.0] - 2024-09-03
+* Update docx/docs generator for `m3 reference guide` and `m3 usage guide`
+
 ## [3.120.3] - 2024-08-13
 * Add command `m3 backup`
 * Update `--full-help` for `lock-related` commands
