@@ -1364,13 +1364,13 @@
         },
         "script": {
           "alias": "scname",
-          "api_param_name": "User script",
+          "api_param_name": "User script name",
           "help": "The name of the script that will be applied",
           "required": false,
           "validation": {
             "type": "string",
-            "regex": "^[\\w\\-._ ]{6,32}$",
-            "regex_error": "Script name must be 6-32 characters long and can include only these characters in lower case: 'a-z', '0-9', .-_ "
+            "regex": "^[a-z0-9\\-_]{1,28}(\\.sh|\\.bat|\\.cmd|\\.ps1)$",
+            "regex_error": "Script names should consist of characters from 'a-z', '0-9', '-_', and be 6-32 characters in length, including a valid extension such as '.sh', '.bat', '.cmd', or '.ps1'"
           }
         },
         "tag": {

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.124.3] - 2024-10-02
+* Fix regex and improve regex error message for `--script` parameter in `run-instances` command
+
+## [3.124.2] - 2024-09-20
+* Fix `--script` parameter in `run-instances` command
+
 ## [3.124.1] - 2024-09-06
 * Update table titles for `m3 reference guide` and `m3 usage guide`
 * Replace `uuid1` with `uuid4` 
