@@ -5,13 +5,15 @@ import click
 
 from m3cli.services.commands_service import CommandsService
 from m3cli.services.interactive_options_service import (
-    InteractiveOptionsService)
-from m3cli.services.plugin_service import (INTEGRATION_REQUEST_ATTRIBUTE_NAME,
-                                           INTEGRATION_RESPONSE_ATTRIBUTE_NAME,
-                                           PluginService, REQUEST_KEY,
-                                           RESPONSE_KEY)
-from m3cli.services.request_service import (BaseRequest,
-                                            POST, SdkClient, wrap_request)
+    InteractiveOptionsService,
+)
+from m3cli.services.plugin_service import (
+    INTEGRATION_REQUEST_ATTRIBUTE_NAME, INTEGRATION_RESPONSE_ATTRIBUTE_NAME,
+    PluginService, REQUEST_KEY, RESPONSE_KEY,
+)
+from m3cli.services.request_service import (
+    BaseRequest, POST, SdkClient, wrap_request,
+)
 from m3cli.services.response_processor_service import ResponseProcessorService
 from m3cli.services.validation_service import ValidationService
 from m3cli.utils import HEALTH_CHECK_CMD_NAME

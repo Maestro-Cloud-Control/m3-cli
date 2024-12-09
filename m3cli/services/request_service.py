@@ -20,7 +20,6 @@ RESPONSE_ENDING_CHARS = b'}]}'
 
 _LOG = get_logger('request_service')
 
-USER_IDENTIFIER = 'SYSTEM'
 USER_UNKNOWN = 'UNKNOWN'
 CLIENT_IDENTIFIER = "api-server"
 
@@ -196,8 +195,9 @@ class SdkClient:
         date = int(datetime.now().timestamp()) * 1000
         signature = hmac.new(
             key=bytearray(f'{get_secret_key()}{date}'.encode(UTF_8)),
-            msg=bytearray(f'M3-POST:{access_key}:{date}:{USER_IDENTIFIER}'
-                          .encode(UTF_8)),
+            msg=bytearray(
+                f'M3-POST:{access_key}:{date}:{USER_UNKNOWN}'.encode(UTF_8)
+            ),
             digestmod=hashlib.sha256
         ).hexdigest()
         n = 2

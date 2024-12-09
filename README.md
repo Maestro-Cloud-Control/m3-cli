@@ -62,10 +62,10 @@ Activate: `source .venv/bin/activate`
 `pip install m3-cli`
 ## Configuration
 
-Before using m3 cli execute commnad `m3 access` to set up all needed settings.
+Before using m3 cli execute command `m3 access` to set up all needed settings.
 
 In case you want to configure all needed settings manually, please set up the
-following environmnet variables:
+following environment variables:
 
 * `M3SDK_ACCESS_KEY`: Specifies an M3 access key associated with Maestro3 user;
 * `M3SDK_SECRET_KEY`: Specifies the secret key associated with the access key.

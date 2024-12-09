@@ -24,7 +24,7 @@ class TestParametersProviderFetchInteractiveParameters(TestParametersProvider):
         with self.assertRaises(AssertionError) as context:
             self.service.fetch_interactive_parameters(self.request_parameters)
         self.assertEqual(str(context.exception),
-                         'An error has occurred while processing the request. '
+                         'An error has occurred while processing the request'
                          f'{readable}')
 
     def test_fetch_interactive_parameters_not_response_data(self):
@@ -34,7 +34,7 @@ class TestParametersProviderFetchInteractiveParameters(TestParametersProvider):
         with self.assertRaises(AssertionError) as context:
             self.service.fetch_interactive_parameters(self.request_parameters)
         self.assertEqual(str(context.exception),
-                         'An error has occurred while processing the request. '
+                         'An error has occurred while processing the request'
                          f'{error}')
 
     def test_fetch_interactive_parameters_success(self):
