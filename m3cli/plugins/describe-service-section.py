@@ -4,16 +4,22 @@ import json
 from bs4 import BeautifulSoup
 
 
-def create_custom_response(request, response):
+def create_custom_response(
+        request,
+        response: str,
+) -> list | str:
     try:
-        response = json.loads(response)
+        response_data = json.loads(response)
     except json.decoder.JSONDecodeError:
-        return response
+        return response  # Return the raw response if it's not a valid JSON
 
-    if isinstance(response, list):
-        for res in response:
+    if isinstance(response_data, list):
+        for res in response_data:
             block_value = res.get('blockValue')
-            html = bool(BeautifulSoup(block_value, "html.parser").find())
-            if html:
-                res['blockValue'] = '<HTML content>'
-    return response
+            if not block_value:
+                res['blockValue'] = "No content for the section is available"
+            else:
+                html = bool(BeautifulSoup(block_value, "html.parser").find())
+                if html:
+                    res['blockValue'] = '<HTML content>'
+    return response_data

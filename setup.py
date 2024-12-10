@@ -13,8 +13,4 @@ class CustomInstallCommand(install):
         install.run(self)
 
 
-setup(
-    cmdclass={
-        'install': CustomInstallCommand
-    }
-)
+setup(cmdclass={'install': CustomInstallCommand})
