@@ -131,7 +131,7 @@
         "instance-id": {
           "alias": "iid",
           "api_param_name": "resourceId",
-          "help": "The IDs of the instances.",
+          "help": "The IDs of the instances",
           "required": true,
           "validation": {
             "type": "string"
@@ -193,7 +193,7 @@
         "group": {
           "alias": "g",
           "api_param_name": "group",
-          "help": "Filter for instances by insights group. Default value: ALL.\nAllowed values: ['ALL', 'UNTAGGED'].",
+          "help": "Filter for instances by insights group. Default value: ALL.\nAllowed values: ['ALL', 'UNTAGGED']",
           "required": false,
           "validation": {
             "allowed_values": [
@@ -261,7 +261,7 @@
         "insights": {
           "alias": "I",
           "api_param_name": "insights",
-          "help": "Instance criticality factor flag.",
+          "help": "Instance criticality factor flag",
           "required": false,
           "validation": {
             "type": "bool"
@@ -270,7 +270,7 @@
         "group": {
           "alias": "g",
           "api_param_name": "group",
-          "help": "Filter for instances by insights group. \nAllowed values if 'insights' flag applied: ['ALL', 'INSTANCE_COSTS', 'SCHEDULES', 'TAGS', 'LIFE_TIME', 'OWNERSHIP', 'VULNERABLE']. \nAllowed values if 'insights' flag NOT applied ['ALL', 'UNTAGGED`].",
+          "help": "Filter for instances by insights group. \nAllowed values if 'insights' flag applied: ['ALL', 'INSTANCE_COSTS', 'SCHEDULES', 'TAGS', 'LIFE_TIME', 'OWNERSHIP', 'VULNERABLE']. \nAllowed values if 'insights' flag NOT applied ['ALL', 'UNTAGGED`]",
           "required": false,
           "validation": {
             "type": "string"
@@ -280,7 +280,7 @@
         "risk-factor": {
           "alias": "rf",
           "api_param_name": "riskFactor",
-          "help": "Filter for instances by specific risk factor. Note: could be applied only with 'insights' flag.",
+          "help": "Filter for instances by specific risk factor. Note: could be applied only with 'insights' flag",
           "required": false,
           "validation": {
             "type": "string",
@@ -304,7 +304,7 @@
         "instance-id": {
           "alias": "iid",
           "api_param_name": "instanceIds",
-          "help": "The IDs of the instances. \nFor several instances, specify the IDs one by one, separated by a comma without space (e.g., vmo00000001,vmo00000002).\nRequired for Azure cloud.",
+          "help": "The IDs of the instances. \nFor several instances, specify the IDs one by one, separated by a comma without space (e.g., vmo00000001,vmo00000002).\nRequired for Azure cloud",
           "required": false,
           "validation": {
             "type": "list"
@@ -322,7 +322,7 @@
         "running": {
           "alias": "R",
           "api_param_name": "running",
-          "help": "A flag. Show only running instances.",
+          "help": "A flag. Show only running instances",
           "required": false,
           "validation": {
             "type": "bool"
@@ -331,7 +331,7 @@
         "stopped": {
           "alias": "S",
           "api_param_name": "stopped",
-          "help": "A flag. Show only stopped instances.",
+          "help": "A flag. Show only stopped instances",
           "required": false,
           "validation": {
             "type": "bool"
@@ -567,7 +567,7 @@
         "all-tenants": {
           "alias": "AT",
           "api_param_name": "allTenants",
-          "help": "Register service for all tenants of the customer.",
+          "help": "Register service for all tenants of the customer",
           "required": false,
           "validation": {
             "type": "bool"
@@ -605,6 +605,7 @@
     "describe-service-section": {
       "api_action": "DESCRIBE_PLATFORM_SERVICE_SECTION",
       "help": "Describes the section content of the certain published service",
+      "help_file": true,
       "alias": "dssec",
       "integration_response": true,
       "groups": [
@@ -1363,13 +1364,13 @@
         },
         "script": {
           "alias": "scname",
-          "api_param_name": "User script",
+          "api_param_name": "User script name",
           "help": "The name of the script that will be applied",
           "required": false,
           "validation": {
             "type": "string",
-            "regex": "^[\\w\\-._ ]{6,32}$",
-            "regex_error": "Script name must be 6-32 characters long and can include only these characters in lower case: 'a-z', '0-9', .-_ "
+            "regex": "^[a-z0-9\\-_]{1,28}(\\.sh|\\.bat|\\.cmd|\\.ps1)$",
+            "regex_error": "Script names should consist of characters from 'a-z', '0-9', '-_', and be 6-32 characters in length, including a valid extension such as '.sh', '.bat', '.cmd', or '.ps1'"
           }
         },
         "tag": {
@@ -1436,6 +1437,60 @@
           "state",
           "instanceName",
           "errorMessage"
+        ]
+      }
+    },
+    "backup": {
+      "api_action": "BACKUP_PLATFORM_SERVICE",
+      "alias": "bkup",
+      "help": "Provides assistance with using the Backup Platform Service for data backup and recovery",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "groups": [
+        "platform-service-management"
+      ],
+      "parameters": {
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenant": {
+          "parent": "tenant"
+        },
+        "region": {
+          "parent": "region"
+        },
+        "service-id": {
+          "parent": "service-id",
+          "required": false
+        },
+        "instance-id": {
+          "alias": "iid",
+          "api_param_name": "instances",
+          "help": "The IDs of the instances. \nFor several instances, specify the IDs one by one, separated by a comma without space (e.g., vmo00000001,vmo00000002)",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "backup-server-id": {
+          "alias": "bsid",
+          "api_param_name": "backupServer",
+          "help": "The ID of the backup server",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "instanceId",
+          "cloud",
+          "tenant",
+          "region",
+          "state",
+          "description"
         ]
       }
     },
@@ -1582,6 +1637,7 @@
     "create-attach-storage": {
       "api_action": "CREATE_AND_ATTACH_VOLUME",
       "help": "Creates the storage and attaches to the specified instance",
+      "help_file": true,
       "alias": "addattstor",
       "groups": [
         "volume-management"
@@ -1645,6 +1701,7 @@
     "detach-storage": {
       "api_action": "DETACH_VOLUME",
       "help": "Detaches the specified storage from instance",
+      "help_file": true,
       "alias": "detstor",
       "integration_response": true,
       "groups": [
@@ -1683,6 +1740,7 @@
     "delete-storage": {
       "api_action": "REMOVE_VOLUME",
       "help": "Deletes the specified storage",
+      "help_file": true,
       "alias": "delstor",
       "integration_request": true,
       "integration_response": true,
@@ -1722,6 +1780,7 @@
     "decrypt-password": {
       "api_action": "GET_INSTANCE_HASHED_PASSWORD",
       "help": "Decrypts the password for windows instances",
+      "help_file": true,
       "alias": "dp",
       "integration_request": true,
       "integration_response": true,
@@ -1867,7 +1926,7 @@
         "cron": {
           "alias": "cron",
           "api_param_name": "cron",
-          "help": "The cron rule that will be used by the schedule. It should contain these parameters separated by spaces, in given order: seconds (optional), minutes, hours, days of month, months, days of weeks, year (optional). Example: s m d M d/w y. Accepted placeholders: * (all values), ? (no specific value), / (increments), - (range).",
+          "help": "The cron rule that will be used by the schedule. It should contain these parameters separated by spaces, in given order: seconds (optional), minutes, hours, days of month, months, days of weeks, year (optional). Example: s m d M d/w y. Accepted placeholders: * (all values), ? (no specific value), / (increments), - (range)",
           "required": true,
           "validation": {
             "type": "string",
@@ -2206,7 +2265,7 @@
         "date": {
           "alias": "date",
           "api_param_name": "date",
-          "help": "The date. Format \"dd.mm.yyyy\".",
+          "help": "The date. Format \"dd.mm.yyyy\"",
           "required": true,
           "validation": {
             "type": "date"
@@ -2272,6 +2331,7 @@
     "untagged-resource-report": {
       "api_action": "GET_RESOURCE_BILLING_REPORT",
       "help": "Gets untagged resource billing report",
+      "help_file": true,
       "integration_request": true,
       "integration_response": true,
       "alias": "untagresreport",
@@ -2403,7 +2463,7 @@
         "region": {
           "alias": "r",
           "api_param_name": "region",
-          "help": "The region name. Specify this parameter to filter report records by region.\nCan not be provided with \"--cloud\" parameter.",
+          "help": "The region name. Specify this parameter to filter report records by region.\nCan not be provided with \"--cloud\" parameter",
           "required": false,
           "validation": {
             "type": "string"
@@ -2535,7 +2595,7 @@
         "product": {
           "alias": "pn",
           "api_param_name": "productName",
-          "help": "The product name. If not specified, 'All' will be used.",
+          "help": "The product name. If not specified, 'All' will be used",
           "required": false,
           "validation": {
             "type": "string"
@@ -2544,7 +2604,7 @@
         "usage-type": {
           "alias": "ut",
           "api_param_name": "usageType",
-          "help": "The usage type. If not specified, 'All' will be used.",
+          "help": "The usage type. If not specified, 'All' will be used",
           "required": false,
           "validation": {
             "type": "string"
@@ -2553,7 +2613,7 @@
         "resource-type": {
           "alias": "rt",
           "api_param_name": "resourceType",
-          "help": "The resource type. If not specified, 'All' will be used.",
+          "help": "The resource type. If not specified, 'All' will be used",
           "required": false,
           "validation": {
             "type": "string"
@@ -2590,7 +2650,7 @@
         "date": {
           "alias": "date",
           "api_param_name": "date",
-          "help": "The date. Format \"dd.mm.yyyy\".",
+          "help": "The date. Format \"dd.mm.yyyy\"",
           "required": true,
           "validation": {
             "type": "date"
@@ -2629,7 +2689,7 @@
         "instance-id": {
           "alias": "iid",
           "api_param_name": "instanceId",
-          "help": "The ID of the instance.",
+          "help": "The ID of the instance",
           "required": false,
           "validation": {
             "type": "string"
@@ -2643,6 +2703,7 @@
     "aws-management-console": {
       "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
       "help": "AWS management console access",
+      "help_file": true,
       "alias": "awsmc",
       "integration_request": true,
       "integration_response": true,
@@ -2677,6 +2738,7 @@
     "azure-management-console": {
       "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
       "help": "Azure management console access",
+      "help_file": true,
       "integration_request": true,
       "integration_response": true,
       "alias": "azuremc",
@@ -2695,6 +2757,7 @@
     "google-management-console": {
       "api_action": "SEND_MANAGEMENT_CONSOLE_ACCESS",
       "help": "Google management console access",
+      "help_file": true,
       "alias": "gcpmc",
       "integration_request": true,
       "integration_response": true,
@@ -3373,6 +3436,7 @@
       "integration_request": true,
       "integration_response": true,
       "help": "Uploads a Terraform template from Git",
+      "help_file": true,
       "groups": [
         "terraform-management",
         "email-template_upload_notification-group",
@@ -3495,7 +3559,7 @@
         "approver": {
           "alias": "apr",
           "api_param_name": "reviewers",
-          "help": "Template approvers. For several approvers, specify the template names one by one, separated by a comma without space (e.g., value1,value2)",
+          "help": "Template Approvers. For several template approvers, please specify each approver's email individually, separated by a comma without a space. For example: email1,email2",
           "required": false,
           "validation": {
             "type": "list"
@@ -3514,6 +3578,33 @@
             ]
           },
           "case": "upper"
+        },
+        "variables-file": {
+          "alias": "vfile",
+          "help": "Specify the path to the JSON file that contains the variables. Supported types: STRING, MAP, LIST, BOOL, NUMBER",
+          "no_api": true,
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "variables": {
+          "alias": "var",
+          "api_param_name": "variables",
+          "help": "Provide the variables along with their values. The format should be:\n\"key1:value1\" for strings, \"key2:\\\"value2_1,value2_2\\\"\" for lists and \"key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\" for objects.\nSimultaneous use is possible: \"key1:value1,key2:\\\"value2_1,value2_2\\\",key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\"\nNote: the example uses cmd syntax. If you use bash or powershell, update the parameter value specification accordingly",
+          "required": false,
+          "multiple_values": true,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
         }
       },
       "output_configuration": {
@@ -3692,6 +3783,7 @@
     "manage-termination-protection": {
       "api_action": "MANAGE_TERMINATION_PROTECTION",
       "help": "Manages termination protection for public cloud instances",
+      "help_file": true,
       "integration_response": true,
       "parameters": {
         "tenant": {
@@ -3807,10 +3899,19 @@
             "type": "string"
           }
         },
-        "variable": {
+        "variables-file": {
+          "alias": "vfile",
+          "help": "Specify the path to the JSON file that contains the variables. Supported types: STRING, MAP, LIST, BOOL, NUMBER",
+          "no_api": true,
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "variables": {
           "alias": "var",
           "api_param_name": "variables",
-          "help": "The list of parameters with values. \nFormat - key:value for string; key:\"value1, value2, value3\" for list; key1:\"key2=value2\" for object",
+          "help": "Provide the variables along with their values. The format should be:\n\"key1:value1\" for strings, \"key2:\\\"value2_1,value2_2\\\"\" for lists and \"key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\" for objects.\nSimultaneous use is possible: \"key1:value1,key2:\\\"value2_1,value2_2\\\",key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\"\nNote: the example uses cmd syntax. If you use bash or powershell, update the parameter value specification accordingly",
           "required": false,
           "multiple_values": true,
           "validation": {
@@ -3865,10 +3966,19 @@
             "type": "string"
           }
         },
-        "variable": {
+        "variables-file": {
+          "alias": "vfile",
+          "help": "Specify the path to the JSON file that contains the variables. Supported types: STRING, MAP, LIST, BOOL, NUMBER",
+          "no_api": true,
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "variables": {
           "alias": "var",
           "api_param_name": "variables",
-          "help": "Parameters with values. \nFormat - key:value for string; key:\"value1, value2, value3\" for list; key1:\"key2=value2\" for object",
+          "help": "Provide the variables along with their values. The format should be:\n\"key1:value1\" for strings, \"key2:\\\"value2_1,value2_2\\\"\" for lists and \"key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\" for objects.\nSimultaneous use is possible: \"key1:value1,key2:\\\"value2_1,value2_2\\\",key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\"\nNote: the example uses cmd syntax. If you use bash or powershell, update the parameter value specification accordingly",
           "required": false,
           "multiple_values": true,
           "validation": {
@@ -3881,6 +3991,130 @@
                 "type": "string"
               }
             }
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+          "status"
+        ]
+      }
+    },
+    "lock-terraform-template": {
+      "api_action": "LOCK_TERRAFORM_TEMPLATE",
+      "alias": "locktpl",
+      "help": "Lock a Terraform template to prevent any actions from other users",
+      "help_file": true,
+      "integration_request": true,
+      "integration_response": true,
+      "groups": [
+        "terraform-management"
+      ],
+      "parameters": {
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenant": {
+          "parent": "tenant"
+        },
+        "template": {
+          "alias": "tpl",
+          "api_param_name": "templateName",
+          "help": "The name of the Terraform template that is to be locked",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "expiration": {
+          "alias": "exp",
+          "api_param_name": "expirationHours",
+          "help": "Expiration parameter which specifies time in hours. You can specify the lock time within the range of 1-168 hours",
+          "required": true,
+          "validation": {
+            "type": "number",
+            "min_value": 1,
+            "max_value": 168
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+          "status"
+        ]
+      }
+    },
+    "prolong-terraform-template-lock": {
+      "api_action": "PROLONG_TERRAFORM_TEMPLATE_LOCK",
+      "alias": "ptplock",
+      "help": "Prolong a Terraform template lock to prevent any actions from other users",
+      "help_file": true,
+      "integration_request": true,
+      "integration_response": true,
+      "groups": [
+        "terraform-management"
+      ],
+      "parameters": {
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenant": {
+          "parent": "tenant"
+        },
+        "template": {
+          "alias": "tpl",
+          "api_param_name": "templateName",
+          "help": "The name of the Terraform template for which the lock is to be prolonged",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "expiration": {
+          "alias": "exp",
+          "api_param_name": "expirationHours",
+          "help": "Expiration parameter which specifies time in hours. You can prolong the locking time in the range of 1-168 hours",
+          "required": true,
+          "validation": {
+            "type": "number",
+            "min_value": 1,
+            "max_value": 168
+          }
+        }
+      },
+      "output_configuration": {
+        "none": true,
+        "response_table_headers": [
+          "status"
+        ]
+      }
+    },
+    "unlock-terraform-template": {
+      "api_action": "UNLOCK_TERRAFORM_TEMPLATE",
+      "alias": "unlocktpl",
+      "help": "Unlock a Terraform template to allow actions from other users",
+      "help_file": true,
+      "integration_request": true,
+      "integration_response": true,
+      "groups": [
+        "terraform-management"
+      ],
+      "parameters": {
+        "cloud": {
+          "parent": "cloud"
+        },
+        "tenant": {
+          "parent": "tenant"
+        },
+        "template": {
+          "alias": "tpl",
+          "api_param_name": "templateName",
+          "help": "The name of the Terraform template that needs to be unlocked",
+          "required": true,
+          "validation": {
+            "type": "string"
           }
         }
       },
@@ -3913,7 +4147,7 @@
         "template": {
           "alias": "tpl",
           "api_param_name": "templateName",
-          "help": "The name of the template to be planed",
+          "help": "The name of the template to be destroyed",
           "required": true,
           "validation": {
             "type": "string"
@@ -4601,7 +4835,7 @@
     "delete-tags": {
       "api_action": "DELETE_TAGS",
       "alias": "deltag",
-      "help": "Deletes tags. Applicable both for public and private clouds.",
+      "help": "Deletes tags. Applicable both for public and private clouds",
       "help_file": true,
       "integration_request": true,
       "integration_response": true,
@@ -4677,7 +4911,7 @@
     "describe-tags": {
       "api_action": "DESCRIBE_TAGS",
       "alias": "dtag",
-      "help": "Describes instance tags. Applicable both for public and private clouds.",
+      "help": "Describes instance tags. Applicable both for public and private clouds",
       "help_file": true,
       "integration_request": true,
       "integration_response": true,
@@ -4783,7 +5017,7 @@
         "overwrite": {
           "alias": "O",
           "api_param_name": "overwrite",
-          "help": "Flag. If specified, the existing tags will be replaced with the passed.",
+          "help": "Flag. If specified, the existing tags will be replaced with the passed",
           "required": false,
           "validation": {
             "type": "bool"
@@ -4876,7 +5110,7 @@
         "terraform-version": {
           "alias": "terv",
           "api_param_name": "terraformVersion",
-          "help": "The version of Terraform to use. The version of template should be indicated with the letter 'v'. For example v0.14.9. ",
+          "help": "The version of Terraform to use. The version of template should be indicated with the letter 'v'. For example v0.14.9",
           "required": true,
           "validation": {
             "type": "string",
@@ -4922,7 +5156,7 @@
         "approver": {
           "alias": "apr",
           "api_param_name": "reviewers",
-          "help": "Template approvers. For several approvers, specify the template names one by one, separated by a comma without space (e.g., value1,value2)",
+          "help": "Template Approvers. For several template approvers, please specify each approver's email individually, separated by a comma without a space. For example: email1,email2",
           "required": false,
           "validation": {
             "type": "list"
@@ -4941,6 +5175,33 @@
             ]
           },
           "case": "upper"
+        },
+        "variables-file": {
+          "alias": "vfile",
+          "help": "Specify the path to the JSON file that contains the variables. Supported types: STRING, MAP, LIST, BOOL, NUMBER",
+          "no_api": true,
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "variables": {
+          "alias": "var",
+          "api_param_name": "variables",
+          "help": "Provide the variables along with their values. The format should be:\n\"key1:value1\" for strings, \"key2:\\\"value2_1,value2_2\\\"\" for lists and \"key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\" for objects.\nSimultaneous use is possible: \"key1:value1,key2:\\\"value2_1,value2_2\\\",key3:\\\"key3_1=value3_1,key3_2=value3_2\\\"\"\nNote: the example uses cmd syntax. If you use bash or powershell, update the parameter value specification accordingly",
+          "required": false,
+          "multiple_values": true,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
         }
       },
       "output_configuration": {
@@ -5039,7 +5300,7 @@
         "report-type": {
           "alias": "rtype",
           "api_param_name": "reportProjectType",
-          "help": "The type of the report. Allowed values: [ACCOUNT, ACTIVE, ADJUSTMENT, ALL_PERSONAL, ANNUAL, CUSTOMERS, INACTIVE, NOT_PMC, UNITS, UPSA_INACTIVE]",
+          "help": "The type of the report. Allowed values: [ACCOUNT, ACTIVE, ADJUSTMENT, ALL_PERSONAL, ANNUAL, CUSTOMERS, INACTIVE, NOT_PMC, UNITS, UPSA_INACTIVE, NATIVE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -5053,7 +5314,8 @@
               "INACTIVE",
               "NOT_PMC",
               "UNITS",
-              "UPSA_INACTIVE"
+              "UPSA_INACTIVE",
+              "NATIVE"
             ]
           },
           "case": "upper"
@@ -5107,7 +5369,7 @@
         "all": {
           "alias": "A",
           "api_param_name": "all",
-          "help": "A flag. Includes inactive regions.",
+          "help": "A flag. Includes inactive regions",
           "required": false,
           "validation": {
             "type": "bool"

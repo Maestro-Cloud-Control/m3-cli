@@ -21,7 +21,7 @@ def build_message(id, command_name, parameters):
 
 
 def _generate_id():
-    return str(uuid.uuid1())
+    return str(uuid.uuid4())
 
 
 class RabbitMqService:

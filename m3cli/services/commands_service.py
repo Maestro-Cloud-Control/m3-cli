@@ -6,24 +6,23 @@ from typing import Any
 
 from tabulate import tabulate
 
-from m3cli.services.environment_service import (get_configuration_folder_path,
-                                                CONFIGURATION_FOLDER_PATH)
-from m3cli.services.interactive_options_service import \
-    INTERACTIVE_OPTIONS_ATTRIBUTE
+from m3cli.services.environment_service import (
+    get_configuration_folder_path, CONFIGURATION_FOLDER_PATH,
+)
+from m3cli.services.interactive_options_service import (
+    INTERACTIVE_OPTIONS_ATTRIBUTE,
+)
 from m3cli.services.request_service import mask_params
-from m3cli.services.validation_service import (COMMANDS_KEY,
-                                               HELP_FILE_KEY, VALIDATION_KEY,
-                                               HELP_KEY, PARAMS_KEY, ALIAS_KEY,
-                                               REQUIRED_KEY, SECURE_KEY,
-                                               DOMAIN_PARAMETERS_KEY,
-                                               GROUPS_KEY, VALIDATION_TYPE,
-                                               DATE_PATTERN,
-                                               AUXILIARY_GROUP_PREFIX,
-                                               AUXILIARY_GROUP_SUFFIX,
-                                               EMAIL_GROUP_PREFIX,
-                                               EMAIL_GROUP_SUFFIX)
-from m3cli.utils import (CREDENTIALS_FILE, M3_CLI_RESOURCES_DIR,
-                         M3_PROPERTIES_FILE, RESERVED_KEYWORDS)
+from m3cli.services.validation_service import (
+    COMMANDS_KEY, HELP_FILE_KEY, VALIDATION_KEY, HELP_KEY, PARAMS_KEY,
+    ALIAS_KEY, REQUIRED_KEY, SECURE_KEY, DOMAIN_PARAMETERS_KEY, GROUPS_KEY,
+    VALIDATION_TYPE, DATE_PATTERN, AUXILIARY_GROUP_PREFIX, EMAIL_GROUP_SUFFIX,
+    AUXILIARY_GROUP_SUFFIX, EMAIL_GROUP_PREFIX,
+)
+from m3cli.utils import (
+    CREDENTIALS_FILE, M3_CLI_RESOURCES_DIR, M3_PROPERTIES_FILE,
+    RESERVED_KEYWORDS,
+)
 from m3cli.utils.decorators import SECURED_VALUES
 from m3cli.utils.logger import get_logger
 from m3cli.utils.utilities import load_properties_file, inherit_dict

@@ -4,6 +4,100 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.139.0] - 2025-04-11
+* Add the report type `NATIVE` to the `report-type` parameter for the `multitenant-report` command
+
+## [3.128.2] - 2024-12-09
+* Fix import for command `describe-service-section`
+
+## [3.128.1] - 2024-12-06
+* Fix `object of type 'NoneType' has no len()` for command `describe-service-section`
+if `'blockValue'=null`
+
+## [3.128.0] - 2024-11-29
+* Update `SdkClient` class `execute` method. Set `UNKNOWN` instead of `SYSTEM` for signature `msg`
+* Remove `USER_IDENTIFIER = 'SYSTEM'` constant
+
+## [3.124.3] - 2024-10-02
+* Fix regex and improve regex error message for `--script` parameter in `run-instances` command
+
+## [3.124.2] - 2024-09-20
+* Fix `--script` parameter in `run-instances` command
+
+## [3.124.1] - 2024-09-06
+* Update table titles for `m3 reference guide` and `m3 usage guide`
+* Replace `uuid1` with `uuid4` 
+
+## [3.124.0] - 2024-09-03
+* Update docx/docs generator for `m3 reference guide` and `m3 usage guide`
+
+## [3.120.3] - 2024-08-13
+* Add command `m3 backup`
+* Update `--full-help` for `lock-related` commands
+
+## [3.120.2] - 2024-08-09
+* Add docx/docs generator for `m3 reference guide` and `m3 usage guide`
+* Change links from `https://m3api.cloud.epam.com/maestro/api/v3` to
+`https://api-mcc.cloud.epam.com/maestro/api/v3`
+* Delete `docs` folder containing `Artifact ...`, `m3-cli-cicd...`, `Reset Cache...`
+* Update `m3cli/docs/README.md` with a more relevant `LaTeX` download link
+
+## [3.120.1] - 2024-08-07
+* Improve description message for commands:
+  * `m3 lock-terraform-template`
+  * `m3 prolong-terraform-template-lock`
+  * `m3 unlock-terraform-template`
+
+## [3.120.0] - 2024-07-24
+* Update `docs_generator.py` to meet requirements
+* Add missing examples to `commands_help.py` file for the following commands:
+  * `describe-service-section`, `decrypt-password`, `manage-termination-protection`
+* Add `"help_file": true` in the `commands_def.json` file for the following commands:
+  * `describe-service-section`, `create-attach-storage`, `manage-termination-protection`
+  * `delete-storage`, `decrypt-password`, `untagged-resource-report`, `detach-storage`
+  * `aws-management-console`, `azure-management-console`,  `google-management-console`
+
+## [3.116.8] - 2024-07-19
+* Implement error handling for `'NoneType' object has no attribute 'get'` issue
+in `dstorquota` and `dinquota` commands. Update system to display user-friendly
+message for enhanced user experience.
+
+## [3.116.7] - 2024-06-17
+* Refactor code and handle `Invalid JSON format`. This applies to the following
+commands:
+  * `apply-terraform-template`, `plan-terraform-template`
+  * `upload-terraform-template`, `upload-terraform-template-from-git`
+
+## [3.116.6] - 2024-05-31
+* Add functionality to use JSON file with variables for commands
+ Supported types for JSON file: STRING, LIST, MAP, NUMBER, BOOL
+ Supported types for console: STRING, LIST, MAP
+ This applies to the following commands:
+  * `apply-terraform-template`, `plan-terraform-template`
+  * `upload-terraform-template`, `upload-terraform-template-from-git`
+* Add functionality to use parameter `--variables` for commands:
+  * `upload-terraform-template`, `upload-terraform-template-from-git`
+* Add `lock-terraform-template`, `prolong-terraform-template-lock`,
+`unlock-terraform-template` commands to `group` with name `terraform-management`
+* Improve code readability and add typing in `docs_generator.py`
+* Fix typos in help
+* Update help for all commands according to this rule: use `.` between sentences,
+but do not use it at the end of the entire help message
+
+## [3.116.1] - 2024-05-14
+* Fix import for `m3 prolong-terraform-template-lock` command
+* Remove `--description` as a parameter from the following commands and 
+implement it as an auto-generated description:
+  * `m3 lock-terraform-template`
+  * `m3 prolong-terraform-template-lock`
+  * `m3 unlock-terraform-template`
+
+## [3.116.0] - 2024-05-09
+* Add commands:
+  * `m3 lock-terraform-template`
+  * `m3 prolong-terraform-template-lock`
+  * `m3 unlock-terraform-template`
+
 ## [3.112.4] - 2024-04-08
 * Add `--tag` parameter alias `-tag` to `m3 run-instances` command
 
@@ -712,8 +806,8 @@ ${command_name}_${integration_suffix}.py
     * `cloud-target`
   * Added the `target-name` parameter to the `multitenant-report` command
   * INACTIVE, UPSA_INACTIVE, ALL_PERSONAL, NOT_PMC, CUSTOMERS, UNITS, ADJUSTMENT types do not require additional parameters at all 
-  * ACCOUNT type may accept the optional parameters – `account-id`
-  * ACTIVE type may accept the optional parameters – `target-name`
+  * ACCOUNT type may accept the optional parameters - `account-id`
+  * ACTIVE type may accept the optional parameters - `target-name`
 * Updated the help field of the `terraform-version` parameter in the `terraform-upload-template` command
 
 ## [3.45.35] - 2021-10-07
