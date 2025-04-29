@@ -5300,7 +5300,7 @@
         "report-type": {
           "alias": "rtype",
           "api_param_name": "reportProjectType",
-          "help": "The type of the report. Allowed values: [ACCOUNT, ACTIVE, ADJUSTMENT, ALL_PERSONAL, ANNUAL, CUSTOMERS, INACTIVE, NOT_PMC, UNITS, UPSA_INACTIVE]",
+          "help": "The type of the report. Allowed values: [ACCOUNT, ACTIVE, ADJUSTMENT, ALL_PERSONAL, ANNUAL, CUSTOMERS, INACTIVE, NOT_PMC, UNITS, UPSA_INACTIVE, NATIVE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -5314,7 +5314,8 @@
               "INACTIVE",
               "NOT_PMC",
               "UNITS",
-              "UPSA_INACTIVE"
+              "UPSA_INACTIVE",
+              "NATIVE"
             ]
           },
           "case": "upper"
