@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.139.1] - 2025-05-08
+* Remove header `host`
+* Add headers `X-App` and `X-Client-Id`
+
 ## [3.139.0] - 2025-04-11
 * Add the report type `NATIVE` to the `report-type` parameter for the `multitenant-report` command
 
