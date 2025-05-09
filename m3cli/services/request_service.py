@@ -215,7 +215,8 @@ class SdkClient:
                 "maestro-accesskey": access_key,
                 "maestro-sdk-version": get_sdk_version(),
                 "maestro-sdk-async": 'false',
-                "host": get_host()
+                "X-App": "m3-cli",
+                "X-Client-Id": get_host()
             },
             'data': encrypted_raw_object,
             'url': self.base_address
