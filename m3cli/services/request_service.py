@@ -8,10 +8,9 @@ from datetime import datetime
 import requests
 
 from m3cli.services.aes_cipher_service import AESCipherService, UTF_8
-from m3cli.services.environment_service import (get_access_key,
-                                                get_agent_address,
-                                                get_sdk_version,
-                                                get_secret_key)
+from m3cli.services.environment_service import (
+    get_access_key, get_agent_address, get_sdk_version, get_secret_key,
+)
 from m3cli.utils.decorators import SECURED_VALUES
 from m3cli.utils.logger import get_logger
 from m3cli.utils.utilities import open_creds_file, __load_creds_contents
@@ -124,20 +123,22 @@ def get_host():
 
 
 class BaseRequest:
-    def __init__(self, command, method=POST, parameters=None,
-                 api_action=None):
+    def __init__(
+            self,
+            command: str,
+            method: str = POST,
+            parameters: dict | None = None,
+            api_action=None,
+            metadata=None,
+    ) -> None:
         self.command = command
         self.api_action = api_action
         self.parameters = parameters
         self.method = method
+        self.metadata = metadata
 
     def __repr__(self) -> str:
-        return json.dumps({
-            'command': self.command,
-            'api_action': self.api_action,
-            'parameters': self.parameters,
-            'method': self.method
-        })
+        return json.dumps(self.get_request())
 
     def get_request(self):
         return {

@@ -232,9 +232,14 @@ class CommandsService:
                 ]
             else:
                 t_data = []
-            for each_param, each_param_value \
-                    in sorted(cmd_def[PARAMS_KEY].items(),
-                              key=lambda x: (-x[1]['required'], x[0])):
+
+            command_params = cmd_def[PARAMS_KEY].items()
+            if not cmd_def.get("keep-params-order"):
+                command_params = sorted(
+                    command_params, key=lambda x: (-x[1]['required'], x[0])
+                )
+
+            for each_param, each_param_value in command_params:
                 param_alias = each_param_value.get(ALIAS_KEY)
                 t_data.append([
                     '\t',
@@ -516,6 +521,12 @@ class CommandsService:
 
         # check extra params
         extra_parameters = set(incoming_params) - set(params_def)
+
+        # crunch for `m3 report --type hourly` to ignore `-R/--report`
+        if api_action == 'GET_HOURLY_BILLING_REPORT':
+            extra_parameters.discard('--report')
+            extra_parameters.discard('-R')
+
         if extra_parameters:
             _pretty_list = ', '.join(list(extra_parameters))
             parameters_errors.append(

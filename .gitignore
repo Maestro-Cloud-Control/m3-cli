@@ -50,6 +50,9 @@ wheels/
 .installed.cfg
 *.egg
 *.log
+m3_entry.py
+Output
+buildvenv
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

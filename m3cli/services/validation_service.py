@@ -250,7 +250,7 @@ class ValidationService:
     @staticmethod
     def check_string(param_name, value, validation_rules):
         if not type(value) == str:
-            return [f'Type of {param_name} is not str.']
+            return [f"Type of parameter '{param_name}' is not str"]
         regex = validation_rules.get(VALIDATION_REGEX)
         if regex:
             pattern = re.compile(regex)

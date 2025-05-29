@@ -2,6 +2,7 @@ import json
 import os
 import sys
 from datetime import datetime, date, timezone, timedelta
+from decimal import Decimal
 from getpass import getpass
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,16 @@ CLI_MAC_OS_DISTRIBUTION_URL = 'cliMacOsDistributionUrl'
 CONFIRMATION_MESSAGE = 'Maestro CLI credentials have been already set.\n' \
                        'Do you want to set a new credentials? [y/n]: '
 DEFAULT_API_ADDRESS = 'https://api-mcc.cloud.epam.com/maestro/api/v3'
+SECRET_KEY_ERROR = (
+    "Error: Secret Key must be 128, 192, or 256 bits (16, 24, or 32 bytes)\n"
+    "Credentials were NOT saved. Please run the command again and enter a valid"
+    " key"
+)
+TIP_MESSAGE_FOR_ACCESS = (
+    '\nTip: You can also set credentials non-interactively using:\n'
+    '  m3 access --access_key <ACCESS_KEY> --secret_key <SECRET_KEY> '
+    '--api_address <API_ADDRESS>'
+)
 
 
 def inherit_dict(root_dict, child_dict):
@@ -33,19 +44,44 @@ def inherit_dict(root_dict, child_dict):
     return child_dict
 
 
-def _set_credentials_interactively(credentials_path):
+def _set_credentials_interactively(credentials_path: str) -> bool:
+    print('Please enter your Maestro CLI credentials')
     m3sdk_access_key = input('M3 SDK Access key: ')
     if sys.platform.startswith(WINDOWS_SYSTEM):
         print('Use right-click anywhere in the body of the window to paste '
               'M3 SDK Secret key instead of using Ctrl+V')
     m3sdk_secret_key = getpass('M3 SDK Secret key: ')
-    m3sdk_api_address = DEFAULT_API_ADDRESS
+    key_len = len(m3sdk_secret_key.encode('utf-8'))
+    if key_len not in (16, 24, 32):
+        print(SECRET_KEY_ERROR)
+        print(TIP_MESSAGE_FOR_ACCESS)
+        return False
+
+    print(f'Default API link: {DEFAULT_API_ADDRESS}')
+    api_link = input(
+        'Press Enter to use the default API link above, or paste a custom '
+        'API link: '
+    ).strip()
+    if api_link == '':
+        m3sdk_api_address = DEFAULT_API_ADDRESS
+        print(f'Using default API link: {DEFAULT_API_ADDRESS}')
+    else:
+        m3sdk_api_address = api_link
+        print(f'Using custom API link: {m3sdk_api_address}')
 
     os.environ[ACCESS_KEY] = m3sdk_access_key
     os.environ[SECRET_KEY] = m3sdk_secret_key
     os.environ[ADDRESS] = m3sdk_api_address
-    __write_credentials_to_file(credentials_path, m3sdk_access_key,
-                                m3sdk_secret_key, m3sdk_api_address)
+    __write_credentials_to_file(
+        credentials_path=credentials_path,
+        access_key=m3sdk_access_key,
+        secret_key=m3sdk_secret_key,
+        api_address=m3sdk_api_address,
+    )
+    print("Credentials have been successfully saved")
+    print(f"Location: {credentials_path}")
+    print(TIP_MESSAGE_FOR_ACCESS)
+    return True
 
 
 def _set_credentials_by_params(
@@ -113,14 +149,13 @@ def get_non_interactive_access(
     return f'Credentials have been successfully saved in: \n{creds_filepath}'
 
 
-def get_user_access():
+def get_user_access() -> bool:
     creds_filepath = _get_credentials_file_path()
     if (check_credentials_in_file(creds_filepath)
             and input(CONFIRMATION_MESSAGE).lower().strip() not
             in POSITIVE_ANSWERS):
-        return
-    _set_credentials_interactively(creds_filepath)
-    return f'Credentials have been successfully saved in: \n{creds_filepath}'
+        return False
+    return _set_credentials_interactively(creds_filepath)
 
 
 def check_credentials_in_file(file_path):
@@ -397,3 +432,16 @@ def handle_variables(
             'name': name,
         }
     return result
+
+
+def format_floats_in_data(data):
+    if isinstance(data, dict):
+        return {k: format_floats_in_data(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [format_floats_in_data(item) for item in data]
+    elif isinstance(data, float):
+        return format(Decimal(str(data)), 'f').rstrip('0').rstrip('.') or '0'
+    elif isinstance(data, int):
+        return str(data)
+    else:
+        return data

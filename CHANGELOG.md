@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.139.6] - 2025-05-28
+[EPMCEOOS-7560]:
+* Adjust the `describe-tenants` command according to the QA and Java BE recommendations
+
+## [3.139.5] - 2025-05-26
+* Add `budgets` type for `report` command
+[EPMCEOOS-7551]:
+* Remove `if grand_total == 0:` from the `subtotal-report` and `subtotal-report-softline` commands
+[EPMCEOOS-7443]:
+* Add the `--adjustment` parameter to the `total-report`, `subtotal-report`, and `report` commands
+[EPMCEOOS-7461]:
+* Add command `budgets-report`
+[SFTGMSTR-8803]:
+* Change rounding in from two to six decimal places (as determined by Java BE) for the reporting command
+* Fix bug where integer 0 resolves as False and disappears
+
+## [3.139.4] - 2025-05-20
+* Add `build.py` file for simplify installation using `PyInstaller`
+(create m3.exe or Linux binary)
+
+## [3.139.3] - 2025-05-13
+[EPMCEOOS-7384]:
+* Add the parameters `--year`, `--month`, and `--day` to the following commands:
+  * `total-report`, `subtotal-report`, `resource-report`, and `hourly-report`
+* Update and fix interactive mode for `m3 access` command
+
+## [3.139.2] - 2025-05-08
+[EPMCEOOS-7384]:
+* Add `m3 report` command as a single point of entry for report-related commands:
+  * `total-report`, `subtotal-report`, `resource-report`, and `hourly-report`
+
 ## [3.139.1] - 2025-05-08
 * Remove header `host`
 * Add headers `X-App` and `X-Client-Id`

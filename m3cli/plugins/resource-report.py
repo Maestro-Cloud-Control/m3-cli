@@ -7,6 +7,7 @@ import json
 
 from m3cli.plugins.utils.plugin_utilities import processing_report_format
 from m3cli.utils.utilities import timestamp_to_iso
+from m3cli.plugins import parse_and_set_date_range
 
 
 def create_custom_request(request):
@@ -18,27 +19,25 @@ def create_custom_request(request):
     :type request: BaseRequest
     """
     processing_report_format(request)
+    parse_and_set_date_range(request.parameters)
+
     params = request.parameters
-    from_date = params.get('from')
-    to_date = params.get('to')
-    if from_date >= to_date:
-        raise AssertionError('Parameter "from" can not be equal or greater '
-                             'than parameter "to"')
-    request.parameters['target'] = {'tenantGroup': params.pop('tenantGroup'),
-                                    'reportUnit': 'TENANT_GROUP'}
-    target = request.parameters['target']
+    params['target'] = {
+        'tenantGroup': params.pop('tenantGroup'),
+        'reportUnit': 'TENANT_GROUP'
+    }
+    target = params['target']
     if params.get('clouds') and params.get('region'):
-        raise AssertionError('Parameters "clouds" and "regions" can not be'
-                             ' specified together')
+        raise AssertionError(
+            'Parameters "clouds" and "regions" can not be specified together'
+        )
     elif params.get('clouds'):
         target.update({
             'reportUnit': 'TENANT_GROUP_AND_CLOUD',
-            'clouds': params.pop('clouds')
+            'clouds': params.pop('clouds'),
         })
     elif params.get('region'):
-        target.update({
-            'region': params.pop('region')
-        })
+        target.update({'region': params.pop('region')})
     return request
 
 

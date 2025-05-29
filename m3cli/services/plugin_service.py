@@ -1,4 +1,5 @@
 import os
+import inspect
 
 from m3cli.services.environment_service import get_configuration_folder_path
 from m3cli.utils.logger import get_logger
@@ -19,6 +20,7 @@ DATA_PROCESSING_MAPPING = {
 
 REQUEST_KEY = 'request'
 RESPONSE_KEY = 'response'
+VIEW_TYPE_KEY = 'view_type'
 
 METHOD_TYPE_MAPPING = {
     INTEGRATION_REQUEST_ATTRIBUTE_NAME: REQUEST_KEY,
@@ -70,9 +72,23 @@ class PluginService:
         method_action_type = METHOD_TYPE_MAPPING.get(method_type)
         if not self.cmd_def.get(method_type):
             return data.get(method_action_type)
+
         method = DATA_PROCESSING_MAPPING.get(method_type)
         plugin_method = self.validate_method(method=method)
-        args = [data.get(REQUEST_KEY)]
-        if method_action_type == RESPONSE_KEY:
-            args.append(data.get(RESPONSE_KEY))
-        return plugin_method(*args)
+
+        # Prepare keyword arguments based on method's parameters
+        sig = inspect.signature(plugin_method)
+        params = sig.parameters
+
+        kwargs = {}
+        # Check and add 'request' if the method expects it
+        if REQUEST_KEY in params:
+            kwargs[REQUEST_KEY] = data.get(REQUEST_KEY)
+        # Check and add 'response' if applicable and method expects it
+        if method_action_type == RESPONSE_KEY and RESPONSE_KEY in params:
+            kwargs[RESPONSE_KEY] = data.get(RESPONSE_KEY)
+        # Check and add 'view_type' if the method expects it
+        if VIEW_TYPE_KEY in params:
+            kwargs[VIEW_TYPE_KEY] = data.get(VIEW_TYPE_KEY)
+
+        return plugin_method(**kwargs)

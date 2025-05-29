@@ -8,11 +8,18 @@ import json
 from m3cli.utils.utilities import timestamp_to_iso
 
 
-def create_custom_request(request):
+def create_custom_request(request, view_type: str | None = None):
     params = request.parameters
     if params.get('hidden') and params.get('inactive'):
         raise AssertionError(
-            '\'hidden\' and \'inactive\' parameters cannot be both specified')
+            "Cannot specify both 'hidden' and 'inactive' parameters"
+        )
+    if params.get('all') and params.get('inactive'):
+        raise AssertionError(
+            "Cannot specify both 'all' and 'inactive' parameters"
+        )
+    if view_type == 'full':
+        params['full'] = True
     return request
 
 
@@ -29,4 +36,6 @@ def create_custom_response(request, response):
 
         if each.get('activationDate'):
             each['activationDate'] = timestamp_to_iso(each.get('activationDate'))
+        if each.get('deactivationDate'):
+            each['deactivationDate'] = timestamp_to_iso(each.get('deactivationDate'))
     return response

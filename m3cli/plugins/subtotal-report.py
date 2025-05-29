@@ -7,6 +7,7 @@ import json
 
 from m3cli.plugins.utils.plugin_utilities import processing_report_format
 from m3cli.utils.utilities import timestamp_to_iso
+from m3cli.plugins import parse_and_set_date_range
 
 
 def create_custom_request(request):
@@ -18,31 +19,28 @@ def create_custom_request(request):
     :type request: BaseRequest
     """
     processing_report_format(request)
-    from_date = request.parameters.get('from')
-    to_date = request.parameters.get('to')
-    if from_date >= to_date:
-        raise AssertionError('Parameter "from" can not be equal or greater '
-                             'than parameter "to"')
+    parse_and_set_date_range(request.parameters)
 
-    tenant_group = request.parameters.pop('tenantGroup')
-    clouds = request.parameters.pop('clouds') if \
-        request.parameters.get('clouds') else None
-    region = request.parameters.pop('region') if \
-        request.parameters.get('region') else None
-    request.parameters['target'] = {'tenantGroup': tenant_group,
-                                    'reportUnit': 'TENANT_GROUP'}
+    params = request.parameters
+    tenant_group = params.pop('tenantGroup')
+    clouds = params.pop('clouds', None) or None
+    region = params.pop('region', None) or None
+    params['target'] = {
+        'tenantGroup': tenant_group,
+        'reportUnit': 'TENANT_GROUP',
+    }
     if region and clouds:
-        raise AssertionError('Can not get subtotal report using '
-                             '--clouds and --region filters together.')
+        raise AssertionError(
+            'Can not get subtotal report using --clouds and --region filters '
+            'together.'
+        )
     if clouds:
-        request.parameters['target'].update({
+        params['target'].update({
             'clouds': clouds,
-            'reportUnit': 'TENANT_GROUP_AND_CLOUD'
+            'reportUnit': 'TENANT_GROUP_AND_CLOUD',
         })
     if region:
-        request.parameters['target'].update({
-            'region': region
-        })
+        params['target'].update({'region': region})
     return request
 
 
@@ -68,12 +66,12 @@ def create_custom_response(request, response):
                 each_row['billingPeriodEndDate'] = \
                     timestamp_to_iso(each_row.get('billingPeriodEndDate'))
             response_processed.append(each_row)
-        response_processed.append({'recordType': 'grandTotal',
-                                   'totalPrice': grand_total,
-                                   'currencyCode': 'USD'})
+        response_processed.append({
+            'recordType': 'grandTotal',
+            'totalPrice': grand_total,
+            'currencyCode': 'USD',
+        })
         return response_processed
     if response.get('message'):
         return response.get('message')
-    if grand_total == 0:
-        return "There are no records to display"
     return response
