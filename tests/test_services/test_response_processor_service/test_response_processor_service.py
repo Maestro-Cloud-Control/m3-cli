@@ -326,6 +326,7 @@ class TestResponseProcessorServicePrettifyResponse(TestResponseProcessorService)
     def setUp(self) -> None:
         super().setUp()
         self.nullable = True
+        self.custom_full_view = False
         self.cmd_def = {
             'output_configuration': {
                 'nullable': self.nullable
@@ -351,7 +352,9 @@ class TestResponseProcessorServicePrettifyResponse(TestResponseProcessorService)
             self.init_service_object()
             result = self.service.prettify_response({})
         self.assertEqual(result, expected_result)
-        view_printer_mock.assert_called_with([], self.detailed, self.nullable)
+        view_printer_mock.assert_called_with(
+            [], self.detailed, self.nullable, self.custom_full_view,
+        )
 
 
 class TestResponseProcessorServiceFormatResponse(TestResponseProcessorService):

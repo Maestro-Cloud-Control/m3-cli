@@ -9,7 +9,7 @@ from m3cli.services.interactive_options_service import (
 )
 from m3cli.services.plugin_service import (
     INTEGRATION_REQUEST_ATTRIBUTE_NAME, INTEGRATION_RESPONSE_ATTRIBUTE_NAME,
-    PluginService, REQUEST_KEY, RESPONSE_KEY,
+    PluginService, REQUEST_KEY, RESPONSE_KEY, VIEW_TYPE_KEY,
 )
 from m3cli.services.request_service import (
     BaseRequest, POST, SdkClient, wrap_request,
@@ -69,13 +69,21 @@ CMD_SERVICE = init_commands_service()
               expose_value=False, is_eager=True)
 @dynamic_dispatcher
 @cli_response(params_to_be_secured=CMD_SERVICE.get_secure_params)
-def m3(help=False, full_help=False, command=None, parameters=None,
-       view_type=None, detailed=None, raw_response=None):
+def m3(
+        help: bool = False,
+        full_help: bool = False,
+        command: str | None = None,
+        parameters: dict | None = None,
+        view_type: str = None,
+        detailed: bool = False,
+        raw_response: bool = False,
+):
     health_check_response = perform_version_check(
         invoked_command=command,
         is_help_invoked=help or full_help,
         view_type=view_type,
-        detailed=detailed)
+        detailed=detailed,
+    )
     errors = CMD_SERVICE.validate_meta()
     if errors:
         _pretty_errors = '\n'.join(errors)
@@ -89,15 +97,23 @@ def m3(help=False, full_help=False, command=None, parameters=None,
 
     if command == HEALTH_CHECK_CMD_NAME:
         return health_check_response
-    return execute_command(command=command,
-                           parameters=parameters,
-                           view_type=view_type,
-                           detailed=detailed,
-                           raw_response=raw_response)
+
+    return execute_command(
+        command=command,
+        parameters=parameters,
+        view_type=view_type,
+        detailed=detailed,
+        raw_response=raw_response,
+    )
 
 
-def execute_command(command=None, parameters=None,
-                    view_type=None, detailed=None, raw_response=None):
+def execute_command(
+        command: str | None = None,
+        parameters: dict | None = None,
+        view_type: str | None = None,
+        detailed: bool = False,
+        raw_response: bool = False,
+):
     # Forming an incoming request from cli
     requests = BaseRequest(command=command,
                            parameters=parameters, method=POST)
@@ -120,8 +136,11 @@ def execute_command(command=None, parameters=None,
     for req in requests:
         applied_request = plugin_service.apply_plugin(
             data=build_plugin_data(
-                request=wrap_request(cmd_def=cmd_def, request=req)),
-            method_type=INTEGRATION_REQUEST_ATTRIBUTE_NAME)
+                request=wrap_request(cmd_def=cmd_def, request=req),
+                view_type=view_type,
+            ),
+            method_type=INTEGRATION_REQUEST_ATTRIBUTE_NAME,
+        )
         check_required_parameters(request=applied_request)
         requests_list.append(applied_request)
 
@@ -137,9 +156,11 @@ def execute_command(command=None, parameters=None,
     if raw_response:
         return responses
 
-    response_service = ResponseProcessorService(cmd_def=cmd_def,
-                                                view_type=view_type,
-                                                detailed=detailed)
+    response_service = ResponseProcessorService(
+        cmd_def=cmd_def,
+        view_type=view_type,
+        detailed=detailed
+    )
     fail_safe = is_batch
     applied_responses = []
     for resp in responses:
@@ -163,10 +184,15 @@ def check_required_parameters(request):
             f'the required \'api_action\' attribute.')
 
 
-def build_plugin_data(request, response=None):
+def build_plugin_data(
+        request,
+        response=None,
+        view_type: str | None = None,
+) -> dict:
     return {
         REQUEST_KEY: request,
-        RESPONSE_KEY: response
+        RESPONSE_KEY: response,
+        VIEW_TYPE_KEY: view_type,
     }
 
 

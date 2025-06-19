@@ -73,6 +73,4 @@ def create_custom_response(request, response):
         return response_processed
     if response.get('message'):
         return response.get('message')
-    if grand_total == 0:
-        return "There are no records to display"
     return response

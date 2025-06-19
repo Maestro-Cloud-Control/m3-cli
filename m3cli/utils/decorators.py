@@ -148,7 +148,6 @@ def dynamic_dispatcher(func):
                     raise e
             else:
                 access = get_user_access()
-                click.echo(access)
 
             # if the user has entered credits then switch check_health
             # flag to True

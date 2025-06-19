@@ -256,7 +256,9 @@ class TestValidationServiceCheckString(TestValidationServiceCheck):
     def test_check_string_not_str(self):
         value = True
         result = self.service.check_string(self.param_name, value, {})
-        self.assertEqual(result[0], f'Type of {self.param_name} is not str.')
+        self.assertEqual(
+            result[0], f"Type of parameter '{self.param_name}' is not str"
+        )
 
     def test_check_string_regex_does_not_match(self):
         value = 'wrong_value1'

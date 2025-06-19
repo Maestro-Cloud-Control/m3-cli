@@ -2080,8 +2080,8 @@
         "from": {
           "alias": "from",
           "api_param_name": "from",
-          "help": "The start range date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "Start date. Format (dd.mm.yyyy). Use with 'to' for a custom range",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2089,8 +2089,8 @@
         "to": {
           "alias": "to",
           "api_param_name": "to",
-          "help": "The end range date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "End date. Format (dd.mm.yyyy). Use with 'from' for a custom range",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2143,6 +2143,42 @@
             "type": "string"
           },
           "case": "upper"
+        },
+        "year": {
+          "alias": "y",
+          "api_param_name": "year",
+          "help": "Year. Format (yyyy). Use with 'month' for a 1-month range, or with 'month' and 'day' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "month": {
+          "alias": "m",
+          "api_param_name": "month",
+          "help": "Month. Format (mm). Use with 'year' for a 1-month range, or with 'day' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "day": {
+          "alias": "d",
+          "api_param_name": "day",
+          "help": "Day. Format (dd). Use with 'year' and 'month' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "adjustment": {
+          "alias": "A",
+          "api_param_name": "onlyAdjustments",
+          "help": "A flag. If specified, only adjustments will be shown",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
@@ -2172,8 +2208,8 @@
         "from": {
           "alias": "from",
           "api_param_name": "from",
-          "help": "The start range date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "Start date. Format (dd.mm.yyyy). Use with 'to' for a custom range",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2181,8 +2217,8 @@
         "to": {
           "alias": "to",
           "api_param_name": "to",
-          "help": "The end range date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "End date. Format (dd.mm.yyyy). Use with 'from' for a custom range",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2235,6 +2271,42 @@
             "type": "list"
           },
           "case": "upper"
+        },
+        "year": {
+          "alias": "y",
+          "api_param_name": "year",
+          "help": "Year. Format (yyyy). Use with 'month' for a 1-month range, or with 'month' and 'day' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "month": {
+          "alias": "m",
+          "api_param_name": "month",
+          "help": "Month. Format (mm). Use with 'year' for a 1-month range, or with 'day' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "day": {
+          "alias": "d",
+          "api_param_name": "day",
+          "help": "Day. Format (dd). Use with 'year' and 'month' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "adjustment": {
+          "alias": "A",
+          "api_param_name": "onlyAdjustments",
+          "help": "A flag. If specified, only adjustments will be shown",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
@@ -2248,6 +2320,106 @@
           "totalPrice",
           "currencyCode"
         ]
+      }
+    },
+    "budgets-report": {
+      "api_action": "GET_QUOTAS_BY_TENANTS_AND_CRITERIA",
+      "help": "Gets a budgets billing report for a tenant",
+      "help_file": true,
+      "alias": "bgreport",
+      "integration_request": true,
+      "integration_response": true,
+      "groups": [
+        "billing-reports",
+        "cli-price-help"
+      ],
+      "parameters": {
+        "tenant-group": {
+          "alias": "tg",
+          "api_param_name": "tenantGroup",
+          "help": "The tenant group",
+          "required": true,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "year": {
+          "alias": "y",
+          "api_param_name": "year",
+          "help": "Year. Format (yyyy). Use with 'month' for a 1-month range",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "month": {
+          "alias": "m",
+          "api_param_name": "month",
+          "help": "Month. Format (mm). Use with 'year' for a 1-month range",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "cloud": {
+          "alias": "c",
+          "api_param_name": "cloud",
+          "help": "The cloud. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE",
+              "NUTANIX",
+              "OPEN_STACK",
+              "VSPHERE",
+              "VMWARE"
+            ]
+          },
+          "case": "upper"
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "region",
+          "help": "The region name. Specify this parameter to filter report records by region",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "status": {
+          "alias": "s",
+          "api_param_name": "criteria",
+          "help": "Status. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED]",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "ALL",
+              "DEPLETED",
+              "ACTUAL",
+              "DISABLED"
+            ]
+          },
+          "case": "upper"
+        },
+        "compress-each-quota": {
+          "alias": "CEQ",
+          "api_param_name": "compressEachQuota",
+          "help": "A flag. If specified, each quota will be compressed",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [],
+        "nullable": true
       }
     },
     "cost-usage-report": {
@@ -2425,8 +2597,8 @@
         "from": {
           "alias": "from",
           "api_param_name": "from",
-          "help": "The start range date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "Start date. Format (dd.mm.yyyy). Use with 'to' for a custom range",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2434,8 +2606,8 @@
         "to": {
           "alias": "to",
           "api_param_name": "to",
-          "help": "The end range date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "End date. Format (dd.mm.yyyy). Use with 'from' for a custom range",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2496,6 +2668,33 @@
           "required": false,
           "validation": {
             "type": "bool"
+          }
+        },
+        "year": {
+          "alias": "y",
+          "api_param_name": "year",
+          "help": "Year. Format (yyyy). Use with 'month' for a 1-month range, or with 'month' and 'day' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "month": {
+          "alias": "m",
+          "api_param_name": "month",
+          "help": "Month. Format (mm). Use with 'year' for a 1-month range, or with 'day' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "day": {
+          "alias": "d",
+          "api_param_name": "day",
+          "help": "Day. Format (dd). Use with 'year' and 'month' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
           }
         }
       },
@@ -2650,8 +2849,8 @@
         "date": {
           "alias": "date",
           "api_param_name": "date",
-          "help": "The date. Format \"dd.mm.yyyy\"",
-          "required": true,
+          "help": "Date. Format (dd.mm.yyyy). Or specify 'year, month and day' instead",
+          "required": false,
           "validation": {
             "type": "date"
           }
@@ -2690,6 +2889,33 @@
           "alias": "iid",
           "api_param_name": "instanceId",
           "help": "The ID of the instance",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "year": {
+          "alias": "y",
+          "api_param_name": "year",
+          "help": "Year. Format (yyyy). Use with 'month' and 'day'",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "month": {
+          "alias": "m",
+          "api_param_name": "month",
+          "help": "Month. Format (mm). Use with 'year' and 'day'",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "day": {
+          "alias": "d",
+          "api_param_name": "day",
+          "help": "Day. Format (dd). Use with 'year' and 'month'",
           "required": false,
           "validation": {
             "type": "string"
@@ -4568,7 +4794,7 @@
         "inactive": {
           "alias": "N",
           "api_param_name": "inactive",
-          "help": "A flag. If specified the inactive tenants will be displayed",
+          "help": "A flag. If specified only the inactive tenants will be displayed",
           "required": false,
           "validation": {
             "type": "bool"
@@ -4586,8 +4812,8 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE]",
-          "required": true,
+          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE, HYPERV, VMWARE, WORKSPACE]",
+          "required": false,
           "validation": {
             "type": "string",
             "allowed_values": [
@@ -4598,7 +4824,10 @@
               "HARDWARE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "HYPERV",
+              "VMWARE",
+              "WORKSPACE"
             ]
           },
           "case": "upper"
@@ -4612,10 +4841,20 @@
             "type": "list"
           },
           "case": "upper"
+        },
+        "all": {
+          "alias": "A",
+          "api_param_name": "all",
+          "help": "A flag. If specified active and inactive tenants including hidden regions will be displayed",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
         "nullable": true,
+        "custom_full_view": true,
         "response_table_headers": [
           "tenantName",
           "region",
@@ -4623,7 +4862,7 @@
           "hidden",
           "activationDate",
           "tenantManagerContacts",
-          "tenantGroup"
+          "deactivationDate"
         ],
         "headers_customization": {
           "hidden": {
@@ -5735,6 +5974,156 @@
           "regionName",
           "instanceId"
         ]
+      }
+    },
+    "report": {
+      "api_action": "GET_TOTAL_BILLING_REPORT",
+      "help": "This command is a single point of entry for report-related commands: 'total-report', 'subtotal-report', 'resource-report', 'budgets-report' and 'hourly-report'",
+      "help_file": true,
+      "alias": "report",
+      "integration_request": true,
+      "integration_response": true,
+      "groups": [
+        "billing-reports",
+        "cli-price-help"
+      ],
+      "keep-params-order": true,
+      "parameters": {
+        "tenant-group": {
+          "alias": "tg",
+          "api_param_name": "tenantGroup",
+          "help": "The tenant group",
+          "required": true,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "year": {
+          "alias": "y",
+          "api_param_name": "year",
+          "help": "Year. Format (yyyy). Use with 'month' for a 1-month range, or with 'month' and 'day' for a 1-day range",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "month": {
+          "alias": "m",
+          "api_param_name": "month",
+          "help": "Month. Format (mm). Use with 'year' for a 1-month range, or with 'day' for a 1-day range",
+          "required": true,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "day": {
+          "alias": "d",
+          "api_param_name": "day",
+          "help": "Day. Format (dd). Use with 'year' and 'month' for a 1-day range",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "tag": {
+          "alias": "tag",
+          "api_param_name": "tag",
+          "help": "Collects only records with a specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "regex": "^[A-Za-z0-9_.:/+-@.]+=[A-Za-z0-90-9_.:/+-@.]*$"
+          }
+        },
+        "report": {
+          "alias": "R",
+          "api_param_name": "reportFormat",
+          "help": "A flag. If specified the report will be sent by email",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "region",
+          "help": "The region name. Specify this parameter to filter report records by region",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "type": {
+          "alias": "t",
+          "api_param_name": "types",
+          "help": "Report type. Possible parameter values: [total, subtotal, resource, hourly, budgets]. Default: total ('total-report' command)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "lower"
+        },
+        "instance-id": {
+          "alias": "iid",
+          "api_param_name": "instanceId",
+          "help": "The ID of the instance (used for the type: 'resource', 'hourly')",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "adjustment": {
+          "alias": "A",
+          "api_param_name": "onlyAdjustments",
+          "help": "A flag. If specified, only adjustments will be shown (used for the type: 'total', 'subtotal')",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "status": {
+          "alias": "s",
+          "api_param_name": "criteria",
+          "help": "Status. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED] (used for the type: 'budgets')",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "ALL",
+              "DEPLETED",
+              "ACTUAL",
+              "DISABLED"
+            ]
+          },
+          "case": "upper"
+        },
+        "compress-each-quota": {
+          "alias": "CEQ",
+          "api_param_name": "compressEachQuota",
+          "help": "A flag. If specified, each quota will be compressed (used for the type: 'budgets')",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "productName",
+          "projectCode",
+          "zone",
+          "usageType",
+          "recordType",
+          "quantity",
+          "currencyCode",
+          "totalPrice",
+          "tenantName",
+          "billingPeriodStartDate",
+          "billingPeriodEndDate"
+        ],
+        "nullable": true
       }
     }
   },

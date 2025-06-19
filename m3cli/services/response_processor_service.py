@@ -4,6 +4,7 @@ import re
 
 import yaml
 from tabulate import tabulate
+from collections.abc import KeysView
 
 from m3cli.services.request_service import mask_params
 from m3cli.services.response_utils import contains_empty_data, \
@@ -12,6 +13,7 @@ from m3cli.services.response_utils import contains_empty_data, \
 from m3cli.utils.decorators import FULL_VIEW, JSON_VIEW, TABLE_VIEW, \
     SECURED_VALUES
 from m3cli.utils.logger import get_logger
+from m3cli.utils.utilities import format_floats_in_data
 
 STATUS = 'status'
 
@@ -98,11 +100,11 @@ def _change_header_display_name(responses, header: str, custom_header: str):
             if isinstance(resp, list):
                 _change_header_display_name(responses=resp, header=header,
                                             custom_header=custom_header)
-            elif resp.get(header.strip()) or isinstance(
-                    resp.get(header.strip()), bool):
+            elif resp.get(header.strip()) \
+                    or isinstance(resp.get(header.strip()), (bool, float, int)):
                 resp[custom_header] = resp.pop(header)
-    elif responses.get(header.strip()) or isinstance(
-            responses.get(header.strip()), bool):
+    elif responses.get(header.strip()) \
+            or isinstance(responses.get(header.strip()), (bool, float, int)):
         responses[custom_header] = responses.pop(header)
 
     return responses
@@ -151,8 +153,12 @@ def _resolve_header_display_name(response, response_table_headers,
     return headers, response
 
 
-def _build_single_table(responses, headers, display_name=None,
-                        headers_config=None):
+def _build_single_table(
+        responses: list,
+        headers: KeysView[str],
+        display_name: str | None = None,
+        headers_config: dict | None = None,
+):
     responses = [responses] if isinstance(responses, dict) else responses
     """
     Such logic is needed because by default 'responses' param is the list
@@ -162,22 +168,34 @@ def _build_single_table(responses, headers, display_name=None,
     list of dictionaries, we should iterate over each item, otherwise, we
     should iterate over each list and each item of the corresponding list.
     """
-    responses = _format_lists(responses=responses,
-                              headers_config=headers_config)
-
-    disable_numparse_indices = _resolve_disable_numparse_indices(
-        response_table_headers=headers,
-        headers_config=headers_config)
+    responses = _format_lists(
+        responses=responses,
+        headers_config=headers_config,
+    )
 
     _resolve_header_display_name(
-        response=responses, response_table_headers=headers,
-        headers_config=headers_config)
+        response=responses,
+        response_table_headers=headers,
+        headers_config=headers_config,
+    )
 
     responses, headers = _configure_table_response(responses, headers)
     headers, data = _build_tabulate_data(responses=responses, headers=headers)
-    table = tabulate(tabular_data=data, headers=headers,
-                     tablefmt='grid', floatfmt='.2f',
-                     disable_numparse=disable_numparse_indices)
+
+    data = [
+        [
+            "0" if cell == 0 else str(cell) if cell is not None else ''
+            for cell in row
+        ]
+        for row in data
+    ]
+
+    table = tabulate(
+        tabular_data=data,
+        headers=headers,
+        tablefmt='grid',
+        disable_numparse=True,
+    )
     return TableView(table=table, display_name=display_name)
 
 
@@ -210,6 +228,38 @@ def _build_tabulate_data(responses, headers):
             table_data.aggregate_values(response_item=each_response)
     return table_data.get_table_data()
 
+def flatten(obj, parent_key='', sep='.', list_sep=','):
+    """Recursively flattens a dict/list into key = value lines"""
+    items = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+            items.extend(flatten(v, new_key, sep, list_sep))
+    elif isinstance(obj, list):
+        if all(isinstance(x, (str, int, float, bool, type(None))) for x in obj):
+            # List of primitives: join as comma-separated
+            items.append(f"{parent_key} = {list_sep.join(str(x) for x in obj)}")
+        else:
+            # List of dicts or lists: index as key[i]
+            for i, v in enumerate(obj):
+                items.extend(flatten(v, f"{parent_key}[{i}]", sep, list_sep))
+    else:  # primitive
+        items.append(f"{parent_key} = {obj}")
+    return items
+
+def general_full_view(responses):
+    # Flatten top-level if needed
+    if isinstance(responses, list) \
+            and len(responses) == 1 and isinstance(responses[0], list):
+        responses = responses[0]
+    lines = []
+    if isinstance(responses, list):
+        for obj in responses:
+            lines.extend(flatten(obj))
+            lines.append('')  # blank line between items
+    else:
+        lines = flatten(responses)
+    return '\n'.join(lines)
 
 class TableDataContainer:
     def __init__(self, headers):
@@ -349,14 +399,16 @@ class ResponseProcessorService:
             raise AssertionError(
                 'The service has failed to handle the request')
 
-    def prettify_response(self, response):
+    def prettify_response(self, response: list):
         response = ResponseProcessorService.format_response(response=response)
         nullable = self.cmd_def.get('output_configuration').get('nullable')
+        custom_full_view = self.cmd_def.get('output_configuration') \
+                               .get('custom_full_view') or False
         view_printer = self.available_view_types.get(self.view)
         if not view_printer:
             raise AssertionError(
                 f'The view type {self.view} is not currently supported')
-        return view_printer(response, self.detailed, nullable)
+        return view_printer(response, self.detailed, nullable, custom_full_view)
 
     @staticmethod
     def format_response(response):
@@ -370,11 +422,26 @@ class ResponseProcessorService:
             result.append(each)
         return result
 
-    def __full_view(self, responses, detailed=None, nullable=None):
-        formatted_response = yaml.dump(responses)
-        return f'\n\n{formatted_response}'.replace(': ', ' = ')
+    def __full_view(
+            self,
+            responses,
+            detailed=None,
+            nullable=None,
+            custom_full_view: bool = False,
+    ):
+        if custom_full_view:
+            return "\n\n" + general_full_view(responses)
+        else:
+            formatted_response = yaml.dump(responses)
+            return f'\n\n{formatted_response}'.replace(': ', ' = ')
 
-    def __json_view(self, responses, detailed=None, nullable=None):
+    def __json_view(
+            self,
+            responses: list,
+            detailed: bool,
+            nullable: bool,
+            custom_full_view: bool = False,
+    ) -> json:
         responses = self.__remove_none(responses, nullable)
         # It is possible to take empty data after removing none values,
         # need to check
@@ -386,8 +453,8 @@ class ResponseProcessorService:
 
         if contains_string_data(responses):
             return responses[0]
-        if contains_dict_data(responses) and responses[0].get(
-                'message'):  # response after sending report via email
+        # response after sending report via email
+        if contains_dict_data(responses) and responses[0].get('message'):
             return responses
         if contains_empty_data(responses):
             return NO_RECORDS_INFO_MESSAGE
@@ -397,9 +464,15 @@ class ResponseProcessorService:
                 _output_conf.get('response_table_headers'):
             headers = _output_conf.get('response_table_headers')
             multiple_table = _output_conf.get('multiple_table')
-            self._compose_json_items(responses=responses,
-                                     response_table_headers=headers,
-                                     multiple_table=multiple_table)
+            self._compose_json_items(
+                responses=responses,
+                response_table_headers=headers,
+                multiple_table=multiple_table,
+            )
+
+        # Format all float values to avoid scientific notation
+        responses = format_floats_in_data(responses)
+
         return json.dumps(responses, indent=4)
 
     def _compose_json_items(self, responses, response_table_headers,
@@ -443,7 +516,15 @@ class ResponseProcessorService:
                      if k in headers})
         return response_processed
 
-    def __table_view(self, responses, detailed=None, nullable=None):
+    def __table_view(
+            self,
+            responses,
+            detailed=None,
+            nullable=None,
+            custom_full_view: bool = False,
+    ):
+        # Format all float values to avoid scientific notation
+        responses = format_floats_in_data(responses)
         responses = self.__unmap_response(responses)
         responses = self.__remove_none(responses, nullable)
         # It is possible to take empty data after removing none values,

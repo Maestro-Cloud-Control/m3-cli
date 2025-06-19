@@ -584,9 +584,11 @@ class TestCommandsServiceValidateRequest(TestCommandsService):
         }
         result = self.service.validate_request(self.request)
         self.assertIsNone(result[0])
-        self.assertEqual(result[1],
-                         ['Type of param1 is not str.',
-                          'Type of param2 is not number.'])
+        self.assertEqual(
+            result[1],
+            ["Type of parameter 'param1' is not str",
+             "Type of param2 is not number."],
+        )
 
     def test_validate_request_success(self):
         self.request.parameters = {

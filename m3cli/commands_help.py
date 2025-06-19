@@ -349,7 +349,13 @@ hourly_report = """
 Gets hourly billing report for the specified tenant
 
 Example:
-        m3 hourly-report --date <date> --tenant-group <tenant_group_name> 
+        1. Specify year, month and day:
+        m3 hourly-report --year <yyyy> --month <mm> --day <dd> --tenant-group <tenant_group_name>
+
+        2. Specify date:
+        m3 hourly-report --date <date> --tenant-group <tenant_group_name>
+
+Note: Use either 'year', 'month', and 'day', OR 'date'
 """
 
 import_key = """
@@ -376,8 +382,17 @@ Example:
 resource_report = """
 Gets resource billing report for the specified tenant
 
-Example:
-        m3 resource-report --tenant-group <tenant_group_name> --from <dd.mm.yyyy> --to <dd.mm.yyyy>
+Examples:
+    1. For the current month (specify year and month):
+       m3 resource-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm>
+
+    2. For a specific day (specify year, month, and day):
+       m3 resource-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd>
+
+    3. For a date range (from - to):
+       m3 resource-report --tenant-group <tenant_group_name> --from <dd.mm.yyyy> --to <dd.mm.yyyy>
+
+Note: Use either 'year' and 'month' (and optionally 'day'), OR 'from' and 'to'
 """
 
 run_instances = """
@@ -427,9 +442,30 @@ Example:
 subtotal_report = """
 Gets subtotal billing report for the specified tenant
 
-Example:
+Examples:
+    1. For the current month (specify year and month):
+        m3 subtotal-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm>
+
+    2. For a specific day (specify year, month, and day):
+        m3 subtotal-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd>
+
+    3. For a date range (from - to):
         m3 subtotal-report --tenant-group <tenant_group_name> --from <dd.mm.yyyy> --to <dd.mm.yyyy>
+
+    4. Show only adjustments:
+        m3 subtotal-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd> --adjustment
+
+Note: Use either 'year' and 'month' (and optionally 'day'), OR 'from' and 'to'
 """
+
+
+budgets_report = """
+Gets budgets billing report for the specified tenant
+
+Examples:
+        m3 budgets-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm>
+"""
+
 
 terminate_instances = """
 Terminates a virtual instance
@@ -556,8 +592,20 @@ Examples:
 total_report = """
 Gets a total billing report for a tenant
 
-Example:
+Examples:
+    1. For the current month (specify year and month):
+        m3 total-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm>
+
+    2. For a specific day (specify year, month, and day):
+        m3 total-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd>
+
+    3. For a date range (from - to):
         m3 total-report --tenant-group <tenant_group_name> --from <dd.mm.yyyy> --to <dd.mm.yyyy>
+
+    4. Show only adjustments:
+        m3 total-report --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd> --adjustment
+
+Note: Use either 'year' and 'month' (and optionally 'day'), OR 'from' and 'to'
 """
 
 manage_key = """
@@ -790,4 +838,20 @@ Provides assistance with using the Backup Platform Service for data backup and r
 
 Example:
     m3 backup --tenant <tenant_name> --region <region_name> --cloud <cloud> --service-id <service-id> --instance-id <instance-id> --backup-server-id <backup-server-id>
+"""
+
+report = """
+This command serves as a single point of entry for report-related commands:'total-report', 'subtotal-report', 'resource-report', and 'hourly-report'
+
+Examples:
+
+  Total, Subtotal, and Resource Reports:
+    1. For the current month (specify year and month):
+       m3 report --type total|subtotal|resource --tenant-group <tenant_group_name> --year <yyyy> --month <mm>
+
+    2. For a specific day (specify year, month, and day):
+       m3 report --type total|subtotal|resource --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd>
+
+  Hourly Report:
+    m3 report --type hourly --tenant-group <tenant_group_name> --year <yyyy> --month <mm> --day <dd>
 """
