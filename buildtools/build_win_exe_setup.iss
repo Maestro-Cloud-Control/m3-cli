@@ -18,7 +18,7 @@ SolidCompression=yes
 PrivilegesRequired=lowest
 
 [Files]
-Source: ".\dist\m3.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\m3.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 ; Add to user PATH if not already present

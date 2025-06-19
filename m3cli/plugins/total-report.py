@@ -28,6 +28,11 @@ def create_custom_request(request: BaseRequest) -> BaseRequest:
         'reportUnit': 'TENANT_GROUP'
     }
     target = params['target']
+    if params.get('onlyAdjustments'):
+        target.update({
+            'onlyAdjustments': params.pop('onlyAdjustments'),
+        })
+
     if params.get('clouds'):
         target.update({
             'clouds': params.pop('clouds'),
@@ -40,7 +45,11 @@ def create_custom_request(request: BaseRequest) -> BaseRequest:
     return request
 
 
-def create_custom_response(request, response):
+def create_custom_response(
+        request,
+        response,
+        view_type: str,
+):
     """ Transform the command 'total-report' response from M3 SDK API
     to the more human readable format.
 
@@ -51,6 +60,10 @@ def create_custom_response(request, response):
         response = json.loads(response)
     except json.decoder.JSONDecodeError:
         return response
+
+    if response.get('message') and response.get('s3ReportLink'):
+        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+
     response_processed = []
     grand_total = response.get('grandTotal')
     if isinstance(grand_total, (float, int)):

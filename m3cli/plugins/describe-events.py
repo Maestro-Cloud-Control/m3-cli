@@ -10,13 +10,15 @@ from m3cli.utils.utilities import timestamp_to_iso
 
 def create_custom_request(request):
     params = request.parameters
-
+    if not params.get('searchType'):
+        params['searchType'] = 'ALL'
     if not params.get('count'):
         params.update({'count': 10})
     if params.get('searchType') == "RELATED" and not params.get('resourceId'):
         raise AssertionError(
             "The `--resource-id` parameter is required in case the RELATED "
-            "search-type is specified")
+            "search-type is specified"
+        )
 
     return request
 

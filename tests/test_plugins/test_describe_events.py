@@ -13,7 +13,8 @@ class TestDescribeEvents(TestPluginsBase):
         expected_result = {
             'count': 10,
             'cloud': 'AWS',
-            'region': 'aws-eucentral'
+            'region': 'aws-eucentral',
+            'searchType': 'ALL'
         }
 
         result = self.execute_create_custom_request()

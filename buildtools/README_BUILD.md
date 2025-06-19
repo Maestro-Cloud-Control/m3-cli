@@ -71,10 +71,10 @@ Open file `build_win_exe_setup.iss` with Inno Setup Compiler press F9 on keyboar
 ```
 
 ```ps
-cmd /c '"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DVersion=x.x.x build_win_exe_setup.iss'
+cmd /c '"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DVersion=x.x.x .\buildtools\build_win_exe_setup.iss'
 ```
 
-You can find `m3-cli-x.x.x.exe` installer in the `Output` directory.
+You can find `m3-cli-x.x.x.exe` installer in the `.\buildtools\Output` directory.
 
 #### To install:
 Run `m3-cli-x.x.x.exe` and click through setup wizard 
@@ -100,7 +100,7 @@ Prerequisites
 
 To start artifact build process run:(included in the build_deb.sh)
 ```
-python3 build.py
+python3 ./buildtools/build.py
 ```
 
 ### Create .dmg Installer
