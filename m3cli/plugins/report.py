@@ -29,6 +29,7 @@ TYPES_MAP = {
 }
 
 REQUEST_MAP = {}
+HEADERS_MAP = {}
 for param_type, command_name in COMMANDS_MAP.items():
     _, cmd_def = CMD_SERVICE._CommandsService__resolve_command_def(command_name)
     REQUEST_MAP[param_type] = {
@@ -36,6 +37,8 @@ for param_type, command_name in COMMANDS_MAP.items():
         "method": POST,
         "api_action": cmd_def["api_action"],
     }
+    HEADERS_MAP[param_type] = \
+        cmd_def["output_configuration"].get("response_table_headers") or []
 
 
 def create_custom_request(request: BaseRequest) -> BaseRequest:
@@ -51,9 +54,19 @@ def create_custom_request(request: BaseRequest) -> BaseRequest:
     return new_request
 
 
-def create_custom_response(request: BaseRequest, response):
+def create_custom_response(
+        request: BaseRequest,
+        response,
+        view_type: str,
+):
     report_type = TYPES_MAP[request.command]
     new_response = ACTIONS_MAP[report_type].create_custom_response(
-        request, response,
+        request, response, view_type,
     )
+    if view_type == 'table' and isinstance(new_response, list):
+        new_headers = HEADERS_MAP[report_type]
+        new_response = [
+            {k: v for k, v in i.items() if k in new_headers}
+            for i in new_response
+        ]
     return new_response

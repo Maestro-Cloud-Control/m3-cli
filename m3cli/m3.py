@@ -168,9 +168,13 @@ def execute_command(
         processed_response = response_service.process_response(resp, fail_safe)
 
         response = plugin_service.apply_plugin(
-            data=build_plugin_data(request=related_request,
-                                   response=processed_response),
-            method_type=INTEGRATION_RESPONSE_ATTRIBUTE_NAME)
+            data=build_plugin_data(
+                request=related_request,
+                response=processed_response,
+                view_type=view_type,
+            ),
+            method_type=INTEGRATION_RESPONSE_ATTRIBUTE_NAME
+        )
         applied_responses.append(response)
     return response_service.prettify_response(applied_responses)
 

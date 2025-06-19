@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.142.0] - 2025-06-03
+* Update `describe-events` command
+* Update `budgets-report` command
+* Sort `budgets-report` table view (--view-type=table) by `Type`
+
+## [3.139.7] - 2025-06-02
+* Merge `setup.cfg` and `pyproject.toml` into a single `pyproject.toml` file
+* Remove `setup.py` file
+* Move build-related files into the `buildtools` folder
+* Add the `--url` flag and the ability to handle responses that contain `s3ReportLink` to the following commands:
+ * `total-report`, `subtotal-report`, `resource-report`, `hourly-report`, `report`
+
 ## [3.139.6] - 2025-05-28
 [EPMCEOOS-7560]:
 * Adjust the `describe-tenants` command according to the QA and Java BE recommendations

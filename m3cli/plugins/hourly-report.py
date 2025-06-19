@@ -75,9 +75,15 @@ def create_custom_request(request):
     return request
 
 
-def create_custom_response(request, response):
+def create_custom_response(
+        request,
+        response,
+        view_type: str,
+):
     try:
         response = json.loads(response)
     except json.decoder.JSONDecodeError:
         return response
+    if response.get('message') and response.get('s3ReportLink'):
+        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
     return response
