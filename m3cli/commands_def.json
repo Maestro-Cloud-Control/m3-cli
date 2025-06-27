@@ -357,6 +357,7 @@
       },
       "output_configuration": {
         "unmap_key": "instances",
+        "mutated_yaml": true,
         "nullable": true,
         "response_table_headers": [
           "instanceId",
@@ -2192,11 +2193,11 @@
       },
       "output_configuration": {
         "response_table_headers": [
-          "projectCode",
-          "zone",
+          "tenant",
+          "region",
           "productName",
-          "recordType",
-          "totalPrice",
+          "type",
+          "total",
           "currencyCode"
         ],
         "nullable": true
@@ -2329,13 +2330,13 @@
       },
       "output_configuration": {
         "response_table_headers": [
-          "projectCode",
-          "zone",
+          "tenant",
+          "region",
           "productName",
           "usageType",
           "quantity",
-          "recordType",
-          "totalPrice",
+          "type",
+          "total",
           "currencyCode"
         ]
       }
@@ -2351,6 +2352,7 @@
         "billing-reports",
         "cli-price-help"
       ],
+      "keep-params-order": true,
       "parameters": {
         "tenant-group": {
           "alias": "tg",
@@ -2390,6 +2392,16 @@
           },
           "case": "upper"
         },
+        "tag": {
+          "alias": "",
+          "api_param_name": "tag",
+          "help": "Collects only records with a specified tag. Use the following format: tag=value",
+          "required": false,
+          "validation": {
+            "type": "string",
+            "regex": "^[A-Za-z0-9_.:/+-@.]+=[A-Za-z0-90-9_.:/+-@.]*$"
+          }
+        },
         "filter": {
           "alias": "f",
           "api_param_name": "criteria",
@@ -2405,33 +2417,16 @@
             ]
           },
           "case": "upper"
-        },
-        "compress-each-quota": {
-          "alias": "CEQ",
-          "api_param_name": "compressEachQuota",
-          "help": "A flag. If specified, each quota will be compressed",
-          "required": false,
-          "validation": {
-            "type": "bool"
-          }
-        },
-        "url": {
-          "alias": "U",
-          "api_param_name": "URL",
-          "help": "A flag. If specified, the presigned URL will be generated",
-          "required": false,
-          "validation": {
-            "type": "bool"
-          }
         }
       },
       "output_configuration": {
+        "mutated_yaml": true,
         "response_table_headers": [
           "tenant",
           "type",
           "monthlyBudget",
           "currentChargeback",
-          "utilization",
+          "utilization %",
           "actionPlan",
           "status",
           "tag",
@@ -2728,12 +2723,12 @@
       "output_configuration": {
         "response_table_headers": [
           "tenantName",
-          "zone",
+          "region",
           "productName",
           "billingPeriodStartDate",
           "billingPeriodEndDate",
-          "recordType",
-          "totalPrice",
+          "type",
+          "total",
           "currencyCode"
         ],
         "nullable": true
@@ -2868,6 +2863,7 @@
       "help_file": true,
       "alias": "hreport",
       "integration_request": true,
+      "integration_response": true,
       "groups": [
         "billing-reports",
         "cli-price-help"
@@ -6106,7 +6102,7 @@
         "url": {
           "alias": "U",
           "api_param_name": "URL",
-          "help": "A flag. If specified, the presigned URL will be generated",
+          "help": "A flag. If specified, the presigned URL will be generated (used for the type: 'total', 'subtotal', 'resource' and 'hourly')",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6129,47 +6125,23 @@
           "validation": {
             "type": "bool"
           }
-        },
-        "filter": {
-          "alias": "f",
-          "api_param_name": "criteria",
-          "help": "Filter by criteria. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED] (used for the type: 'budgets')",
-          "required": false,
-          "validation": {
-            "type": "string",
-            "allowed_values": [
-              "ALL",
-              "DEPLETED",
-              "ACTUAL",
-              "DISABLED"
-            ]
-          },
-          "case": "upper"
-        },
-        "compress-each-quota": {
-          "alias": "CEQ",
-          "api_param_name": "compressEachQuota",
-          "help": "A flag. If specified, each quota will be compressed (used for the type: 'budgets')",
-          "required": false,
-          "validation": {
-            "type": "bool"
-          }
         }
       },
       "output_configuration": {
+        "mutated_yaml": true,
         "response_table_headers": [
-          "tenant",
           "type",
+          "tenant",
           "monthlyBudget",
           "currentChargeback",
-          "utilization",
+          "utilization %",
           "actionPlan",
           "status",
           "tag",
           "affectedRegions",
           "recordType",
           "projectCode",
-          "zone",
+          "region",
           "productName",
           "usageType",
           "quantity",
@@ -6180,7 +6152,8 @@
           "tenantDisplayName",
           "regionName",
           "owner",
-          "totalPrice"
+          "totalPrice",
+          "total"
         ],
         "nullable": true
       }

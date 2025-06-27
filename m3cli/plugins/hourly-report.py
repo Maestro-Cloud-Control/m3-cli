@@ -8,9 +8,13 @@ import json
 from datetime import datetime, timedelta
 
 from m3cli.services.validation_service import ValidationService
+from m3cli.plugins.utils.plugin_utilities import processing_report_format
 
 
-def create_custom_request(request):
+def create_custom_request(
+        request,
+        view_type: str | None = None,
+):
     """ Transform 'hourly-report' command parameters from the Human
     readable format to appropriate for M3 SDK API request.
 
@@ -18,6 +22,13 @@ def create_custom_request(request):
     parameters
     :type request: BaseRequest
     """
+    if view_type in ('json', 'full'):
+        raise AssertionError(
+            "This command doesn't support the '--json' or '--full' "
+            "flags"
+        )
+
+    processing_report_format(request, report_format='EMAIL')
     validation_service = ValidationService()
     params = request.parameters
 

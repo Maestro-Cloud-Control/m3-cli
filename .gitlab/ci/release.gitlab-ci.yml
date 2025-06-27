@@ -8,7 +8,7 @@ prepare_release:
   script:
     - apk add curl jq git
     - echo "Fetching current version"
-    - echo "RELEASE_VERSION=$(cat setup.cfg | awk -F"version = " {'print $2'} | sed -e 's|["'\'' '^',]||g' | xargs)" > version.env
+    - echo "RELEASE_VERSION=$(cat pyproject.toml | awk -F"version = " {'print $2'} | sed -e 's|["'\'' '^',]||g' | xargs)" > version.env
     - source version.env
     - echo "CURRENT VERSION=$RELEASE_VERSION"
 

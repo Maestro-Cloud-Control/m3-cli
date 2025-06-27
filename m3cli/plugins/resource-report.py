@@ -10,7 +10,10 @@ from m3cli.utils.utilities import timestamp_to_iso
 from m3cli.plugins import parse_and_set_date_range
 
 
-def create_custom_request(request):
+def create_custom_request(
+        request,
+        view_type: str | None = None,
+):
     """ Transform 'resource-report' command parameters from the Human
     readable format to appropriate for M3 SDK API request.
 
@@ -18,10 +21,19 @@ def create_custom_request(request):
     parameters
     :type request: BaseRequest
     """
-    processing_report_format(request)
-    parse_and_set_date_range(request.parameters)
+    if view_type in ('json', 'full'):
+        raise AssertionError(
+            "This command doesn't support the '--json' or '--full' "
+            "flags"
+        )
 
+    processing_report_format(request, report_format='EMAIL')
+    parse_and_set_date_range(request.parameters)
     params = request.parameters
+    if params.get('onlyAdjustments'):
+        raise AssertionError(
+            "The flag `--adjustment` is not supported for this report type"
+        )
     params['target'] = {
         'tenantGroup': params.pop('tenantGroup'),
         'reportUnit': 'TENANT_GROUP'
@@ -44,7 +56,7 @@ def create_custom_request(request):
 def create_custom_response(
         request,
         response,
-        view_type: str,
+        view_type: str | None = None,
 ):
     """ Transform the command 'resource-report' response from M3 SDK API
     to the more human readable format.
@@ -75,10 +87,20 @@ def create_custom_response(
             if each_row.get('billingPeriodEndDate'):
                 each_row['billingPeriodEndDate'] = \
                     timestamp_to_iso(each_row.get('billingPeriodEndDate'))
+            # Rename
+            if 'totalPrice' in each_row:
+                each_row['total'] = each_row.pop('totalPrice')
+            if 'recordType' in each_row:
+                each_row['type'] = each_row.pop('recordType')
+            if 'zone' in each_row:
+                each_row['region'] = each_row.pop('zone')
             response_processed.append(each_row)
-        response_processed.append({'recordType': 'grandTotal',
-                                   'totalPrice': grand_total,
-                                   'currencyCode': 'USD'})
+
+        response_processed.append({
+            'type': 'grandTotal',
+            'total': grand_total,
+            'currencyCode': 'USD'
+        })
         return response_processed
     if response.get('message'):
         return response.get('message')

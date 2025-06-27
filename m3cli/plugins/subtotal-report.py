@@ -10,7 +10,10 @@ from m3cli.utils.utilities import timestamp_to_iso
 from m3cli.plugins import parse_and_set_date_range
 
 
-def create_custom_request(request):
+def create_custom_request(
+        request,
+        view_type: str | None = None,
+):
     """ Transform 'subtotal-report' command parameters from the Human
     readable format to appropriate for M3 SDK API request.
 
@@ -51,7 +54,7 @@ def create_custom_request(request):
 def create_custom_response(
         request,
         response,
-        view_type: str,
+        view_type: str | None = None,
 ):
     """ Transform the command 'subtotal-report' response from M3 SDK API
     to the more human readable format.
@@ -77,10 +80,20 @@ def create_custom_response(
             if each_row.get('billingPeriodEndDate'):
                 each_row['billingPeriodEndDate'] = \
                     timestamp_to_iso(each_row.get('billingPeriodEndDate'))
+            # Rename
+            if 'totalPrice' in each_row:
+                each_row['total'] = each_row.pop('totalPrice')
+            if 'recordType' in each_row:
+                each_row['type'] = each_row.pop('recordType')
+            if 'zone' in each_row:
+                each_row['region'] = each_row.pop('zone')
+            if 'projectCode' in each_row:
+                each_row['tenant'] = each_row.pop('projectCode')
             response_processed.append(each_row)
+
         response_processed.append({
-            'recordType': 'grandTotal',
-            'totalPrice': grand_total,
+            'type': 'grandTotal',
+            'total': grand_total,
             'currencyCode': 'USD',
         })
         return response_processed
