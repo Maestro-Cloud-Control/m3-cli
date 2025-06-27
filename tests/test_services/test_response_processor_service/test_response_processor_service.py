@@ -327,6 +327,7 @@ class TestResponseProcessorServicePrettifyResponse(TestResponseProcessorService)
         super().setUp()
         self.nullable = True
         self.custom_full_view = False
+        self.mutated_yaml = False
         self.cmd_def = {
             'output_configuration': {
                 'nullable': self.nullable
@@ -353,7 +354,11 @@ class TestResponseProcessorServicePrettifyResponse(TestResponseProcessorService)
             result = self.service.prettify_response({})
         self.assertEqual(result, expected_result)
         view_printer_mock.assert_called_with(
-            [], self.detailed, self.nullable, self.custom_full_view,
+            responses=[],
+            detailed=self.detailed,
+            nullable=self.nullable,
+            custom_full_view=self.custom_full_view,
+            mutated_yaml=self.mutated_yaml,
         )
 
 

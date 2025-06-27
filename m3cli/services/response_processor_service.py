@@ -404,11 +404,19 @@ class ResponseProcessorService:
         nullable = self.cmd_def.get('output_configuration').get('nullable')
         custom_full_view = self.cmd_def.get('output_configuration') \
                                .get('custom_full_view') or False
+        mutated_yaml = self.cmd_def.get('output_configuration') \
+                               .get('mutated_yaml') or False
         view_printer = self.available_view_types.get(self.view)
         if not view_printer:
             raise AssertionError(
                 f'The view type {self.view} is not currently supported')
-        return view_printer(response, self.detailed, nullable, custom_full_view)
+        return view_printer(
+            responses=response,
+            detailed=self.detailed,
+            nullable=nullable,
+            custom_full_view=custom_full_view,
+            mutated_yaml=mutated_yaml,
+        )
 
     @staticmethod
     def format_response(response):
@@ -428,9 +436,30 @@ class ResponseProcessorService:
             detailed=None,
             nullable=None,
             custom_full_view: bool = False,
+            mutated_yaml: bool = False,
     ):
         if custom_full_view:
             return "\n\n" + general_full_view(responses)
+        elif mutated_yaml:
+            yaml_str = yaml.dump(responses)
+            lines = yaml_str.split('\n')
+            # Remove list markers from top-level items
+            processed_lines = [
+                line[2:] if line.startswith('- ') else line for line in lines
+            ]
+            # Detect top-level keys dynamically
+            final_lines = []
+            for line in processed_lines:
+                # Calculate current indentation
+                curr_indent = len(line) - len(line.lstrip())
+                # Add blank line before new root-level objects
+                if curr_indent == 0 and line.strip().endswith(':'):
+                    if final_lines and final_lines[-1] != '':
+                        final_lines.append('')
+                final_lines.append(line)
+            # Format key-value pairs
+            formatted_response = '\n'.join(final_lines).replace(': ', ' = ')
+            return f'\n\n{formatted_response}'
         else:
             formatted_response = yaml.dump(responses)
             return f'\n\n{formatted_response}'.replace(': ', ' = ')
@@ -441,6 +470,7 @@ class ResponseProcessorService:
             detailed: bool,
             nullable: bool,
             custom_full_view: bool = False,
+            mutated_yaml: bool = False,
     ) -> json:
         responses = self.__remove_none(responses, nullable)
         # It is possible to take empty data after removing none values,
@@ -522,6 +552,7 @@ class ResponseProcessorService:
             detailed=None,
             nullable=None,
             custom_full_view: bool = False,
+            mutated_yaml: bool = False,
     ):
         # Format all float values to avoid scientific notation
         responses = format_floats_in_data(responses)
