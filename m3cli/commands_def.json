@@ -2179,6 +2179,15 @@
           "validation": {
             "type": "bool"
           }
+        },
+        "url": {
+          "alias": "U",
+          "api_param_name": "URL",
+          "help": "A flag. If specified, the presigned URL will be generated",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
@@ -2307,6 +2316,15 @@
           "validation": {
             "type": "bool"
           }
+        },
+        "url": {
+          "alias": "U",
+          "api_param_name": "URL",
+          "help": "A flag. If specified, the presigned URL will be generated",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
@@ -2362,25 +2380,6 @@
             "type": "string"
           }
         },
-        "cloud": {
-          "alias": "c",
-          "api_param_name": "cloud",
-          "help": "The cloud. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
-          "required": false,
-          "validation": {
-            "type": "string",
-            "allowed_values": [
-              "AWS",
-              "AZURE",
-              "GOOGLE",
-              "NUTANIX",
-              "OPEN_STACK",
-              "VSPHERE",
-              "VMWARE"
-            ]
-          },
-          "case": "upper"
-        },
         "region": {
           "alias": "r",
           "api_param_name": "region",
@@ -2391,10 +2390,10 @@
           },
           "case": "upper"
         },
-        "status": {
-          "alias": "s",
+        "filter": {
+          "alias": "f",
           "api_param_name": "criteria",
-          "help": "Status. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED]",
+          "help": "Filter by criteria. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED]",
           "required": false,
           "validation": {
             "type": "string",
@@ -2415,10 +2414,29 @@
           "validation": {
             "type": "bool"
           }
+        },
+        "url": {
+          "alias": "U",
+          "api_param_name": "URL",
+          "help": "A flag. If specified, the presigned URL will be generated",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
-        "response_table_headers": [],
+        "response_table_headers": [
+          "tenant",
+          "type",
+          "monthlyBudget",
+          "currentChargeback",
+          "utilization",
+          "actionPlan",
+          "status",
+          "tag",
+          "affectedRegions"
+        ],
         "nullable": true
       }
     },
@@ -2696,6 +2714,15 @@
           "validation": {
             "type": "string"
           }
+        },
+        "url": {
+          "alias": "U",
+          "api_param_name": "URL",
+          "help": "A flag. If specified, the presigned URL will be generated",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
@@ -2919,6 +2946,15 @@
           "required": false,
           "validation": {
             "type": "string"
+          }
+        },
+        "url": {
+          "alias": "U",
+          "api_param_name": "URL",
+          "help": "A flag. If specified, the presigned URL will be generated",
+          "required": false,
+          "validation": {
+            "type": "bool"
           }
         }
       },
@@ -3558,18 +3594,20 @@
         "search-type": {
           "alias": "stype",
           "api_param_name": "searchType",
-          "help": "Search type. \nAllowed values: [ALL, BILLING, CLOUD_FORMATION, MANAGEMENT, RELATED, SECURITY, TERRAFORM]",
-          "required": true,
+          "help": "Search type. \nAllowed values: [ALL(default), TENANT, SECURITY, BILLING, MANAGEMENT, AZURE_BICEP, TERRAFORM, CLOUD_FORMATION, VIOLATION]",
+          "required": false,
           "validation": {
             "type": "string",
             "allowed_values": [
               "ALL",
-              "BILLING",
-              "CLOUD_FORMATION",
-              "MANAGEMENT",
-              "RELATED",
+              "TENANT",
               "SECURITY",
-              "TERRAFORM"
+              "BILLING",
+              "MANAGEMENT",
+              "AZURE_BICEP",
+              "TERRAFORM",
+              "CLOUD_FORMATION",
+              "VIOLATION"
             ]
           },
           "case": "upper"
@@ -3581,7 +3619,7 @@
           "alias": "c",
           "api_param_name": "cloud",
           "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE]",
-          "required": true,
+          "required": false,
           "validation": {
             "type": "string",
             "allowed_values": [
@@ -3601,7 +3639,7 @@
           "alias": "r",
           "api_param_name": "region",
           "help": "The region name",
-          "required": true,
+          "required": false,
           "validation": {
             "type": "string"
           },
@@ -6026,6 +6064,26 @@
             "type": "string"
           }
         },
+        "type": {
+          "alias": "t",
+          "api_param_name": "types",
+          "help": "Report type. Possible parameter values: [total, subtotal, resource, hourly, budgets]. Default: total ('total-report' command)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "lower"
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "region",
+          "help": "The region name. Specify this parameter to filter report records by region",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
         "tag": {
           "alias": "tag",
           "api_param_name": "tag",
@@ -6045,25 +6103,14 @@
             "type": "bool"
           }
         },
-        "region": {
-          "alias": "r",
-          "api_param_name": "region",
-          "help": "The region name. Specify this parameter to filter report records by region",
+        "url": {
+          "alias": "U",
+          "api_param_name": "URL",
+          "help": "A flag. If specified, the presigned URL will be generated",
           "required": false,
           "validation": {
-            "type": "string"
-          },
-          "case": "upper"
-        },
-        "type": {
-          "alias": "t",
-          "api_param_name": "types",
-          "help": "Report type. Possible parameter values: [total, subtotal, resource, hourly, budgets]. Default: total ('total-report' command)",
-          "required": false,
-          "validation": {
-            "type": "string"
-          },
-          "case": "lower"
+            "type": "bool"
+          }
         },
         "instance-id": {
           "alias": "iid",
@@ -6083,10 +6130,10 @@
             "type": "bool"
           }
         },
-        "status": {
-          "alias": "s",
+        "filter": {
+          "alias": "f",
           "api_param_name": "criteria",
-          "help": "Status. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED] (used for the type: 'budgets')",
+          "help": "Filter by criteria. \nAllowed values: [ALL(default), DEPLETED, ACTUAL, DISABLED] (used for the type: 'budgets')",
           "required": false,
           "validation": {
             "type": "string",
@@ -6111,17 +6158,29 @@
       },
       "output_configuration": {
         "response_table_headers": [
-          "productName",
+          "tenant",
+          "type",
+          "monthlyBudget",
+          "currentChargeback",
+          "utilization",
+          "actionPlan",
+          "status",
+          "tag",
+          "affectedRegions",
+          "recordType",
           "projectCode",
           "zone",
+          "productName",
           "usageType",
-          "recordType",
           "quantity",
           "currencyCode",
-          "totalPrice",
           "tenantName",
           "billingPeriodStartDate",
-          "billingPeriodEndDate"
+          "billingPeriodEndDate",
+          "tenantDisplayName",
+          "regionName",
+          "owner",
+          "totalPrice"
         ],
         "nullable": true
       }

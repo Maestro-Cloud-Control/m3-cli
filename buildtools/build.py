@@ -30,6 +30,12 @@ def get_platform_separator():
 
 
 def build_executable():
+    # Determine project root directory based on script location
+    # Change working directory to project root, so all paths work from root
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    os.chdir(project_root)
+
     separator = get_platform_separator()
 
     clean_previous_builds()
@@ -92,7 +98,7 @@ def build_executable():
         else:
             print(f"Warning: Data file {src} not found")
 
-    cmd.append("m3cli/m3.py")
+    cmd.append(os.path.join("m3cli", "m3.py"))
 
     print("Running PyInstaller command:")
     print(" ".join(cmd))

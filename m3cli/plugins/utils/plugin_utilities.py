@@ -69,8 +69,20 @@ def encoding_image(icon):
 
 
 def processing_report_format(request):
-    if request.parameters.get("reportFormat"):
-        request.parameters.update({'reportFormat': 'EMAIL'})
+    params = request.parameters
+    if params.get('reportFormat') and params.get('URL'):
+        raise AssertionError(
+            'The flags `--url` (`-U`) and `--report` (`-R`) cannot be specified'
+            ' together'
+        )
+
+    if params.get("URL"):
+        params.update({'reportFormat': 'S3'})
+        params.pop("URL")
+        return request
+
+    if params.get("reportFormat"):
+        params.update({'reportFormat': 'EMAIL'})
     else:
-        request.parameters.update({'reportFormat': 'JSON'})
+        params.update({'reportFormat': 'JSON'})
     return request
