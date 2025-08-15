@@ -2193,12 +2193,12 @@
       },
       "output_configuration": {
         "response_table_headers": [
+          "type",
           "tenant",
           "region",
           "productName",
-          "type",
-          "total",
-          "currencyCode"
+          "currencyCode",
+          "total"
         ],
         "nullable": true
       }
@@ -2330,14 +2330,14 @@
       },
       "output_configuration": {
         "response_table_headers": [
+          "type",
           "tenant",
           "region",
           "productName",
           "usageType",
           "quantity",
-          "type",
-          "total",
-          "currencyCode"
+          "currencyCode",
+          "total"
         ]
       }
     },
@@ -2422,11 +2422,14 @@
       "output_configuration": {
         "mutated_yaml": true,
         "response_table_headers": [
-          "tenant",
           "type",
+          "tenant",
           "monthlyBudget",
-          "currentChargeback",
-          "utilization %",
+          "currentMonthlyChargeback",
+          "monthlyUtilization %",
+          "dailyBudget",
+          "currentDailyChargeback",
+          "dailyUtilization %",
           "actionPlan",
           "status",
           "tag",
@@ -6133,8 +6136,11 @@
           "type",
           "tenant",
           "monthlyBudget",
-          "currentChargeback",
-          "utilization %",
+          "currentMonthlyChargeback",
+          "monthlyUtilization %",
+          "dailyBudget",
+          "currentDailyChargeback",
+          "dailyUtilization %",
           "actionPlan",
           "status",
           "tag",

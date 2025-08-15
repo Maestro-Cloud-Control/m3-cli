@@ -96,10 +96,11 @@ def create_custom_response(
                 each_row['region'] = each_row.pop('zone')
             response_processed.append(each_row)
 
+        currency_code = response.get('currencyCode') or 'USD'
         response_processed.append({
             'type': 'grandTotal',
             'total': grand_total,
-            'currencyCode': 'USD'
+            'currencyCode': currency_code,
         })
         return response_processed
     if response.get('message'):

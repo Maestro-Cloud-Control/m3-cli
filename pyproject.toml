@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "m3-cli"
-version = "4.142.1"
+version = "4.146.0"
 authors = [
     {name = "maestrocloudcontrol", email = "support@maestrocontrol.cloud"}
 ]
@@ -23,7 +23,7 @@ dependencies = [
     "jsonschema==3.2.0",
     "pyyaml==6.0.1",
     "Pillow==10.0.0",
-    "packaging==21.3",
+    "packaging==25.0",
     "beautifulsoup4==4.10.0",
 ]
 

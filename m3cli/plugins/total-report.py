@@ -26,6 +26,11 @@ def create_custom_request(
     parse_and_set_date_range(request.parameters)
 
     params = request.parameters
+    if params.get('instanceId'):
+        raise AssertionError(
+            'The parameter `--instance-id` is not supported for this report type'
+        )
+
     params['target'] = {
         'tenantGroup': params.pop('tenantGroup'),
         'reportUnit': 'TENANT_GROUP'
@@ -45,6 +50,10 @@ def create_custom_request(
         target.update({
             'region': params.pop('region'),
         })
+
+    if target.get('region') in {'AWS_UNREACHABLE', 'AZURE_NATIVE'}:
+        params['nativeCurrency'] = True
+
     return request
 
 
@@ -88,10 +97,11 @@ def create_custom_response(
                 each_row['region'] = each_row.pop('zone')
             response_processed.append(each_row)
 
+        currency_code = response.get('currencyCode') or 'USD'
         response_processed.append({
             'type': 'grandTotal',
             'total': grand_total,
-            'currencyCode': 'USD',
+            'currencyCode': currency_code,
         })
         return response_processed
     if response.get('message'):

@@ -67,9 +67,13 @@ def create_custom_response(request, response):
                 each_row['billingPeriodEndDate'] = \
                     timestamp_to_iso(each_row.get('billingPeriodEndDate'))
             response_processed.append(each_row)
-        response_processed.append({'recordType': 'grandTotal',
-                                   'totalPrice': grand_total,
-                                   'currencyCode': 'USD'})
+
+        currency_code = response.get('currencyCode') or 'USD'
+        response_processed.append({
+            'recordType': 'grandTotal',
+            'totalPrice': grand_total,
+            'currencyCode': currency_code,
+        })
         return response_processed
     if response.get('message'):
         return response.get('message')

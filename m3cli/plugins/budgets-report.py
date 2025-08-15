@@ -21,6 +21,27 @@ def create_custom_request(
         view_type: str | None = None,
 ) -> BaseRequest:
     params = request.parameters
+    if params.get('URL'):
+        raise AssertionError(
+            'The flag `--url` is not supported for this report type'
+        )
+    if params.get('reportFormat'):
+        raise AssertionError(
+            'The flag `--report` is not supported for this report type'
+        )
+    if params.get('instanceId'):
+        raise AssertionError(
+            'The parameter `--instance-id` is not supported for this report type'
+        )
+    if params.get('onlyAdjustments'):
+        raise AssertionError(
+            'The flag `--adjustment` is not supported for this report type'
+        )
+    if params.get('day'):
+        raise AssertionError(
+            'The parameter `--day` is not supported for this report type'
+        )
+
     if not params.get('criteria'):
         params['criteria'] = 'ALL'
     if not params.get('compressEachQuota'):
@@ -28,18 +49,15 @@ def create_custom_request(
     params['tenantNames'] = [params.pop('tenantGroup')]
     if 'region' in params:
         params['regionName'] = params.pop('region')
-    if params.get('URL'):
-        raise AssertionError(
-            'The command report obtains unexpected params: -U;'
-        )
     if params.get('year'):
-        year =int(params['year'])
+        year = int(params['year'])
         if not isinstance(year, int):
             raise AssertionError("Year must be an integer")
         current_year = datetime.datetime.now().year
         if not (2020 <= year <= current_year):
             raise AssertionError(
-                f"Year must be between 2020 and {current_year}")
+                f"Year must be between 2020 and {current_year}"
+            )
 
         if params.get('month'):
             month = int(params['month'])
@@ -99,6 +117,25 @@ def create_custom_response(
             else:
                 utilization = monthly_budget = current_chargeback = ''
 
+            daily_usages = item.get('dailyUsages', [])
+            daily_usage = None
+            if isinstance(daily_usages, list) and daily_usages:
+                daily_usage = max(
+                    daily_usages,
+                    key=lambda d: int(d.get('date') or 0)
+                )
+
+            if daily_usage:
+                d_percent_used = daily_usage.get('percentUsed')
+                daily_utilization = ""
+                if d_percent_used is not None:
+                    daily_utilization = \
+                        "less than 1%" if d_percent_used < 1 else f"{d_percent_used}"
+                daily_budget = daily_usage.get("value")
+                current_daily_chargeback = daily_usage.get("used")
+            else:
+                daily_utilization = daily_budget = current_daily_chargeback = ''
+
             thresholds = item.get('thresholds', [])
             actions = item.get('actions', [])
             threshold_strs = [
@@ -115,8 +152,11 @@ def create_custom_response(
                 "tenant": item.get("tenantDisplayName", ""),
                 "type": item.get("type", ""),
                 "monthlyBudget": monthly_budget,
-                "currentChargeback": current_chargeback,
-                "utilization %": utilization,
+                "currentMonthlyChargeback": current_chargeback,
+                "monthlyUtilization %": utilization,
+                "dailyBudget": daily_budget,
+                "currentDailyChargeback": current_daily_chargeback,
+                "dailyUtilization %": daily_utilization,
                 "status": "enabled" if item.get("active") else "disabled",
                 "tag": item.get("tag", ""),
                 "affectedRegions": item.get("regionName", "")
@@ -132,16 +172,20 @@ def create_custom_response(
                 ]
 
         def get_sort_key(row):
-            utilization = row.get('utilization %', '')
-            # Handle numerical values (e.g., "5.6%")
-            if utilization and utilization not in {'', 'less than 1%'}:
-                numerical_value = float(utilization.replace('%', '').strip())
-                return -numerical_value  # Negative for descending order
-            # Handle "less than 1%" special case
+            # Try monthly utilization first, then daily
+            utilization = row.get('monthlyUtilization %', '') \
+                          or row.get('dailyUtilization %', '')
+
+            # Convert to numeric value for sorting (descending order)
             if utilization == 'less than 1%':
-                return 0
-            # Push empty/missing values to the end
-            return float('inf')
+                return -0.5  # Treat as 0.5% for sorting
+            elif utilization:
+                try:
+                    return -float(str(utilization).replace('%', '').strip())
+                except ValueError:
+                    return float('inf')  # Invalid values go to end
+            else:
+                return float('inf')  # Empty values go to end
 
         if view_type == 'full':
             return [{"budget": item} for item in response]

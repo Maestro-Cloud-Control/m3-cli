@@ -4,13 +4,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.146.0] - 2025-08-12
+* Update `report` command `budgets` value for `type` parameter:
+  * Add validation for unsupported parameters: 
+    * flags: `--url`, `--report`, `--adjustment`
+    * parameters: `--instance-id`, `--day`
+  * Update `table` view to support `dailyBudget` 
+  * Update `table` view to improve readability by renaming:
+    * `currentChargeback` to `currentMonthlyChargeback`
+    * `utilization` to `monthlyUtilization`
+* Update `report` command `total/subtotal` value for `type` parameter:
+  * Add validation for unsupported parameter `--instance-id`
+* Support dynamic currency code from BE response (with USD fallback) for commands: 
+  * `cost-object-report`, `resource-report`, `resource-report-softline`
+  * `subtotal-report`, `subtotal-report-softline`, `total-report-softline`
+  * `untagged-resource-report`, `total-report`
+
+## [4.142.2] - 2025-07-17
+* Update `multitenant-report`, `total-report` and `subtotal-report` commands:
+  * If the `--region` parameter is set to `AWS_UNREACHABLE` or `AZURE_NATIVE`, add `'nativeCurrency': True` to the request
+
 ## [4.142.1] - 2025-06-23
 * Adjust `total-report`, `subtotal-report`, `resource-report`, `hourly-report`, `report` commands according to the QA and Java BE recommendations
 
 ## [4.142.0] - 2025-06-03
 * Update `describe-events` command
 * Update `budgets-report` command
-* Sort `budgets-report` table view (--view-type=table) by `Type`
+* Sort `budgets-report` table view (--view-type=table) by `Type
+* Update libraries:
+  * `packaging` from 21.3 to 25.0
 
 ## [3.139.7] - 2025-06-02
 * Merge `setup.cfg` and `pyproject.toml` into a single `pyproject.toml` file

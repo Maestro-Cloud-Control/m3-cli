@@ -7,17 +7,23 @@ appropriate for M3 SDK API request.
 
 
 def create_custom_request(request):
-    if request.parameters.get('reportProjectType') != 'ACCOUNT' and \
-            request.parameters.get('eoAccount'):
+    params = request.parameters
+    if params.get('reportProjectType') != 'ACCOUNT' and params.get('eoAccount'):
         raise AssertionError(
-            "The \'account-id\' parameter may be specified only in case "
-            "ACCOUNT report-type is set. Account-id is not applicable with "
-            "other values of report-type")
-    if request.parameters.get('reportProjectType') == 'ACCOUNT' \
-            and not request.parameters.get('eoAccount'):
+            "The 'account-id' parameter may be specified only in case ACCOUNT "
+            "report-type is set. Account-id is not applicable with other values"
+            " of report-type"
+        )
+    if params.get('reportProjectType') == 'ACCOUNT' \
+            and not params.get('eoAccount'):
         raise AssertionError(
-            "Please, specified the \'account-id\' parameter for the "
-            "ACCOUNT report-type parameter")
-    request.parameters['format'] = 'EMAIL'
+            "Please, specified the 'account-id' parameter for the ACCOUNT "
+            "report-type parameter"
+        )
+
+    params['format'] = 'EMAIL'
+
+    if params.get('reportZoneType') in {'AWS_UNREACHABLE', 'AZURE_NATIVE'}:
+        params['nativeCurrency'] = True
 
     return request
