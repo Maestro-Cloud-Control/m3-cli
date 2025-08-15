@@ -74,7 +74,7 @@ def m3(
         full_help: bool = False,
         command: str | None = None,
         parameters: dict | None = None,
-        view_type: str = None,
+        view_type: str | None = None,
         detailed: bool = False,
         raw_response: bool = False,
 ):
@@ -175,7 +175,10 @@ def execute_command(
             ),
             method_type=INTEGRATION_RESPONSE_ATTRIBUTE_NAME
         )
-        applied_responses.append(response)
+        if isinstance(response, list):
+            applied_responses.extend(response)
+        else:
+            applied_responses.append(response)
     return response_service.prettify_response(applied_responses)
 
 

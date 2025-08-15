@@ -41,7 +41,10 @@ for param_type, command_name in COMMANDS_MAP.items():
         cmd_def["output_configuration"].get("response_table_headers") or []
 
 
-def create_custom_request(request: BaseRequest) -> BaseRequest:
+def create_custom_request(
+        request: BaseRequest,
+        view_type: str | None = None,
+) -> BaseRequest:
     report_type = request.parameters.pop("types", "total")
     request_kwargs = REQUEST_MAP.get(report_type)
     if not request_kwargs:
@@ -50,14 +53,16 @@ def create_custom_request(request: BaseRequest) -> BaseRequest:
             f"Valid options: {tuple(COMMANDS_MAP.keys())}"
         )
     new_request = BaseRequest(**request_kwargs, parameters=request.parameters)
-    new_request = ACTIONS_MAP[report_type].create_custom_request(new_request)
+    new_request = ACTIONS_MAP[report_type].create_custom_request(
+        new_request, view_type,
+    )
     return new_request
 
 
 def create_custom_response(
         request: BaseRequest,
         response,
-        view_type: str,
+        view_type: str | None = None,
 ):
     report_type = TYPES_MAP[request.command]
     new_response = ACTIONS_MAP[report_type].create_custom_response(

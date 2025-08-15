@@ -16,20 +16,51 @@ def compute_month_epoch_ms(year, month):
     ) * 1000
 
 
-def create_custom_request(request: BaseRequest) -> BaseRequest:
+def create_custom_request(
+        request: BaseRequest,
+        view_type: str | None = None,
+) -> BaseRequest:
     params = request.parameters
     if not params.get('criteria'):
         params['criteria'] = 'ALL'
+    if not params.get('compressEachQuota'):
+        params['compressEachQuota'] = False
     params['tenantNames'] = [params.pop('tenantGroup')]
     if 'region' in params:
         params['regionName'] = params.pop('region')
+    if params.get('URL'):
+        raise AssertionError(
+            'The command report obtains unexpected params: -U;'
+        )
+    if params.get('year'):
+        year =int(params['year'])
+        if not isinstance(year, int):
+            raise AssertionError("Year must be an integer")
+        current_year = datetime.datetime.now().year
+        if not (2020 <= year <= current_year):
+            raise AssertionError(
+                f"Year must be between 2020 and {current_year}")
+
+        if params.get('month'):
+            month = int(params['month'])
+            if not isinstance(month, int):
+                raise AssertionError("Month must be an integer")
+            if not (1 <= month <= 12):
+                raise AssertionError("Month must be between 1 and 12")
+
+            current_month = datetime.datetime.now().month
+            if year == current_year and month > current_month:
+                raise AssertionError(
+                    f"Month {month}/{year} is in the future. Current month is "
+                    f"{current_month}/{current_year}"
+                )
     return request
 
 
 def create_custom_response(
         request: BaseRequest,
         response,
-        view_type: str,
+        view_type: str | None = None,
 ):
     try:
         response = json.loads(response)
@@ -38,9 +69,8 @@ def create_custom_response(
     if isinstance(response, dict) and response.get('message') \
             and response.get('s3ReportLink'):
         return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
-
-    if view_type == 'table':
-        params = getattr(request, 'parameters', None)
+    params = getattr(request, 'parameters', None)
+    if view_type in ('json', 'table', 'full'):
         year = \
             int(params.get('year')) if params and params.get('year') else None
         month = \
@@ -50,7 +80,6 @@ def create_custom_response(
 
         table_rows = []
         for item in response:
-            # Find the usage for the requested month
             month_usages = item.get('monthUsages', [])
             month_usage = None
             if month_epoch_ms:
@@ -59,7 +88,6 @@ def create_custom_response(
                         month_usage = usage
                         break
 
-            # If nothing found, set fields to 'No data to show'
             if month_usage:
                 percent_used = month_usage.get('percentUsed')
                 utilization = ""
@@ -88,7 +116,7 @@ def create_custom_response(
                 "type": item.get("type", ""),
                 "monthlyBudget": monthly_budget,
                 "currentChargeback": current_chargeback,
-                "utilization": utilization,
+                "utilization %": utilization,
                 "status": "enabled" if item.get("active") else "disabled",
                 "tag": item.get("tag", ""),
                 "affectedRegions": item.get("regionName", "")
@@ -96,6 +124,31 @@ def create_custom_response(
             if action_plan:
                 row["actionPlan"] = action_plan
             table_rows.append(row)
-        return sorted(table_rows, key=lambda row: str(row.get('type', '')).upper())
+
+            if params and params.get('tag'):
+                desired_tag = params['tag']
+                table_rows = [
+                    row for row in table_rows if row.get('tag') == desired_tag
+                ]
+
+        def get_sort_key(row):
+            utilization = row.get('utilization %', '')
+            # Handle numerical values (e.g., "5.6%")
+            if utilization and utilization not in {'', 'less than 1%'}:
+                numerical_value = float(utilization.replace('%', '').strip())
+                return -numerical_value  # Negative for descending order
+            # Handle "less than 1%" special case
+            if utilization == 'less than 1%':
+                return 0
+            # Push empty/missing values to the end
+            return float('inf')
+
+        if view_type == 'full':
+            return [{"budget": item} for item in response]
+
+        return sorted(
+            table_rows,
+            key=get_sort_key
+        )
 
     return response

@@ -68,7 +68,7 @@ def encoding_image(icon):
     return encoded_str
 
 
-def processing_report_format(request):
+def processing_report_format(request, report_format: str | None = None):
     params = request.parameters
     if params.get('reportFormat') and params.get('URL'):
         raise AssertionError(
@@ -82,6 +82,8 @@ def processing_report_format(request):
         return request
 
     if params.get("reportFormat"):
+        params.update({'reportFormat': 'EMAIL'})
+    elif report_format == 'EMAIL':
         params.update({'reportFormat': 'EMAIL'})
     else:
         params.update({'reportFormat': 'JSON'})

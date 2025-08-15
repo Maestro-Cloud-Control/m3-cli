@@ -62,7 +62,11 @@ def create_custom_request(request):
     return request
 
 
-def create_custom_response(request, response):
+def create_custom_response(
+        request,
+        response,
+        view_type: str | None = None,
+):
     try:
         response = json.loads(response)
     except json.decoder.JSONDecodeError:
@@ -81,6 +85,10 @@ def create_custom_response(request, response):
                 instance['instanceTerminationDate'] = \
                     timestamp_to_iso(instance.get('instanceTerminationDate'))
             if instance.get('memoryMb'):
-                instance['memoryGb'] = round(instance.pop('memoryMb') / 1024,
-                                             2)
+                instance['memoryGb'] = round(instance.pop('memoryMb') / 1024, 2)
+
+    if view_type == 'full':
+        instances = response.get('instances', [])
+        response = [{"instance": instance} for instance in instances]
+
     return response
