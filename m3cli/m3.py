@@ -115,8 +115,11 @@ def execute_command(
         raw_response: bool = False,
 ):
     # Forming an incoming request from cli
-    requests = BaseRequest(command=command,
-                           parameters=parameters, method=POST)
+    requests = BaseRequest(
+        command=command,
+        parameters=parameters,
+        method=POST,
+    )
     cmd_def, errors = CMD_SERVICE.validate_request(request=requests)
     if errors:
         _pretty_errors = '\n'.join(errors)
@@ -126,11 +129,14 @@ def execute_command(
     requests = CMD_SERVICE.resolve_parameters_case(requests)
     requests, is_batch = CMD_SERVICE.resolve_parameters_batch_processing(
         cmd_def=cmd_def,
-        request=requests)
+        request=requests,
+    )
 
-    plugin_service = PluginService(m3cli_path=get_root_dir_path(),
-                                   cmd_def=cmd_def,
-                                   command_name=cmd_def.get('name'))
+    plugin_service = PluginService(
+        m3cli_path=get_root_dir_path(),
+        cmd_def=cmd_def,
+        command_name=cmd_def.get('name'),
+    )
 
     requests_list = []
     for req in requests:

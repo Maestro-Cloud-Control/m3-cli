@@ -138,12 +138,15 @@ def create_custom_response(
 
             thresholds = item.get('thresholds', [])
             actions = item.get('actions', [])
-            threshold_strs = [
-                f"{int(th['value'])} %" for th in thresholds if 'value' in th
-            ]
+            threshold_values = sorted(
+                int(th['value']) for th in thresholds if 'value' in th
+            )
             action_plan = None
-            if thresholds:
-                action_plan = f"Notify on ({', '.join(threshold_strs)})"
+            if threshold_values:
+                action_plan = (
+                    f"Notify on "
+                    f"({', '.join(f'{v} %' for v in threshold_values)})"
+                )
                 show_action_plan = [a for a in actions if a != 'NOTHING']
                 if show_action_plan:
                     action_plan += ", " + ", ".join(show_action_plan)

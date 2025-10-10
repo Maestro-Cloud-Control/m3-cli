@@ -14,8 +14,10 @@ def create_custom_request(request):
 
     if not params.get('name') and not params.get('cloud') and \
             not params.get('tenantName') and not params.get('region'):
-        raise AssertionError('Please specified one of the following '
-                             'parameters: region, tenant, cloud or key name')
+        raise AssertionError(
+            'Please specified one of the following parameters: '
+            'region, tenant, cloud or key name'
+        )
 
     return request
 
@@ -33,8 +35,8 @@ def create_custom_response(request, response):
     except json.decoder.JSONDecodeError:
         return response
 
-    emails = set([each['email'] for each in response])
-    if len(emails) <= 1:
-        for each in response:
-            each['email'] = None
+    for each in response:
+        # Remove privatePart field
+        each.pop('privatePart', None)
+
     return response

@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.150.2]
+* Update the `create-instance-quota`, `delete-instance-quota`, and `delete-storage-quota` commands
+to display messages from the backend by removing `"none": true` from the `output_configuration` metadata
+* Add `update-recommendation-settings` command to update `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Add `describe-recommendation-settings` command to describe `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Add `remove-recommendation-settings` command to describe `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Update `upload-script` command to remove fields with `None` values from `--full` output
+* Update `describe-user-permissions` command to display additional message as `Note` in table view (below table), full view (at bottom), and JSON view (as last array element)
+
+## [4.150.1]
+* Add `create-recommendation-settings` command to configure `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Update the `create-storage-quota` command to display messages from the backend by removing `"none": true` from the `output_configuration` metadata
+
+## [4.150.0]
+* Update `describe-keys` command by hiding `privatePart` and unhiding `email`
+* Add `native-shapes` flag for `describe-shapes` command
+* Update the `describe-keys` command to make the `--tenant` parameter required
+* Update the `describe-instances` command to convert `creationDateTimestamp` from a Unix timestamp to a human-readable datetime format
+* Update the `describe-insights` command to reflect BE changes
+* Update the `budgets-report` command to sort the action plan in ascending order
+* Add `--schedule-name` parameter to the `describe-schedules` command and include a `Cron` column in the table view
+* Add `--group-name` parameter to the `describe-user-permissions` command
+
+## [4.146.1] - 2025-08-20
+* Remove deprecated files:
+  * `hourly-report-softline.py`
+  * `resource-report-softline.py`
+  * `subtotal-report-softline.py`
+  * `total-report-softline.py`
+  * `commands_def_backup.py`
+
 ## [4.146.0] - 2025-08-12
 * Update `report` command `budgets` value for `type` parameter:
   * Add validation for unsupported parameters: 

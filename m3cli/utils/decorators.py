@@ -239,19 +239,19 @@ def cli_response(stdout=click.echo, params_to_be_secured=None, no_output=None):
                 if no_output:
                     return function_result
                 if function_result:
-                    response_word = 'Response:\n' if not kwargs.get(
-                        'view_type') == JSON_VIEW else ''
+                    response_word = 'Response:\n' \
+                        if kwargs.get('view_type') != JSON_VIEW else ''
                     response = f'{TextColors.OKGREEN}' \
                                f'{response_word}{function_result}' \
                                f'{TextColors.ENDC}'
                     stdout(response)
             except Exception as e:
                 action = f'The command \"{kwargs.get(COMMAND_KEY)}\" failed'
-                response = __prettify_error(action=action,
-                                            error=e)
+                response = __prettify_error(action=action, error=e)
                 stdout(response, err=True)
-                _FUNC_LOG.exception(COMMAND_INPUT_PATTERN.format(
-                    func.__name__, e))
+                _FUNC_LOG.exception(
+                    COMMAND_INPUT_PATTERN.format(func.__name__, e)
+                )
 
         return wrapper
 

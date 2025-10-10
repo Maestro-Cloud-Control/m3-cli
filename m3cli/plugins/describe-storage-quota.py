@@ -16,7 +16,4 @@ def create_custom_response(request, response):
     except json.decoder.JSONDecodeError:
         return response
 
-    max_size = response.get('maxSize')
-    if max_size:
-        response['maxSizeGb'] = max_size
     return response

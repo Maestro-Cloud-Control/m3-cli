@@ -17,27 +17,34 @@ def create_custom_request(request):
     resource_group = params.get('resourceGroup')
     if cloud == 'GOOGLE' and not availability_zone:
         raise AssertionError(
-            "Parameter 'availability-zone' is required for GOOGLE cloud.")
+            "Parameter 'availability-zone' is required for GOOGLE cloud"
+        )
     if cloud == 'AZURE' and not resource_group:
         raise AssertionError(
-            "Parameter 'resource-group' is required for AZURE cloud.")
+            "Parameter 'resource-group' is required for AZURE cloud"
+        )
     return request
 
 
 def create_custom_response(request, response):
-    try:
-        response = json.loads(response)
-    except json.decoder.JSONDecodeError:
-        return response
-    response = response.get('sections', {})
-    if not response:
-        return {}
+    # Try to parse JSON if it's a string
+    if isinstance(response, str):
+        try:
+            response = json.loads(response)
+        except json.decoder.JSONDecodeError:
+            return []
 
-    result = []
-    for section_value in response.values():
-        result.append({
-            "Category": section_value.get('title'),
-            "Risk status": section_value.get('riskStatus'),
-            "Risk priority": section_value.get('riskPriority')
-        })
-    return result
+    # Return empty list if not a list
+    if not isinstance(response, list):
+        return []
+
+    # Transform the response
+    return [
+        {
+            "Category": item.get('category', ''),
+            "Rist index": item.get('impact', 'UNKNOWN'),
+            "Solution": item.get('solution', 'UNKNOWN'),
+            "Source": item.get('source', 'UNKNOWN'),
+        }
+        for item in response
+    ]

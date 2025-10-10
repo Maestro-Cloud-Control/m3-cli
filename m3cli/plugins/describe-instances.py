@@ -84,6 +84,9 @@ def create_custom_response(
             if instance.get('instanceTerminationDate'):
                 instance['instanceTerminationDate'] = \
                     timestamp_to_iso(instance.get('instanceTerminationDate'))
+            if instance.get('creationDateTimestamp'):
+                instance['creationDateTimestamp'] = \
+                    timestamp_to_iso(instance.get('creationDateTimestamp'))
             if instance.get('memoryMb'):
                 instance['memoryGb'] = round(instance.pop('memoryMb') / 1024, 2)
 
