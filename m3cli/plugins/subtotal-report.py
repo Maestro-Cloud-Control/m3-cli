@@ -8,12 +8,13 @@ import json
 from m3cli.plugins.utils.plugin_utilities import processing_report_format
 from m3cli.utils.utilities import timestamp_to_iso
 from m3cli.plugins import parse_and_set_date_range
+from m3cli.services.request_service import BaseRequest
 
 
 def create_custom_request(
         request,
         view_type: str | None = None,
-):
+) -> BaseRequest:
     """ Transform 'subtotal-report' command parameters from the Human
     readable format to appropriate for M3 SDK API request.
 

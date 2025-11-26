@@ -877,9 +877,6 @@ Examples:
 
     2. Rightsizer (R) recommendations:
         m3 create-recommendation-settings -R --tenant <tenant_name> --cloud <cloud> --disabled-until <dd.mm.yyyy> --region <region> --resource-type <resource_type> --resource-id <resource_id> --category <category>
-
-    3. Combined SRE and Rightsizer settings:
-        m3 create-recommendation-settings -SRE --type <type1,type2,type3> -R --tenant <tenant_name> --cloud <cloud> --disabled-until <dd.mm.yyyy> --tag <key1:val1,key2:val2> --native-resource-id <ARN> --region <region> --resource-type <resource_type> --resource-id <resource_id> --category <category>
 """
 
 update_recommendation_settings = """
@@ -903,9 +900,6 @@ Examples:
 
     2. Rightsizer (R) recommendations:
         m3 update-recommendation-settings -R --tenant <tenant_name> --cloud <cloud> --disabled-until <dd.mm.yyyy> --region <region> --resource-type <resource_type> --resource-id <resource_id> --category <category>
-
-    3. Combined SRE and Rightsizer settings:
-        m3 update-recommendation-settings -SRE --type-to-id <type1>:<id1>,<type2>:<id2> -R --tenant <tenant_name> --cloud <cloud> --disabled-until <dd.mm.yyyy> --tag <key1:val1,key2:val2> --arn <arn> --region <region> --resource-type <resource_type> --resource-id <resource_id> --category <category>
 """
 
 describe_recommendation_settings = """
@@ -950,13 +944,5 @@ Examples:
         m3 remove-recommendation-settings -R --tenant <tenant_name> --cloud <cloud> --region <region> --resource-type <resource_type> --resource-id <resource_id> --category <category1,category2,category3,category4,category5>
 
     2. Remove Syndicate Rule Engine recommendations:
-
-        2.1 Remove TAG_FILTER, RESOURCE or ARN type:
-            m3 remove-recommendation-settings -SRE --type-to-id <type>:<id> --tenant <tenant_name> --cloud <cloud>
-
-        2.2 Remove multiple types at once:
-            m3 remove-recommendation-settings -SRE --type-to-id <type1>:<id1>,<type2>:<id2>,<type3>:<id3> --tenant <tenant_name> --cloud <cloud>
-
-    3. Remove both Rightsizer and Syndicate Rule Engine settings:
-        m3 remove-recommendation-settings -R -SRE --tenant <tenant_name> --cloud <cloud> --region <region> --resource-type <resource_type> --resource-id <resource_id> --category <category> --type-to-id <type1>:<id1>,<type2>:<id2>
+        m3 remove-recommendation-settings -SRE --recommendation-id ID1, ID2, ID3, ... --tenant <tenant_name> --cloud <cloud>
 """

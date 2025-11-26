@@ -33,11 +33,11 @@ def generate_docx(
 
     try:
         add_page_to_docx(
-            result_docx_path,
-            '>Maestro CLI\nUser Guide',
-            'M3UG-01',
-            current_month_year,
-            'Version 1',
+            docx_path=result_docx_path,
+            title_text='>Maestro CLI\nUser Guide',
+            secondary_title_text='M3UG-01',
+            date_text=current_month_year,
+            version_text='Version 1',
         )
     except Exception as e:
         _LOG.error(f"Failed to add title page to DOCX: {e}")

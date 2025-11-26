@@ -4,6 +4,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.154.10] - 2025-11-24
+* Fix full view output formatting for all commands:
+  * Prevent line wrapping in long string values (URLs, content) by setting YAML dump width to infinite
+  * Fix key-value separator replacement to only replace YAML separators, not colons within actual content values
+  * Consolidate YAML formatting logic to avoid code duplication
+* Add support for wrapper format with message notes
+* Add type hints for better code maintainability
+
+## [4.154.9] - 2025-11-21
+* Update `describe-script` command:
+  * Add client-side validation to ensure `--presigned-url` flag is only used with `--full` view type and `--script` parameter
+  * Improve help message when content is accessed via presigned URL
+  * Update exception handling to use ValueError instead of AssertionError
+
+## [4.154.8] - 2025-11-20
+* Update `resource-type` parameter in `create/describe/update/remove-recommendation-settings` commands to automatically convert values to uppercase
+
+## [4.154.7] - 2025-11-19
+* Add client-side validation for CLI parameter names and values to prevent non-English character input:
+  * Parameter names (keys) restricted to English letters (A-Z, a-z) and hyphen (-)
+  * Parameter values restricted to standard English keyboard characters (printable ASCII)
+  * Early validation provides clear error messages indicating character position and suggesting English keyboard layout
+  * Prevents confusing backend errors from Cyrillic or other non-ASCII characters
+
+## [4.154.6] - 2025-11-19
+* Change `describe-schedules` command to use the default value `scheduleGroup: "ALL"` instead of `filterByUserAccess: true`
+
+## [4.154.5] - 2025-11-14
+* Update `describe-schedules` command:
+  * Add client-side validation to ensure `--schedule-name` parameter is only used when `--region` parameter is specified
+  * Update help text for `--schedule-name` parameter to indicate it requires `--region` parameter
+
+## [4.154.4]
+* Add client-side validation for `--disabled-until` parameter in `create-recommendation-settings` and `update-recommendation-settings` commands to ensure the date is in the future and within 30 days from today
+* Add shared `validate_disabled_until_date()` validation function to provide early feedback before backend request
+
+## [4.154.3]
+* Update `describe-script` command to send `presignedUrl` instead of `withPresignedUrl`
+* Update `describe-schedules` command to send default value `filterByUserAccess = True`
+* Adjust the `create/update/remove-recommendation-settings` commands according to the QA and Java BE recommendations
+
+## [4.154.2]
+* Update the `create/update/remove-recommendation-settings` commands:
+  * Add validation that `-R` and `-SRE` flags cannot be used simultaneously
+* Update the `remove-recommendation-settings` command's parameter `--type-to-id` to `--recommendation-id` (changed from map to list format)
+
+## [4.154.1]
+* Add `Instance Name` to `m3 din` command `--table` view output
+
+## [4.154.0]
+* Update `describe-script` command:
+  * Add `--presigned-url` flag
+  * Add validation: `--presigned-url` flag now requires `--full` view type
+  * Improve empty response handling
+  * Remove `null` values from output
+
 ## [4.150.2]
 * Update the `create-instance-quota`, `delete-instance-quota`, and `delete-storage-quota` commands
 to display messages from the backend by removing `"none": true` from the `output_configuration` metadata

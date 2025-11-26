@@ -19,7 +19,9 @@ from m3cli.services.validation_service import ValidationService
 from m3cli.utils import HEALTH_CHECK_CMD_NAME
 from m3cli.utils.decorators import (cli_response, dynamic_dispatcher)
 from m3cli.utils.logger import exception_handler_formatter
-from m3cli.utils.utilities import perform_version_check
+from m3cli.utils.utilities import (
+    perform_version_check, validate_parameter_keys, validate_parameter_values,
+)
 
 sys.excepthook = exception_handler_formatter
 
@@ -28,8 +30,10 @@ CONTEXT_SETTINGS = dict(allow_extra_args=True, ignore_unknown_options=True)
 
 @cli_response(no_output=True)
 def init_commands_service():
-    cmd_service = CommandsService(m3cli_path=get_root_dir_path(),
-                                  validation_service=ValidationService())
+    cmd_service = CommandsService(
+        m3cli_path=get_root_dir_path(),
+        validation_service=ValidationService(),
+    )
     return cmd_service
 
 
@@ -78,6 +82,10 @@ def m3(
         detailed: bool = False,
         raw_response: bool = False,
 ):
+    # Validate parameter keys and vales for non-English characters
+    validate_parameter_keys(parameters)
+    validate_parameter_values(parameters)
+
     health_check_response = perform_version_check(
         invoked_command=command,
         is_help_invoked=help or full_help,
@@ -165,7 +173,7 @@ def execute_command(
     response_service = ResponseProcessorService(
         cmd_def=cmd_def,
         view_type=view_type,
-        detailed=detailed
+        detailed=detailed,
     )
     fail_safe = is_batch
     applied_responses = []
@@ -194,7 +202,8 @@ def check_required_parameters(request):
         incoming_command_name = request.command
         raise AssertionError(
             f'The command meta for \'{incoming_command_name}\' does not have '
-            f'the required \'api_action\' attribute.')
+            f'the required \'api_action\' attribute.'
+        )
 
 
 def build_plugin_data(

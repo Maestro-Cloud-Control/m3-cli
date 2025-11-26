@@ -37,6 +37,36 @@ TIP_MESSAGE_FOR_ACCESS = (
     '  m3 access --access_key <ACCESS_KEY> --secret_key <SECRET_KEY> '
     '--api_address <API_ADDRESS>'
 )
+# ============================================================================
+# ALLOWED CHARACTERS CONFIGURATION
+# ============================================================================
+
+# Strict validation for CLI parameter names (keys)
+ALLOWED_PARAMETER_CHARS = set(
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'  # A-Z
+    'abcdefghijklmnopqrstuvwxyz'  # a-z
+    '-'  # hyphen
+)
+
+# Permissive validation for CLI parameter values
+# Allows all printable ASCII characters (space through tilde)
+ALLOWED_VALUE_CHAR_MIN = 0x0020  # Space (32)
+ALLOWED_VALUE_CHAR_MAX = 0x007E  # Tilde (126)
+
+# What's included in printable ASCII (0x20-0x7E):
+#   - Space
+#   - A-Z, a-z (letters)
+#   - 0-9 (digits)
+#   - Punctuation: ! " # $ % & ' ( ) * + , - . /
+#   - Symbols: : ; < = > ? @
+#   - Brackets: [ \ ] ^ _ ` { | } ~
+#
+# What's NOT allowed:
+#   - Control characters (tab, newline, etc.)
+#   - Non-ASCII: Cyrillic (й, ф, с, А), Unicode symbols (†, ©, €), emojis
+
+# For explicit reference, here's the full set (for documentation only):
+# ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
 
 
 def inherit_dict(root_dict, child_dict):
@@ -445,3 +475,111 @@ def format_floats_in_data(data):
         return str(data)
     else:
         return data
+
+
+def is_valid_parameter_char(
+        char: str,
+) -> bool:
+    """Check if character is allowed in CLI parameter names."""
+    return char in ALLOWED_PARAMETER_CHARS
+
+
+def is_valid_value_char(
+        char: str,
+) -> bool:
+    """
+    Check if character is allowed in CLI parameter values.
+    Allows all printable ASCII characters (space to tilde).
+    This is the fastest approach for checking a contiguous range.
+    """
+    code = ord(char)
+    return ALLOWED_VALUE_CHAR_MIN <= code <= ALLOWED_VALUE_CHAR_MAX
+
+
+def validate_parameter_keys(
+        parameters: dict | None = None,
+) -> None:
+    """
+    Validate all parameter keys contain only allowed English characters.
+    Raises AssertionError if invalid characters found.
+
+    Note: By the time this runs, @dynamic_dispatcher has already processed args:
+    - Short params keep their dash: {'-c': 'value'}
+    - Long params lose their dashes: {'cloud': 'value'} (not '--cloud')
+    """
+    if not parameters:
+        return
+
+    all_errors = []
+
+    for key in parameters.keys():
+        if isinstance(key, str):
+            # Determine the original parameter format
+            if key.startswith('-'):
+                # Short param: key is already '-c' or '-du'
+                context = f"parameter '{key}'"
+                position_offset = 0
+            else:
+                # Long param: dispatcher stripped '--', key is 'cloud' or 'сloud'
+                context = f"parameter '--{key}'"
+                position_offset = 2  # Account for '--' prefix in error message
+
+            # Validate characters and collect errors
+            for i, char in enumerate(key):
+                if not is_valid_parameter_char(char):
+                    error_msg = (
+                        f"Invalid character '{char}' at position "
+                        f"{i + 1 + position_offset} in {context}. Only English "
+                        f"letters (A-Z, a-z) and hyphen (-) are allowed"
+                    )
+                    all_errors.append(error_msg)
+
+    if all_errors:
+        error_message = (
+            "CLI parameters contain invalid characters:\n" +
+            "\n".join(f"  • {error}" for error in all_errors) +
+            "\n\nPlease ensure you're using English keyboard layout"
+        )
+        raise AssertionError(error_message)
+
+
+def validate_parameter_values(
+        parameters: dict | None = None,
+) -> None:
+    """
+    Validate all parameter values contain only printable ASCII characters.
+    Raises AssertionError if invalid characters found.
+    """
+    if not parameters:
+        return
+
+    all_errors = []
+
+    for key, value in parameters.items():
+        if not isinstance(value, str) or not value:
+            continue
+
+        # Get parameter name for error context
+        if isinstance(key, str):
+            param_name = key if key.startswith('-') else f"--{key}"
+        else:
+            param_name = str(key)
+
+        # Validate each character (stop at first invalid to avoid spam)
+        for i, char in enumerate(value):
+            if not is_valid_value_char(char):
+                error_msg = (
+                    f"Invalid character '{char}' at position {i + 1} "
+                    f"in value for {param_name}: '{value}'. "
+                    "Please use only English letters (A-Z, a-z), numbers (0-9),"
+                    " and symbols."
+                )
+                all_errors.append(error_msg)
+                break  # Only report first invalid char per value
+
+    if all_errors:
+        raise AssertionError(
+            "CLI parameter values contain invalid characters:\n" +
+            "\n".join(f"  • {error}" for error in all_errors) +
+            "\n\nPlease ensure you're using English keyboard layout"
+        )

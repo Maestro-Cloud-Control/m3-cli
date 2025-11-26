@@ -5,12 +5,14 @@ from shutil import get_terminal_size
 
 import click
 
-from m3cli.services.help_client import EnableAutocompleteCommandHandler, \
-    DisableAutocompleteCommandHandler
+from m3cli.services.help_client import (
+    EnableAutocompleteCommandHandler, DisableAutocompleteCommandHandler,
+)
 from m3cli.utils.logger import get_logger
 from m3cli.utils.logger import write_logs
-from m3cli.utils.utilities import (get_user_access, check_update,
-                                   get_non_interactive_access)
+from m3cli.utils.utilities import (
+    get_user_access, check_update, get_non_interactive_access,
+)
 
 HELP_COMMAND = 'full_help'
 SHORT_HELP_COMMAND = 'help'
@@ -98,7 +100,8 @@ def configuration_executor(config_command, config_command_help, config_params):
     config_command_class = CONFIG_COMMAND_HANDLER_MAPPING[config_command]
     initiate_appropriate_command = config_command_class(
         config_command_help=config_command_help,
-        config_params=config_params)
+        config_params=config_params,
+    )
     return initiate_appropriate_command.process_passed_command()
 
 
@@ -120,12 +123,15 @@ def dynamic_dispatcher(func):
                 response = configuration_executor(
                     config_command=ctx.args[0],
                     config_command_help=ctx.params['help'],
-                    config_params=ctx.args)
+                    config_params=ctx.args,
+                )
                 return response
             except AssertionError as e:
                 action = f'The command \"{ctx.args[0]}\" failed'
-                response = __prettify_error(action=action,
-                                            error=e)
+                response = __prettify_error(
+                    action=action,
+                    error=e,
+                )
                 click.echo(response, err=True)
                 raise e
         if len(ctx.args) > 0 and ctx.args[0] == 'access':

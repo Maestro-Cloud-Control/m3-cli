@@ -362,6 +362,7 @@
         "nullable": true,
         "response_table_headers": [
           "instanceId",
+          "instanceName",
           "state",
           "privateIpAddress",
           "keyName",
@@ -1832,6 +1833,7 @@
       "help": "Describes the schedules set to instances in your tenant",
       "help_file": true,
       "alias": "dsch",
+      "integration_request": true,
       "integration_response": true,
       "groups": [
         "schedule-management",
@@ -1872,7 +1874,7 @@
         "schedule-name": {
           "alias": "schname",
           "api_param_name": "scheduleName",
-          "help": "The name of the schedule",
+          "help": "The name of the schedule. Can be used only with --region parameter",
           "required": false,
           "validation": {
             "type": "string"
@@ -3139,6 +3141,7 @@
       "help": "Describes the script files uploaded to Maestro and available for the specific tenant",
       "help_file": true,
       "alias": "dscript",
+      "integration_request": true,
       "integration_response": true,
       "groups": [
         "init-script-management"
@@ -3149,6 +3152,15 @@
         },
         "cloud": {
           "parent": "cloud"
+        },
+        "presigned-url": {
+          "alias": "purl",
+          "api_param_name": "presignedUrl",
+          "help": "A flag. Allows user to download script by presigned URL. Works only with `--full` flag",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         },
         "script": {
           "alias": "scname",
@@ -6230,7 +6242,7 @@
         "rightsizer": {
           "alias": "R",
           "api_param_name": "R",
-          "help": "Enable Rightsizer recommendations",
+          "help": "Enable Rightsizer recommendations. Cannot be used together with '-SRE'",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6239,7 +6251,7 @@
         "syndicate-rule-engine": {
           "alias": "SRE",
           "api_param_name": "SRE",
-          "help": "Enable Syndicate Rule Engine recommendations",
+          "help": "Enable Syndicate Rule Engine recommendations. Cannot be used together with '-R'",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6279,7 +6291,8 @@
               "INSTANCE"
             ],
             "type": "string"
-          }
+          },
+          "case": "upper"
         },
         "resource-id": {
           "alias": "rid",
@@ -6376,7 +6389,7 @@
         "rightsizer": {
           "alias": "R",
           "api_param_name": "R",
-          "help": "Update Rightsizer recommendations",
+          "help": "Update Rightsizer recommendations. Cannot be used together with '-SRE'",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6385,27 +6398,33 @@
         "syndicate-rule-engine": {
           "alias": "SRE",
           "api_param_name": "SRE",
-          "help": "Update Syndicate Rule Engine recommendations",
+          "help": "Update Syndicate Rule Engine recommendations. Cannot be used together with '-R'",
           "required": false,
           "validation": {
             "type": "bool"
           }
         },
-        "type-to-id": {
-          "alias": "tid",
-          "api_param_name": "typeToId",
-          "help": "Mapping of recommendation filter types to their IDs (required when using -SRE flag). Pass several values in the following format: TYPE1:ID1,TYPE2:ID2. Types: TAG_FILTER, RESOURCE, NRID",
+        "recommendation-id": {
+          "alias": "recid",
+          "api_param_name": "recId",
+          "help": "Recommendation ID (required when using -SRE flag)",
           "required": false,
           "validation": {
-            "type": "object",
-            "properties": {
-              "key": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
+            "type": "string"
+          }
+        },
+        "type": {
+          "alias": "t",
+          "api_param_name": "type",
+          "help": "Recommendation filter type (required when using -SRE flag). Allowed values: TAG_FILTER, RESOURCE, NRID",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "TAG_FILTER",
+              "RESOURCE",
+              "NRID"
+            ],
+            "type": "string"
           }
         },
         "region": {
@@ -6428,7 +6447,8 @@
               "INSTANCE"
             ],
             "type": "string"
-          }
+          },
+          "case": "upper"
         },
         "resource-id": {
           "alias": "rid",
@@ -6442,7 +6462,7 @@
         "native-resource-id": {
           "alias": "nrid",
           "api_param_name": "nativeResourceId",
-          "help": "Native resource identifier (ARN for AWS, Resource ID for Azure, or Project ID for GCP. Required for -SRE flag with --type-to-id NRID:<id>)",
+          "help": "Native resource identifier (ARN for AWS, Resource ID for Azure, or Project ID for GCP. Required for -SRE flag with --type NRID)",
           "required": false,
           "validation": {
             "type": "string"
@@ -6551,7 +6571,8 @@
               "INSTANCE"
             ],
             "type": "string"
-          }
+          },
+          "case": "upper"
         },
         "resource-id": {
           "alias": "rid",
@@ -6638,7 +6659,7 @@
         "rightsizer": {
           "alias": "R",
           "api_param_name": "R",
-          "help": "Remove Rightsizer recommendations",
+          "help": "Remove Rightsizer recommendations. Cannot be used together with '-SRE'",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6647,27 +6668,19 @@
         "syndicate-rule-engine": {
           "alias": "SRE",
           "api_param_name": "SRE",
-          "help": "Remove Syndicate Rule Engine recommendations",
+          "help": "Remove Syndicate Rule Engine recommendations. Cannot be used together with '-R'",
           "required": false,
           "validation": {
             "type": "bool"
           }
         },
-        "type-to-id": {
-          "alias": "tid",
-          "api_param_name": "typeToId",
-          "help": "Mapping of recommendation filter types to their IDs (required when using -SRE flag). Pass several values in the following format: TYPE1:ID1,TYPE2:ID2. Types: TAG_FILTER, RESOURCE, NRID",
+        "recommendation-id": {
+          "alias": "recid",
+          "api_param_name": "recId",
+          "help": "Recommendation IDs. Pass several values in the following format: ID1, ID2, ID3, ...",
           "required": false,
           "validation": {
-            "type": "object",
-            "properties": {
-              "key": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
+            "type": "list"
           }
         },
         "region": {
@@ -6690,7 +6703,8 @@
               "INSTANCE"
             ],
             "type": "string"
-          }
+          },
+          "case": "upper"
         },
         "resource-id": {
           "alias": "rid",

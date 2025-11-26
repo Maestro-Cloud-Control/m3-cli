@@ -436,12 +436,12 @@ class ResponseProcessorService:
 
     def __full_view(
             self,
-            responses,
-            detailed=None,
-            nullable=None,
+            responses: list[dict],
+            detailed: bool | None = None,
+            nullable = None,
             custom_full_view: bool = False,
             mutated_yaml: bool = False,
-    ):
+    ) -> str:
         # Handle the special wrapper format (generic for any command)
         message_note = None
         if isinstance(responses, list) and len(responses) == 1 \
@@ -455,8 +455,16 @@ class ResponseProcessorService:
 
         if custom_full_view:
             return "\n\n" + general_full_view(responses)
-        elif mutated_yaml:
-            yaml_str = yaml.dump(responses)
+
+        # Common YAML dump configuration (no line wrapping)
+        yaml_str = yaml.dump(
+            responses,
+            width=float('inf'),
+            default_flow_style=False,
+            allow_unicode=True,
+        )
+
+        if mutated_yaml:
             lines = yaml_str.split('\n')
             # Remove list markers from top-level items
             processed_lines = [
@@ -472,12 +480,20 @@ class ResponseProcessorService:
                     if final_lines and final_lines[-1] != '':
                         final_lines.append('')
                 final_lines.append(line)
-            # Format key-value pairs
-            formatted_response = '\n'.join(final_lines).replace(': ', ' = ')
-            result = f'\n\n{formatted_response}'
-        else:
-            formatted_response = yaml.dump(responses)
-            result = f'\n\n{formatted_response}'.replace(': ', ' = ')
+            yaml_str = '\n'.join(final_lines)
+
+        # Replace key: value with key = value (only the YAML separator, not in content)
+        lines = yaml_str.split('\n')
+        formatted_lines = []
+        for line in lines:
+            # Only process lines with key-value pairs (not section headers)
+            if ': ' in line and not line.strip().endswith(':'):
+                # Replace only the FIRST ': ' (the YAML separator)
+                formatted_lines.append(line.replace(': ', ' = ', 1))
+            else:
+                formatted_lines.append(line)
+
+        result = '\n\n' + '\n'.join(formatted_lines)
 
         # Add message as a note if present
         if message_note:

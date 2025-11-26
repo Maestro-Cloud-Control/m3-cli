@@ -8,9 +8,6 @@ This guide provides steps for generating technical documentation in both `.md` a
    - Begin by downloading `pandoc`, a universal document converter.
      - Visit the Pandoc official website: [https://pandoc.org/](https://pandoc.org/)
      - Follow the instructions on the website to download and install Pandoc on your computer.
-   - Next, download `LaTeX`, a document preparation system.
-     - Go to the LaTeX Project website: [https://miktex.org/](https://miktex.org/)
-     - Choose the appropriate version for your operating system and follow the installation guide provided on the site.
 
 2. **Install Dependencies:**
    - Use the `requirements.txt` file located at `m3-cli\m3cli\docs\requirements.txt` to install the necessary packages into the current virtual environment.
