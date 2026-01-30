@@ -2381,7 +2381,7 @@
           "alias": "y",
           "api_param_name": "year",
           "help": "Year. Format (yyyy). Use with 'month' for a 1-month range",
-          "required": true,
+          "required": false,
           "validation": {
             "type": "string"
           }
@@ -2390,9 +2390,27 @@
           "alias": "m",
           "api_param_name": "month",
           "help": "Month. Format (mm). Use with 'year' for a 1-month range",
-          "required": true,
+          "required": false,
           "validation": {
             "type": "string"
+          }
+        },
+        "from": {
+          "alias": "from",
+          "api_param_name": "from",
+          "help": "Start date. Format (dd.mm.yyyy). Use with 'to' for a custom range",
+          "required": false,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "api_param_name": "to",
+          "help": "End date. Format (dd.mm.yyyy). Use with 'from' for a custom range",
+          "required": false,
+          "validation": {
+            "type": "date"
           }
         },
         "region": {
@@ -2406,7 +2424,7 @@
           "case": "upper"
         },
         "tag": {
-          "alias": "",
+          "alias": "tag",
           "api_param_name": "tag",
           "help": "Collects only records with a specified tag. Use the following format: tag=value",
           "required": false,
@@ -6242,7 +6260,7 @@
         "rightsizer": {
           "alias": "R",
           "api_param_name": "R",
-          "help": "Enable Rightsizer recommendations. Cannot be used together with '-SRE'",
+          "help": "Enable Rightsizer recommendations. Cannot be used together with -SRE",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6251,7 +6269,7 @@
         "syndicate-rule-engine": {
           "alias": "SRE",
           "api_param_name": "SRE",
-          "help": "Enable Syndicate Rule Engine recommendations. Cannot be used together with '-R'",
+          "help": "Enable Syndicate Rule Engine recommendations. Cannot be used together with -R",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6389,7 +6407,7 @@
         "rightsizer": {
           "alias": "R",
           "api_param_name": "R",
-          "help": "Update Rightsizer recommendations. Cannot be used together with '-SRE'",
+          "help": "Update Rightsizer recommendations. Cannot be used together with -SRE",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6398,7 +6416,7 @@
         "syndicate-rule-engine": {
           "alias": "SRE",
           "api_param_name": "SRE",
-          "help": "Update Syndicate Rule Engine recommendations. Cannot be used together with '-R'",
+          "help": "Update Syndicate Rule Engine recommendations. Cannot be used together with -R",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6659,7 +6677,7 @@
         "rightsizer": {
           "alias": "R",
           "api_param_name": "R",
-          "help": "Remove Rightsizer recommendations. Cannot be used together with '-SRE'",
+          "help": "Remove Rightsizer recommendations. Cannot be used together with -SRE",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6668,7 +6686,7 @@
         "syndicate-rule-engine": {
           "alias": "SRE",
           "api_param_name": "SRE",
-          "help": "Remove Syndicate Rule Engine recommendations. Cannot be used together with '-R'",
+          "help": "Remove Syndicate Rule Engine recommendations. Cannot be used together with -R",
           "required": false,
           "validation": {
             "type": "bool"
@@ -6686,7 +6704,7 @@
         "region": {
           "alias": "r",
           "api_param_name": "regionName",
-          "help": "Region name (required for -R flag and -SRE flag with RESOURCE type)",
+          "help": "Region name (required for -R flag)",
           "required": false,
           "validation": {
             "type": "string"
@@ -6695,7 +6713,7 @@
         },
         "resource-type": {
           "alias": "rt",
-          "help": "Resource type (required for -R flag and -SRE flag with RESOURCE type). Allowed value: INSTANCE",
+          "help": "Resource type (required for -R flag). Allowed value: INSTANCE",
           "api_param_name": "resourceType",
           "required": false,
           "validation": {
@@ -6709,7 +6727,7 @@
         "resource-id": {
           "alias": "rid",
           "api_param_name": "resourceId",
-          "help": "Resource identifier (required for -R flag and -SRE flag with RESOURCE type)",
+          "help": "Resource identifier (required for -R flag)",
           "required": false,
           "validation": {
             "type": "string"

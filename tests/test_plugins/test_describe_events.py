@@ -30,6 +30,6 @@ class TestDescribeEvents(TestPluginsBase):
         with self.assertRaises(AssertionError) as context:
             self.execute_create_custom_request()
         self.assertEqual(str(context.exception),
-                         "The `--resource-id` parameter is"
+                         "The '--resource-id' parameter is"
                          " required in case the RELATED "
                          "search-type is specified")

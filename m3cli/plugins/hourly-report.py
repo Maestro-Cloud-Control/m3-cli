@@ -97,5 +97,5 @@ def create_custom_response(
     except json.decoder.JSONDecodeError:
         return response
     if response.get('message') and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
     return response

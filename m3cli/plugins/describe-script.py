@@ -17,16 +17,16 @@ def create_custom_request(
     if params.get('presignedUrl'):
         if view_type != 'full':
             raise ValueError(
-                'The flag `--presigned-url` can only be used with `--full` '
-                'view type. Please, add the `--full` flag or remove the '
-                '`--presigned-url` flag'
+                "The flag '--presigned-url' can only be used with '--full' "
+                "view type. Please, add the '--full' flag or remove the "
+                "'--presigned-url' flag"
             )
 
         if params.get('fileName') is None:
             raise ValueError(
-                'The flag `--presigned-url` can only be used if script is '
-                'specified. Please, specify --script (-scname) parameter or '
-                'remove the `--presigned-url` flag'
+                "The flag '--presigned-url' can only be used if script is "
+                "specified. Please, specify '--script' (-scname) parameter or "
+                "remove the '--presigned-url' flag"
             )
 
     return request
@@ -57,9 +57,9 @@ def create_custom_response(
             if not each.get('content'):
                 if presigned_url:
                     each['content'] = (
-                        'The content is available through the provided URL. To '
-                        'view the content in the CLI output, remove the '
-                        '`--presigned-url` flag'
+                        "The content is available through the provided URL. To "
+                        "view the content in the CLI output, remove the "
+                        "'--presigned-url' flag"
                     )
                 else:
                     each['content'] = (

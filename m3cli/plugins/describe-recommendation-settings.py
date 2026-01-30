@@ -23,7 +23,7 @@ def create_custom_request(
     # Validate that at least one flag is used
     if not is_r_flag and not is_sre_flag:
         raise ValueError(
-            "At least one flag must be specified: `-R` (Rightsizer) or `-SRE` "
+            "At least one flag must be specified: '-R' (Rightsizer) or '-SRE' "
             "(Syndicate Rule Engine)"
         )
 
@@ -42,7 +42,7 @@ def create_custom_request(
 
     if resource_params_set and len(resource_params_set) != 3:
         raise ValueError(
-            "If any of `--region`, `--resource-type`, or `--resource-id` is "
+            "If any of '--region', '--resource-type', or '--resource-id' is "
             "specified, all three must be provided"
         )
 

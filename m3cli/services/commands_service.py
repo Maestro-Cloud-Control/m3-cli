@@ -522,7 +522,7 @@ class CommandsService:
         # check extra params
         extra_parameters = set(incoming_params) - set(params_def)
 
-        # crunch for `m3 report --type hourly` to ignore `-R/--report`
+        # crunch for 'm3 report --type hourly' to ignore '-R/--report'
         if api_action == 'GET_HOURLY_BILLING_REPORT':
             extra_parameters.discard('--report')
             extra_parameters.discard('-R')

@@ -9,7 +9,7 @@ import glob
 def ensure_pyinstaller():
     if shutil.which("pyinstaller") is None:
         print("Error: PyInstaller is not installed or not in PATH.")
-        print("Please install it with: `pip install pyinstaller==6.13.0`\n")
+        print("Please install it with: 'pip install pyinstaller==6.13.0'\n")
         sys.exit(1)
 
 

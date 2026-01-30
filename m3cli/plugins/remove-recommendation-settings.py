@@ -22,14 +22,14 @@ def create_custom_request(
     # Validate that at least one flag is used
     if not is_r_flag and not is_sre_flag:
         raise ValueError(
-            "At least one flag must be specified: `-R` (Rightsizer) or `-SRE` "
+            "At least one flag must be specified: '-R' (Rightsizer) or '-SRE' "
             "(Syndicate Rule Engine)"
         )
 
     # Validate that only one flag is used at a time
     if is_r_flag and is_sre_flag:
         raise ValueError(
-            "Only one flag can be specified at a time: -R (Rightsizer) or -SRE "
+            "Only one flag can be specified at a time: '-R' (Rightsizer) or '-SRE' "
             "(Syndicate Rule Engine)"
         )
 
@@ -51,15 +51,15 @@ def create_custom_request(
         categories = params.get('categories', [])
 
         if not region:
-            raise ValueError("`--region` is required when using `-R` flag")
+            raise ValueError("'--region' is required when using '-R' flag")
         if not resource_type:
             raise ValueError(
-                "`--resource-type` is required when using `-R` flag"
+                "'--resource-type' is required when using '-R' flag"
             )
         if not resource_id:
-            raise ValueError("`--resource-id` is required when using `-R` flag")
+            raise ValueError("'--resource-id' is required when using '-R' flag")
         if not categories:
-            raise ValueError("`--category` is required when using `-R` flag")
+            raise ValueError("'--category' is required when using '-R' flag")
 
         # Build settings for each category
         for category in categories:
@@ -80,7 +80,7 @@ def create_custom_request(
         rec_ids = params.get('recId')
         if not rec_ids:
             raise ValueError(
-                "`recommendation-id` is required when using `-SRE` flag"
+                "'--recommendation-id' is required when using '-SRE' flag"
             )
 
         # Process each recommendation ID

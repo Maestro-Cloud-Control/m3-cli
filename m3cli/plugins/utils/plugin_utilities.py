@@ -72,8 +72,8 @@ def processing_report_format(request, report_format: str | None = None):
     params = request.parameters
     if params.get('reportFormat') and params.get('URL'):
         raise AssertionError(
-            'The flags `--url` (`-U`) and `--report` (`-R`) cannot be specified'
-            ' together'
+            "The flags '--url' ('-U') and '--report' ('-R') cannot be specified"
+            " together"
         )
 
     if params.get("URL"):

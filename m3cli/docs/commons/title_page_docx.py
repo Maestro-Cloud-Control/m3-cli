@@ -28,7 +28,7 @@ def add_page_to_docx(
 
         first_para: Paragraph = doc.paragraphs[0]
 
-        for i in range(12):
+        for _ in range(12):
             first_para.insert_paragraph_before()
 
         # Add title in the center of the page
@@ -40,7 +40,7 @@ def add_page_to_docx(
         title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
         # Add new lines
-        for i in range(14):
+        for _ in range(14):
             first_para.insert_paragraph_before()
 
         # Add secondary title at the bottom of the page

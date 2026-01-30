@@ -23,15 +23,15 @@ def create_custom_request(
     # Validate that at least one flag is used
     if not is_r_flag and not is_sre_flag:
         raise ValueError(
-            "At least one flag must be specified: `-R` (Rightsizer) or `-SRE` "
+            "At least one flag must be specified: '-R' (Rightsizer) or '-SRE' "
             "(Syndicate Rule Engine)"
         )
 
     # Validate that only one flag is used at a time
     if is_r_flag and is_sre_flag:
         raise ValueError(
-            "Only one flag can be specified at a time: `-R` (Rightsizer) or "
-            "`-SRE` (Syndicate Rule Engine)"
+            "Only one flag can be specified at a time: '-R' (Rightsizer) or "
+            "'-SRE' (Syndicate Rule Engine)"
         )
 
     # Validate flag-specific parameters are not mixed
@@ -39,31 +39,31 @@ def create_custom_request(
         # Check if -R exclusive parameters are used with -SRE
         if params.get('categories'):
             raise ValueError(
-                "Parameter `--category` (-cat) can only be used with `-R` flag,"
-                " not with `-SRE` flag"
+                "Parameter '--category' (-cat) can only be used with '-R' flag,"
+                " not with '-SRE' flag"
             )
 
     if is_r_flag:
         # Check if -SRE exclusive parameters are used with -R
         if params.get('type'):
             raise ValueError(
-                "Parameter `--type` (-t) can only be used with `-SRE` flag, not"
-                " with `-R` flag"
+                "Parameter '--type' (-t) can only be used with '-SRE' flag, not"
+                " with '-R' flag"
             )
         if params.get('recId'):
             raise ValueError(
-                "Parameter `--recommendation-id` (-recid) can only be used with"
-                " `-SRE` flag, not with `-R` flag"
+                "Parameter '--recommendation-id' (-recid) can only be used with"
+                " '-SRE' flag, not with '-R' flag"
             )
         if params.get('tags'):
             raise ValueError(
-                "Parameter `--tag` can only be used with `-SRE` flag, not with"
-                " `-R` flag"
+                "Parameter '--tag' can only be used with '-SRE' flag, not with"
+                " '-R' flag"
             )
         if params.get('nativeResourceId'):
             raise ValueError(
-                "Parameter `--nrid` can only be used with `-SRE` flag, not with"
-                " `-R` flag"
+                "Parameter '--nrid' can only be used with '-SRE' flag, not with"
+                " '-R' flag"
             )
 
     # Extract common parameters
@@ -88,15 +88,15 @@ def create_custom_request(
         categories = params.get('categories', [])
 
         if not region:
-            raise ValueError("`--region` is required when using `-R` flag")
+            raise ValueError("'--region' is required when using '-R' flag")
         if not resource_type:
             raise ValueError(
-                "`--resource-type` is required when using `-R` flag"
+                "'--resource-type' is required when using '-R' flag"
             )
         if not resource_id:
-            raise ValueError("`--resource-id` is required when using `-R` flag")
+            raise ValueError("'--resource-id' is required when using '-R' flag")
         if not categories:
-            raise ValueError("`--category` is required when using `-R` flag")
+            raise ValueError("'--category' is required when using '-R' flag")
 
         # Build settings for each category
         for category in categories:
@@ -121,19 +121,19 @@ def create_custom_request(
         # Validate required parameters for -SRE
         if not recommendation_id:
             raise ValueError(
-                "`--recommendation-id` is required when using `-SRE` flag"
+                "'--recommendation-id' is required when using '-SRE' flag"
             )
         if not rec_type:
-            raise ValueError("`--type` is required when using `-SRE` flag")
+            raise ValueError("'--type' is required when using '-SRE' flag")
 
         # Process based on type
-        if rec_type == 'TAG_FILTER':
+        if rec_type.upper() == 'TAG_FILTER':
             # Validate required parameters for TAG_FILTER
             tags = params.get('tags')
             if not tags:
                 raise ValueError(
-                    "`--tag` is required when using `-SRE` with "
-                    "`--type TAG_FILTER`"
+                    "'--tag' is required when using '-SRE' with "
+                    "'--type TAG_FILTER'"
                 )
 
             # Convert tags to list format expected by API
@@ -153,7 +153,7 @@ def create_custom_request(
             }
             settings.append(setting)
 
-        elif rec_type == 'RESOURCE':
+        elif rec_type.upper() == 'RESOURCE':
             # Validate required parameters for RESOURCE
             region = params.get('regionName')
             resource_type = params.get('resourceType')
@@ -161,18 +161,18 @@ def create_custom_request(
 
             if not region:
                 raise ValueError(
-                    "`--region` is required when using `-SRE` with "
-                    "`--type RESOURCE`"
+                    "'--region' is required when using '-SRE' with "
+                    "'--type RESOURCE'"
                 )
             if not resource_type:
                 raise ValueError(
-                    "`--resource-type` is required when using `-SRE` with "
-                    "`--type RESOURCE`"
+                    "'--resource-type' is required when using '-SRE' with "
+                    "'--type RESOURCE'"
                 )
             if not resource_id:
                 raise ValueError(
-                    "`--resource-id` is required when using `-SRE` with "
-                    "`--type RESOURCE`"
+                    "'--resource-id' is required when using '-SRE' with "
+                    "'--type RESOURCE'"
                 )
 
             setting = {
@@ -186,12 +186,12 @@ def create_custom_request(
             }
             settings.append(setting)
 
-        elif rec_type == 'NRID':
+        elif rec_type.upper() == 'NRID':
             # Validate required parameters for NRID (ARN)
             nrid = params.get('nativeResourceId')
             if not nrid:
                 raise ValueError(
-                    "`--nrid` is required when using `-SRE` with `--type NRID`"
+                    "'--nrid' is required when using '-SRE' with '--type NRID'"
                 )
 
             setting = {
@@ -205,7 +205,7 @@ def create_custom_request(
 
         else:
             raise ValueError(
-                f"Unknown type: `{rec_type}`. Allowed values: "
+                f"Unknown type: '{rec_type}'. Allowed values: "
                 f"TAG_FILTER, RESOURCE, NRID"
             )
 

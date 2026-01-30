@@ -7,6 +7,7 @@ import json
 import datetime
 
 from m3cli.services.request_service import BaseRequest
+from m3cli.plugins import parse_and_set_date_range
 
 
 def compute_month_epoch_ms(year, month):
@@ -21,32 +22,33 @@ def create_custom_request(
         view_type: str | None = None,
 ) -> BaseRequest:
     params = request.parameters
+    parse_and_set_date_range(params)
+
     if params.get('URL'):
         raise AssertionError(
-            'The flag `--url` is not supported for this report type'
+            "The flag '--url' is not supported for this report type"
         )
     if params.get('reportFormat'):
         raise AssertionError(
-            'The flag `--report` is not supported for this report type'
+            "The flag '--report' is not supported for this report type"
         )
     if params.get('instanceId'):
         raise AssertionError(
-            'The parameter `--instance-id` is not supported for this report type'
+            "The parameter '--instance-id' is not supported for this report type"
         )
     if params.get('onlyAdjustments'):
         raise AssertionError(
-            'The flag `--adjustment` is not supported for this report type'
+            "The flag '--adjustment' is not supported for this report type"
         )
     if params.get('day'):
         raise AssertionError(
-            'The parameter `--day` is not supported for this report type'
+            "The parameter '--day' is not supported for this report type"
         )
 
     if not params.get('criteria'):
         params['criteria'] = 'ALL'
     if not params.get('compressEachQuota'):
         params['compressEachQuota'] = False
-    params['tenantNames'] = [params.pop('tenantGroup')]
     if 'region' in params:
         params['regionName'] = params.pop('region')
     if params.get('year'):
@@ -86,8 +88,14 @@ def create_custom_response(
         return response
     if isinstance(response, dict) and response.get('message') \
             and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
     params = getattr(request, 'parameters', None)
+
+    # Apply tag filtering EARLY on raw response before any view processing
+    if params and params.get('tag'):
+        desired_tag = params['tag']
+        response = [item for item in response if item.get('tag') == desired_tag]
+
     if view_type in ('json', 'table', 'full'):
         year = \
             int(params.get('year')) if params and params.get('year') else None
@@ -95,6 +103,10 @@ def create_custom_response(
             int(params.get('month')) if params and params.get('month') else None
         month_epoch_ms = \
             compute_month_epoch_ms(year, month) if year and month else None
+
+        # Now --full will return already filtered data
+        if view_type == 'full':
+            return [{"budget": item} for item in response]
 
         table_rows = []
         for item in response:
@@ -168,12 +180,6 @@ def create_custom_response(
                 row["actionPlan"] = action_plan
             table_rows.append(row)
 
-            if params and params.get('tag'):
-                desired_tag = params['tag']
-                table_rows = [
-                    row for row in table_rows if row.get('tag') == desired_tag
-                ]
-
         def get_sort_key(row):
             # Try monthly utilization first, then daily
             utilization = row.get('monthlyUtilization %', '') \
@@ -189,9 +195,6 @@ def create_custom_response(
                     return float('inf')  # Invalid values go to end
             else:
                 return float('inf')  # Empty values go to end
-
-        if view_type == 'full':
-            return [{"budget": item} for item in response]
 
         return sorted(
             table_rows,

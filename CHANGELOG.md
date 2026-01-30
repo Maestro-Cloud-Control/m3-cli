@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.158.3] - 2026-01-15
+* Change from ` to ' for consistency
+
+## [4.158.2] - 2026-01-15
+* Update docs according to the technical reviewer's recommendations
+* Update `create-recommendation-settings`, `update-recommendation-settings` and `remove-recommendation-settings`
+
+## [4.158.1] - 2026-01-08
+* Add the parameters `--from`, `--to` to the `budget-report` command
+* Update the `budget-report` command by changing the `tenantNames` list to the `tenantGroup` string
+
+## [4.158.0] - 2025-12-01
+* Improve error messages for invalid CLI parameter names and values to provide clearer guidance
+
 ## [4.154.10] - 2025-11-24
 * Fix full view output formatting for all commands:
   * Prevent line wrapping in long string values (URLs, content) by setting YAML dump width to infinite

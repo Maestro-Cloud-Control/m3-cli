@@ -33,7 +33,7 @@ def create_custom_request(
     params = request.parameters
     if params.get('onlyAdjustments'):
         raise AssertionError(
-            "The flag `--adjustment` is not supported for this report type"
+            "The flag '--adjustment' is not supported for this report type"
         )
     params['target'] = {
         'tenantGroup': params.pop('tenantGroup'),
@@ -71,7 +71,7 @@ def create_custom_response(
         return response
 
     if response.get('message') and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
 
     response_processed = []
     grand_total = response.get('grandTotal')

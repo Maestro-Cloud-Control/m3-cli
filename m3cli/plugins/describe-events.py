@@ -16,7 +16,7 @@ def create_custom_request(request):
         params.update({'count': 10})
     if params.get('searchType') == "RELATED" and not params.get('resourceId'):
         raise AssertionError(
-            "The `--resource-id` parameter is required in case the RELATED "
+            "The '--resource-id' parameter is required in case the RELATED "
             "search-type is specified"
         )
 

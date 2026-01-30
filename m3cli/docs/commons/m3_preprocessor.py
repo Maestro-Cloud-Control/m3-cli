@@ -16,21 +16,21 @@ def style_headers(old_md_file, new_md_file):
         _LOG.error(f"Error reading file {old_md_file}: {e}")
         raise
 
-    # Replace `*m3 text*` with `# m3 text`
+    # Replace '*m3 text*' with '# m3 text'
     text = re.sub(
         r'^\*(m3.+)\*$',  # pattern
         r'# \1',  # replacement
         text,
         flags=re.MULTILINE,
     )
-    # Replace `Text:` with `### Text:`
+    # Replace 'Text:' with '### Text:'
     text = re.sub(
         r'^(Description:|Examples?:|Related commands:).*$',
         r'### \1',
         text,
         flags=re.MULTILINE,
     )
-    # Replace `Text: text` with `**Text:** text`
+    # Replace 'Text: text' with '**Text:** text'
     text = re.sub(
         r'^(Parameters:|Usage:)(.*)$',
         r'**\1**\2',

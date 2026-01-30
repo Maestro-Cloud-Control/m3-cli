@@ -28,7 +28,7 @@ def create_custom_request(
     params = request.parameters
     if params.get('instanceId'):
         raise AssertionError(
-            'The parameter `--instance-id` is not supported for this report type'
+            "The parameter '--instance-id' is not supported for this report type"
         )
 
     tenant_group = params.pop('tenantGroup')
@@ -78,7 +78,7 @@ def create_custom_response(
         return response
 
     if response.get('message') and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
 
     response_processed = []
     grand_total = response.get('grandTotal')

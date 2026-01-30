@@ -44,7 +44,7 @@ def create_code_block_style(doc):
         if 'Code Block' not in styles:
             code_style = styles.add_style('Code Block', 1)
             code_style.font.name = 'Consolas'
-            code_style.font.size = Pt(11)
+            code_style.font.size = Pt(10)
             code_style.font.color.rgb = RGBColor(0, 0, 0)
             code_style.paragraph_format.left_indent = Pt(10)
             code_style.paragraph_format.right_indent = Pt(10)
@@ -113,52 +113,43 @@ def apply_custom_styles(docx_file):
         if style.name == 'Normal':
             for run in para.runs:
                 run.font.name = 'Arial'
-                run.font.size = Pt(12)
+                run.font.size = Pt(10)
                 run.font.color.rgb = RGBColor(0, 0, 0)
 
-        if style.name == 'Heading 1':
+        elif style.name == 'Heading 1':
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(20)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(70, 69, 71)
 
-        if style.name in 'Heading 2':
+        elif style.name == 'Heading 2':
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(16)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(26, 156, 176)
 
-        if style.name in 'Heading 3':
+        elif style.name == 'Heading 3':
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(12)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(44, 196, 201)
 
-        if style.name == 'Heading 4':
+        elif style.name in ('Heading 4', 'Heading 5', 'Heading 6'):
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(10)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(0, 0, 0)
 
-        if style.name == 'Heading 5':
-            for run in para.runs:
-                run.font.name = 'Arial'
-                run.font.size = Pt(10)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-
-        if style.name == 'Heading 6':
-            for run in para.runs:
-                run.font.name = 'Arial'
-                run.font.size = Pt(10)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-
-        if 'code' in para.style.name.lower():
+        # Handle code blocks - apply both style AND run-level formatting
+        elif 'code' in style.name.lower() or 'source' in style.name.lower():
             para.style = doc.styles['Code Block']
+            for run in para.runs:
+                run.font.name = 'Consolas'
+                run.font.size = Pt(10)  # This overrides Pandoc's 11pt
+                run.font.color.rgb = RGBColor(0, 0, 0)
 
     doc.save(docx_file)

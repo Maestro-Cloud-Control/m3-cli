@@ -538,7 +538,7 @@ def validate_parameter_keys(
         error_message = (
             "CLI parameters contain invalid characters:\n" +
             "\n".join(f"  • {error}" for error in all_errors) +
-            "\n\nPlease ensure you're using English keyboard layout"
+            "\n\nPlease, ensure you're using English keyboard layout"
         )
         raise AssertionError(error_message)
 
@@ -571,8 +571,8 @@ def validate_parameter_values(
                 error_msg = (
                     f"Invalid character '{char}' at position {i + 1} "
                     f"in value for {param_name}: '{value}'. "
-                    "Please use only English letters (A-Z, a-z), numbers (0-9),"
-                    " and symbols."
+                    "Only English letters (A-Z, a-z), numbers (0-9), and "
+                    "symbols are allowed"
                 )
                 all_errors.append(error_msg)
                 break  # Only report first invalid char per value
@@ -581,5 +581,5 @@ def validate_parameter_values(
         raise AssertionError(
             "CLI parameter values contain invalid characters:\n" +
             "\n".join(f"  • {error}" for error in all_errors) +
-            "\n\nPlease ensure you're using English keyboard layout"
+            "\n\nPlease, ensure you're using English keyboard layout"
         )
