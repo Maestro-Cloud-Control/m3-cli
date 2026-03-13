@@ -97,26 +97,27 @@ def create_custom_response(
         response = [item for item in response if item.get('tag') == desired_tag]
 
     if view_type in ('json', 'table', 'full'):
-        year = \
-            int(params.get('year')) if params and params.get('year') else None
-        month = \
-            int(params.get('month')) if params and params.get('month') else None
-        month_epoch_ms = \
-            compute_month_epoch_ms(year, month) if year and month else None
-
         # Now --full will return already filtered data
         if view_type == 'full':
             return [{"budget": item} for item in response]
 
+        from_date_int = int(params['from'])
+        to_date_int = int(params['to'])
+
         table_rows = []
         for item in response:
-            month_usages = item.get('monthUsages', [])
+            # Process monthly usages
+            month_usages = item.get('monthUsages') or []
+            month_usages = [
+                usage for usage in month_usages
+                if from_date_int <= usage["month"] < to_date_int
+            ]
             month_usage = None
-            if month_epoch_ms:
-                for usage in month_usages:
-                    if int(usage.get("month", 0)) == month_epoch_ms:
-                        month_usage = usage
-                        break
+            if month_usages:
+                month_usage = max(
+                    month_usages,
+                    key=lambda u: int(u.get('month') or 0)
+                )
 
             if month_usage:
                 percent_used = month_usage.get('percentUsed')
@@ -129,9 +130,14 @@ def create_custom_response(
             else:
                 utilization = monthly_budget = current_chargeback = ''
 
-            daily_usages = item.get('dailyUsages', [])
+            # Process daily usages
+            daily_usages = item.get('dailyUsages') or []
+            daily_usages = [
+                usage for usage in daily_usages
+                if from_date_int <= usage["date"] < to_date_int
+            ]
             daily_usage = None
-            if isinstance(daily_usages, list) and daily_usages:
+            if daily_usages:
                 daily_usage = max(
                     daily_usages,
                     key=lambda d: int(d.get('date') or 0)

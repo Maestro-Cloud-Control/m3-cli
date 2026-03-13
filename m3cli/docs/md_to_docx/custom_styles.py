@@ -38,7 +38,9 @@ def create_border_element():
     return border
 
 
-def create_code_block_style(doc):
+def create_code_block_style(
+        doc: Document,
+) -> None:
     try:
         styles = doc.styles
         if 'Code Block' not in styles:
@@ -50,9 +52,10 @@ def create_code_block_style(doc):
             code_style.paragraph_format.right_indent = Pt(10)
             code_style.paragraph_format.space_before = Pt(5)
             code_style.paragraph_format.space_after = Pt(5)
-            p = code_style.paragraph_format
-            p_element = p._element
-            p_element.get_or_add_pPr().append(create_border_element())
+            # No shading, no borders - white background
+            # p = code_style.paragraph_format
+            # p_element = p._element
+            # p_element.get_or_add_pPr().append(create_border_element())
     except Exception as e:
         _LOG.error(f"Failed to create code block style: {e}")
 

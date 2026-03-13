@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "m3-cli"
-version = "4.158.3"
+version = "4.161.0"
 authors = [
     {name = "maestrocloudcontrol", email = "support@maestrocontrol.cloud"}
 ]
