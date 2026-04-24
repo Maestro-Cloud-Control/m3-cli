@@ -31,12 +31,11 @@ _LOG = get_logger('commands_service')
 COMMAND_STUB = '<command>'
 HELP_STUB = 'Here are the commands supported by the current version ' \
             'of Maestro CLI. \nIMPORTANT: The scope of commands you ' \
-            'can execute depends on your user permissions. \n\nOutput:'
+            'can execute depends on your user permissions.'
 
 COMMANDS_DEF_FILE_NAME = 'commands_def.json'
 
 GENERAL_HELP_STRING = """
---------------------------------------------------------------------------------
 Description: {0}
 
 Usage: m3 {1} [parameters]
@@ -44,6 +43,13 @@ Usage: m3 {1} [parameters]
 {2}
 
 {3}
+"""
+GENERAL_HELP_STRING_NO_PARAMS = """
+Description: {0}
+
+Usage: m3 {1} [parameters]
+
+{2}
 """
 SHORT_HELP_STRING = """
 {4}
@@ -136,8 +142,11 @@ def load_parameters_from_json(file_path):
                 if key not in RESERVED_KEYWORDS:
                     parameter_set.update({key: value})
     except json.JSONDecodeError:
-        raise SyntaxError(
-            f'{file_path} contains an invalid JSON')
+        _LOG.warning(
+            f'{file_path} contains invalid JSON. '
+            f'Default parameters will not be loaded'
+        )
+        return {}
     return parameter_set
 
 
@@ -292,8 +301,9 @@ class CommandsService:
             table_item = tabulate(tabular_data=t_data,
                                   headers=table_headers,
                                   tablefmt='grid')
-            return GENERAL_HELP_STRING.format(HELP_STUB, COMMAND_STUB,
-                                              '', table_item)
+            return GENERAL_HELP_STRING_NO_PARAMS.format(
+                HELP_STUB, COMMAND_STUB, table_item,
+            )
 
     def _find_related_commands(self, cmd_name, cmd_def):
         all_commands = self.commands_def.get(COMMANDS_KEY)

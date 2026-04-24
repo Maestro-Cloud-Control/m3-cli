@@ -1,12 +1,16 @@
 # Load all project requirements
 -r requirements.txt
 
-# Setup source directories as editable/development distributions
+# Install m3-cli as editable package for development
 -e .
 
-jsonschema==3.2.0
-tox==3.24.5
-pytest==6.2.5
-pytest-cov==3.0.0
-pyflakes==2.4.0
-flake8==4.0.1
+# Testing
+pytest==9.0.2
+pytest-cov==7.1.0
+
+# Linting
+pyflakes==3.4.0
+flake8==7.3.0
+
+# Tox
+tox==4.52.0

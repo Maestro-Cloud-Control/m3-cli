@@ -51,17 +51,33 @@ class TextColors:
     UNDERLINE = '\033[4m'
 
 
+def __is_parameter(token):
+    """
+    Check if a token looks like a CLI parameter rather than a value.
+    - Long params:  --something
+    - Short params: -c, -du (dash + only alphabetic chars)
+    - Values like -Abc_123 or -3.14 are NOT parameters
+      (they contain digits, underscores, etc.)
+    """
+    if not isinstance(token, str) or not token.startswith('-'):
+        return False
+    if token.startswith('--'):
+        return True
+    # Short parameter: '-' followed by alphabetic characters only
+    suffix = token[1:]
+    return len(suffix) > 0 and suffix.isalpha()
+
+
 def __extract_parameters(parameters_list):
     parameters_dict = {}
-    param_pfx = '-'
     full_param_pfx = '--'
 
     for index in range(len(parameters_list)):
-        if not parameters_list[index].startswith(param_pfx):
+        if not __is_parameter(parameters_list[index]):
             continue
         key = parameters_list[index].replace(full_param_pfx, "")
-        if index < len(parameters_list)-1 and not parameters_list[index+1].startswith(param_pfx):
-            val = parameters_list[index+1]
+        if index < len(parameters_list) - 1 and not __is_parameter(parameters_list[index + 1]):
+            val = parameters_list[index + 1]
         else:
             val = None
         if key in parameters_dict:
@@ -138,8 +154,10 @@ def dynamic_dispatcher(func):
             if ctx.params['help']:
                 click.echo(ACCESS_HELP)
                 return
-            elif ('--access_key' or '--secret_key' or '--api_address' or
-                  '--path') in ctx.args:
+            elif any(
+                    arg in ctx.args for arg in
+                    ('--access_key', '--secret_key', '--api_address', '--path')
+            ):
                 try:
                     access = get_non_interactive_access(
                         *check_args_for_non_interactive_access(ctx)
@@ -286,8 +304,21 @@ def check_args_for_non_interactive_access(ctx):
         '--access_key': True,
         '--secret_key': True,
         '--api_address': False,
-        '--path': False
+        '--path': False,
     }
+
+    # Reject unknown parameters (both -- and - prefixed)
+    provided_params = [
+        arg for arg in ctx.args[1:]  # skip 'access'
+        if __is_parameter(arg)
+    ]
+    unknown = [p for p in provided_params if p not in access_args]
+    if unknown:
+        raise AssertionError(
+            f'Unknown parameter(s): {", ".join(unknown)}. '
+            f'Valid parameters: {", ".join(access_args.keys())}'
+        )
+
     result = []
     for arg, required in access_args.items():
         if arg in ctx.args:

@@ -53,16 +53,32 @@ class TestVerifyResponse(unittest.TestCase):
                          f'[{status_code}] Requested resource not found. '
                          f'{self.reason}')
 
-    def test_verify_response_401(self):
+    @patch('m3cli.services.request_service.open_creds_file',
+           return_value=MagicMock())
+    @patch('m3cli.services.request_service.__load_creds_contents',
+           return_value={})
+    def test_verify_response_401_no_windows_url(self, mock_load, mock_open):
         status_code = 401
         self.response.status_code = status_code
         with self.assertRaises(AssertionError) as context:
             verify_response(self.response)
         self.assertEqual(str(context.exception),
-                         f'[{status_code}] '
-                         f'Bad credentials. Please use the command '
+                         f'[{status_code}] Bad credentials. Please use the command '
                          f'"m3 access" to set up a valid credentials. '
                          f'Or try to install the latest version of m3 tool.')
+
+    @patch('m3cli.services.request_service.open_creds_file',
+           return_value=MagicMock())
+    @patch('m3cli.services.request_service.__load_creds_contents',
+           return_value={'cliWindowsDistributionUrl': 'http://example.com'})
+    def test_verify_response_401_with_windows_url(self, mock_load, mock_open):
+        status_code = 401
+        self.response.status_code = status_code
+        with self.assertRaises(AssertionError) as context:
+            verify_response(self.response)
+        self.assertEqual(str(context.exception),
+                         f'[{status_code}] Bad credentials. Please use the command '
+                         f'"m3 access" to set up a valid credentials.')
 
     def test_verify_response_413(self):
         status_code = 413

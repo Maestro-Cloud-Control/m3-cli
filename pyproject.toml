@@ -4,28 +4,29 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "m3-cli"
-version = "4.161.0"
+version = "4.164.4"
 authors = [
     {name = "maestrocloudcontrol", email = "support@maestrocontrol.cloud"}
 ]
 description = "The Maestro3 Command Line Interface (CLI) is a unified tool to manage your Maestro services and resources"
 readme = {file = "README.md", content-type = "text/markdown"}
 keywords = ["Maestro3", "Command Line Interface", "CLI", "CLOUD"]
-urls = {Homepage = "https://github.com/Maestro-Cloud-Control/m3-cli"}
 
 dependencies = [
-    "setuptools==68.2.1",
-    "click==7.1.2",
-    "requests==2.31.0",
-    "tabulate==0.9.0",
-    "pika==1.0.0b1",
-    "cryptography==41.0.3",
-    "jsonschema==3.2.0",
-    "pyyaml==6.0.1",
-    "Pillow==10.0.0",
-    "packaging==25.0",
-    "beautifulsoup4==4.10.0",
+    "click==8.3.1",
+    "requests==2.33.1",
+    "tabulate==0.10.0",
+    # "pika==1.3.2",  # TODO: re-enable when AMQP transport is implemented
+    "cryptography==46.0.6",
+    "jsonschema==4.26.0",
+    "pyyaml==6.0.3",
+    "Pillow==12.2.0",
+    "packaging==26.0",
+    "beautifulsoup4==4.14.3",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Maestro-Cloud-Control/m3-cli"
 
 [project.entry-points.console_scripts]
 m3 = "m3cli.m3:m3"
@@ -33,13 +34,13 @@ m3 = "m3cli.m3:m3"
 [tool.setuptools]
 include-package-data = true
 
-[tool.setuptools.data-files]
+[tool.setuptools.package-data]
 "m3cli" = [
-    "m3cli/commands_def.json",
-    "m3cli/m3cli_complete/bash_m3cli_complete.sh",
-    "m3cli/m3cli_complete/zsh_m3cli_complete.sh",
-    "m3cli/m3cli_complete/m3cli_complete.py",
-    "m3cli/m3cli_complete/access_meta.json",
+    "commands_def.json",
+    "m3cli_complete/bash_m3cli_complete.sh",
+    "m3cli_complete/zsh_m3cli_complete.sh",
+    "m3cli_complete/m3cli_complete.py",
+    "m3cli_complete/access_meta.json",
 ]
 
 [tool.setuptools.packages.find]

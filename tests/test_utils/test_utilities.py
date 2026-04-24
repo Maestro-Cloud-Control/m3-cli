@@ -2,6 +2,7 @@ import json
 import os.path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from m3cli.utils.utilities import \
     __write_credentials_to_file as write_credentials_to_file
@@ -40,11 +41,31 @@ class TestWriteCredentialsToFile(unittest.TestCase):
         invalid_json = '{\'key\': "value"}'
         with open(self.credentials_path, 'w') as file:
             file.write(invalid_json)
-        with self.assertRaises(SyntaxError) as context:
-            write_credentials_to_file(self.credentials_path, self.access_key,
-                                      self.secret_key, self.api_address)
-        self.assertEqual(str(context.exception),
-                         f'{self.credentials_path} contains invalid JSON')
+
+        with patch('m3cli.utils.utilities.click') as mock_click:
+            write_credentials_to_file(
+                self.credentials_path,
+                self.access_key,
+                self.secret_key,
+                self.api_address,
+            )
+
+        # Warning was printed via click.echo
+        mock_click.echo.assert_called_once_with(
+            f'WARNING: {self.credentials_path} contains invalid JSON. '
+            f'Non-credential settings (e.g. last_visit) will be lost'
+        )
+
+        # Credentials were still written despite the bad JSON
+        with open(self.credentials_path, 'r') as file:
+            data = json.load(file)
+
+        expected_data = {
+            'M3SDK_ACCESS_KEY': self.access_key,
+            'M3SDK_SECRET_KEY': self.secret_key,
+            'M3SDK_ADDRESS': self.api_address,
+        }
+        self.assertEqual(data, expected_data)
 
     def test_write_credentials_to_file_exists_valid_json(self):
         valid_json = '{"key": "value"}'

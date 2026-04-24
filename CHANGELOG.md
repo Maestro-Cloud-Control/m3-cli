@@ -4,6 +4,69 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.164.4] - 2026-04-10
+* Fix CLI argument parser misinterpreting parameter values starting with `-` as parameter keys (e.g., `--token -JG_...`)
+
+## [4.164.3] - 2026-03-31
+* Add `describe-platform-service-variables` command
+* Update project dependencies and build configuration:
+  * Updated direct dependencies:
+    * `click` from 7.1.2 to 8.3.1
+    * `requests` from 2.31.0 to 2.33.1
+    * `tabulate` from 0.9.0 to 0.10.0
+    * `cryptography` from 41.0.3 to 46.0.6
+    * `jsonschema` from 3.2.0 to 4.26.0
+    * `PyYAML` from 6.0.1 to 6.0.3
+    * `Pillow` from 10.0.0 to 12.1.1
+    * `packaging` from 25.0 to 26.0
+    * `beautifulsoup4` from 4.10.0 to 4.14.3
+  * Updated development dependencies:
+    * `pytest` from 6.2.5 to 7.4.4
+    * `pytest-cov` from 3.0.0 to 4.1.0
+    * `flake8` from 4.0.1 to 7.3.0
+    * `pyflakes` from 2.4.0 to 3.4.0
+    * `tox` from 3.24.5 to 4.52.0
+  * Removed pinned transitive dependencies from `requirements.txt`
+    (now resolved automatically by pip):
+    * `attrs` — was transitive dependency of `jsonschema` 3.x
+    * `cffi` — no longer required by `cryptography` 42+ (pure Rust backend)
+    * `pycparser` — was transitive dependency of `cffi`
+    * `chardet` — replaced by `charset-normalizer` in `requests` 2.26+
+    * `certifi`, `idna`, `urllib3` — transitive dependencies of `requests`
+    * `pyrsistent` — was transitive dependency of `jsonschema` 3.x
+    * `pyparsing`, `six`, `soupsieve` — no longer required directly
+  * Fixed `pyproject.toml` build configuration:
+    * Removed `setuptools` from runtime `dependencies`
+      (build-time tool only)
+    * Fixed `[project.urls]` table format
+    * Migrated deprecated `data-files` to `package-data`
+  * Commented out `pika` dependency pending AMQP transport implementation
+
+## [4.164.2] - 2026-04-02
+* Replace `print`/`input`/`getpass` with Click equivalents (`click.echo`, `click.prompt`, `click.confirm`) in `_set_credentials_interactively` and `get_user_access` for consistent output capture and cross-platform encoding handling
+
+## [4.164.1] - 2026-03-30
+* Fix excessive blank lines and stray `Output:` text in `m3 --help` general command listing
+* Replace intrusive version-check warning banner with a plain tip message when CLI version info is unavailable
+* Remove trailing periods from warning messages for consistency
+* Remove decorative separator line from `--full-help` command output
+* Replace `finally` block in `perform_version_check` with sequential flow to fix output ordering and spurious warnings on re-raised exceptions
+* Fix `check_credentials_in_file` crashing on corrupted credentials file (unhandled `JSONDecodeError`)
+* Fix `__write_credentials_to_file` raising `SyntaxError` on corrupted credentials file, making recovery via `m3 access` impossible
+* Fix `load_parameters_from_json` raising `SyntaxError` on corrupted credentials file, blocking all CLI commands including `m3 access`
+* Fix `load_file_contents` raising `FileExistsError` instead of `FileNotFoundError` for missing files
+* Fix potential resource leak in `open_creds_file` by using `pathlib` (`Path.mkdir`, `Path.touch`)
+* Change `__load_creds_contents` file mode from `r+` to `r` (read-only)
+* Fix `handle_variables` type hint from `str | None` to `dict | None` to match actual usage
+* Properly validate all parameters passed into the command
+* Remove the redundant library `chardet>=5.2` from `requirements.txt`
+
+## [4.164.0] - 2026-03-27
+* Add the `VMWARE` value for the `--cloud` parameter in the commands:
+  * `create-key`, `import-key`, `describe-regions`, `manage-key`,
+  * `describe-events`, `describe-keys`, `publish-platform-service`,
+  * `domain_parameters: 'cloud'`
+
 ## [4.161.0] - 2026-02-12
 * Fix `budgets-report` not displaying budget data by using correct date range parameters for filtering
 

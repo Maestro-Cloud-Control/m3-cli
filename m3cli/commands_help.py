@@ -227,6 +227,13 @@ Examples:
         m3 describe-platform-services --service <service_name> --json 
 """
 
+describe_platform_service_variables = """
+Provides a list of configuration variables associated with a platform service:
+
+Example:
+        m3 describe-platform-service-variables --service-id <service_id>
+"""
+
 describe_platform_service_stacks = """
 Provides details about platform service stacks activated for a customer
 

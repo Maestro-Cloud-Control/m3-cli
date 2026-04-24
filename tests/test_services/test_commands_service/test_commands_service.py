@@ -106,10 +106,10 @@ class TestLoadParametersFromJson(unittest.TestCase):
         """
         with open(self.file_path, 'w') as file:
             file.write(invalid_json)
-        with self.assertRaises(SyntaxError) as context:
-            load_parameters_from_json(self.file_path)
-        self.assertEqual(str(context.exception),
-                         f'{self.file_path} contains an invalid JSON')
+
+        result = load_parameters_from_json(self.file_path)
+
+        self.assertEqual(result, {})
 
     def test_load_parameters_from_json_success(self):
         reserved_keywords = ['reserved_key']

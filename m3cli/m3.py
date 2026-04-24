@@ -37,7 +37,7 @@ def init_commands_service():
     return cmd_service
 
 
-def print_version(ctx, value):
+def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
 
@@ -97,10 +97,14 @@ def m3(
         _pretty_errors = '\n'.join(errors)
         raise AssertionError(f'Invalid commands meta. \n{_pretty_errors}')
     if help:
+        # `--help` flag -> `SHORT_HELP_STRING`
         click.echo(CMD_SERVICE.get_help(command=command, compact=True))
         return
     if full_help or not command and not parameters:
+        # `--full-help` flag -> compact=False (default)
         click.echo(CMD_SERVICE.get_help(command=command))
+        #  └─ command is set    -> `GENERAL_HELP_STRING`
+        #  └─ command is None   -> `GENERAL_HELP_STRING_NO_PARAMS`
         return
 
     if command == HEALTH_CHECK_CMD_NAME:
@@ -164,7 +168,6 @@ def execute_command(
             interactive_options_service.process_request(requests_list)
     except click.exceptions.Exit:
         return
-
     # Initializing the connection to the server in SdkClient
     request_mapping, responses = SdkClient().execute(request=requests_list)
     if raw_response:

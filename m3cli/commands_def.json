@@ -61,7 +61,7 @@
     "cloud": {
       "alias": "c",
       "api_param_name": "cloud",
-      "help": "The cloud. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE]",
+      "help": "The cloud. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
       "required": true,
       "validation": {
         "type": "string",
@@ -71,7 +71,8 @@
           "GOOGLE",
           "NUTANIX",
           "OPEN_STACK",
-          "VSPHERE"
+          "VSPHERE",
+          "VMWARE"
         ]
       },
       "case": "upper"
@@ -499,7 +500,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud name. Specifies which cloud the template belongs to. Allowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE]",
+          "help": "The cloud name. Specifies which cloud the template belongs to. Allowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -509,7 +510,8 @@
               "GOOGLE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -537,6 +539,7 @@
               "NUTANIX",
               "OPEN_STACK",
               "VSPHERE",
+              "VMWARE",
               "ALL"
             ]
           },
@@ -1107,6 +1110,39 @@
       },
       "output_configuration": {
         "response_table_headers": []
+      }
+    },
+    "describe-platform-service-variables": {
+      "api_action": "DESCRIBE_PLATFORM_SERVICE_ENTRY_SECRETS",
+      "help": "Provides a list of configuration variables associated with a platform service",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "alias": "dplvars",
+      "groups": [
+        "platform-service-management"
+      ],
+      "parameters": {
+        "service-id": {
+          "parent": "service-id",
+          "required": true
+        },
+        "all": {
+          "alias": "A",
+          "api_param_name": "all",
+          "help": "A flag. If specified, returns all service variables. By default, only the variables intended for email delivery are displayed",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "stackId",
+          "parameter",
+          "value"
+        ]
       }
     },
     "describe-platform-service-stacks": {
@@ -3479,7 +3515,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud to which the key is applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud to which the key is applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -3488,7 +3524,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -3561,7 +3598,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud name where the key will be imported.  \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud name where the key will be imported.  \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -3570,7 +3607,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -3658,7 +3696,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE]",
+          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -3670,7 +3708,8 @@
               "HARDWARE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4699,7 +4738,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud name where the key will be applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud name where the key will be applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -4708,7 +4747,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4812,7 +4852,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. Allowed_values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud. Allowed_values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -4821,7 +4861,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4980,7 +5021,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE]",
+          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -4992,7 +5033,8 @@
               "HARDWARE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "VMWARE"
             ]
           },
           "case": "upper"
