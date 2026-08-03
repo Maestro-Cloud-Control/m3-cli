@@ -5,6 +5,13 @@ from m3cli.docs.commons import create_logger
 _LOG = create_logger()
 
 
+def replace_page_breaks_md(md_text: str) -> str:
+    page_break = '```{=openxml}\n<w:p><w:r><w:br w:type="page"/></w:r></w:p>\n```'
+    for marker in ("[//]: # ({{ pagebreak }})", "{{ pagebreak }}"):
+        md_text = md_text.replace(marker, page_break)
+    return md_text
+
+
 def style_headers(old_md_file, new_md_file):
     try:
         with open(old_md_file, 'r') as file:
@@ -37,10 +44,10 @@ def style_headers(old_md_file, new_md_file):
         text,
         flags=re.MULTILINE,
     )
-    # Add {{ pagebreak }}
+    # Add [//]: # ({{ pagebreak }})
     text = re.sub(
         r'\n# m3',  # pattern
-        r'\n{{ pagebreak }}\n\n# m3',  # replacement
+        r'\n[//]: # ({{ pagebreak }})\n\n# m3',  # replacement
         text,
         flags=re.MULTILINE,
     )

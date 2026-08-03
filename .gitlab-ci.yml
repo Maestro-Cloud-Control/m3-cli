@@ -7,7 +7,7 @@ stages:
 
 
 default:
-  image: python:3.10
+  image: python:3.14
   timeout: 10m
 
 

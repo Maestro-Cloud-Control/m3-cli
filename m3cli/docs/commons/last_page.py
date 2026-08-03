@@ -247,7 +247,7 @@ def add_last_page_to_docx(
 
     Args:
         docx_path: Path to the DOCX file
-        cli_version: CLI version string (e.g., "m3, version 4.158.0")
+        cli_version: CLI version string (e.g., "m3, version 4.170.0")
         changelog_url: URL to the changelog (e.g., Git repository URL)
         changelog_path: Local path to changelog file
     """

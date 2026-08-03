@@ -1,4 +1,4 @@
-# Introduction
+# Preface
 
 ## About This Guide
 
@@ -16,7 +16,7 @@ The guide is designed for Maestro users who aim to reach Maestro functionality v
 
 - For the information on the tool customization, refer to M3 Developers Guide
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 ## Table of Contents
 

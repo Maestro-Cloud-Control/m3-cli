@@ -5,12 +5,12 @@
 -e .
 
 # Testing
-pytest==9.0.2
-pytest-cov==7.1.0
+pytest>=9,<10
+pytest-cov>=7,<8
 
 # Linting
-pyflakes==3.4.0
-flake8==7.3.0
+pyflakes>=3.3,<4
+flake8>=7.2,<8
 
 # Tox
-tox==4.52.0
+tox>=4.52,<5

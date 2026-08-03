@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.170.0] - 2026-05-27
+* Migrate minimum supported Python version from 3.10 to 3.14:
+  * Set `requires-python = ">=3.14"` in `pyproject.toml`
+  * Add `isolated_build = true` to `tox.ini`
+  * Replace `[testenv:py310]` with `[testenv:py314]` (with explicit `basepython = python3.14`) in `tox.ini`
+  * Update `tox.ini` `envlist` from `py310,lint` to `py314,lint`
+* Replace removed stdlib module `imghdr` (dropped in Python 3.13) with Pillow-based image detection in `validation_service.py`:
+  * Remove `import imghdr`
+  * Add `from PIL import Image, UnidentifiedImageError`
+  * Add module-level helper `_detect_image_format(file_path)` that opens the file with `PIL.Image` to detect the actual image format
+  * Update `check_file_type()` to call `_detect_image_format()` instead of `imghdr.what()`
+* Add project classifiers to `pyproject.toml`:
+  * `Programming Language :: Python :: 3.10` through `3.14`
+  * `License :: OSI Approved :: Apache Software License`
+  * `Operating System :: OS Independent`
+* Relax pinned dependency versions to compatible ranges in `pyproject.toml` and `requirements.txt` (allows patch/minor upgrades without file edits):
+  * `click==8.3.1` -> `click>=8.3,<9`
+  * `requests==2.33.1` -> `requests>=2.33,<3`
+  * `tabulate==0.10.0` -> `tabulate>=0.10,<1`
+  * `cryptography==46.0.6` -> `cryptography>=46,<50`
+  * `jsonschema==4.26.0` -> `jsonschema>=4.26,<5`
+  * `PyYAML==6.0.3` -> `PyYAML>=6,<7`
+  * `Pillow==12.2.0` -> `Pillow>=12,<13`
+  * `packaging==26.0` -> `packaging>=26,<27`
+  * `beautifulsoup4==4.14.3` -> `beautifulsoup4>=4.14,<5`
+* Relax pinned development dependency versions to compatible ranges in `requirements-dev.txt`:
+  * `pytest==9.0.2` -> `pytest>=9,<10`
+  * `pytest-cov==7.1.0` -> `pytest-cov>=7,<8`
+  * `pyflakes==3.4.0` -> `pyflakes>=3.3,<4`
+  * `flake8==7.3.0` -> `flake8>=7.2,<8`
+  * `tox==4.52.0` -> `tox>=4.52,<5`
+
+## [4.164.5] - 2026-05-22
+* Remove deprecated parameter `--inactive` from the command `describe-regions`
+
 ## [4.164.4] - 2026-04-10
 * Fix CLI argument parser misinterpreting parameter values starting with `-` as parameter keys (e.g., `--token -JG_...`)
 

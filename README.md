@@ -17,7 +17,7 @@ with the star (*) character.
 
 ## Pre-requisites
 
-The installation of m3 cli assumed that you have Python3.10 and pip installed.
+The installation of m3 cli assumed that you have Python3.14 and pip installed.
 Use the following commands to install the tools in case they are not installed.
 
 ### Windows

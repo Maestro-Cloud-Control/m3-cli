@@ -18,7 +18,7 @@ rm -rf "$BUILD_DIR" "$DIST_DIR"
 mkdir -p "$BUILD_DIR"
 
 # Build the standalone binary using build.py with PyInstaller setup
-python3.10 build.py
+python3.14 build.py
 
 # Copy the binary to the packaging directory
 cp "$DIST_DIR/$APP_NAME" "$BUILD_DIR/$BIN_NAME"

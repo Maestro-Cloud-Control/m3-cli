@@ -147,7 +147,7 @@ Page Header Examples:
 Last Page Examples:
   --changelog-url "https://github.com/Maestro-Cloud-Control/m3-cli/blob/main/CHANGELOG.md"
   --changelog-path "C:\\path\\to\\CHANGELOG.md"
-  --cli-version "m3, version 4.158.0"
+  --cli-version "m3, version 4.170.0"
   --no-last-page  (to skip adding the last page)
     """,
 )

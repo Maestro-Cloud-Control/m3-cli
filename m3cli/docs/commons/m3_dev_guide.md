@@ -1,7 +1,7 @@
 
 ## Table of Contents
 
-- [Introduction](#introduction)
+- [Preface](#preface)
 - [1. Architecture Overview](#1-architecture-overview)
 - [2. Commands Definition File](#2-commands-definition-file)
 - [3. Related Commands Section in "full-help" Contents](#3-related-commands-section-in-full-help-contents)
@@ -18,15 +18,15 @@
     - [Activating Autocomplete](#activating-autocomplete)
     - [Deactivating Autocomplete](#deactivating-autocomplete)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
-# Introduction
+# Preface
 
 ### About This Guide
 
 `Maestro CLI`, also known as `M3-CLI`, is a robust command-line interface (CLI) tool designed to provide a powerful alternative to user interfaces (UI). 
 It allows you to perform cloud infrastructure management operations, as well as manage related assets, by sending respective calls to Maestro cloud management platform.
-The guide is aimed at Maestro users who extend or customize Maestro finctionality, ore perform integrations.
+The guide is aimed at Maestro users who extend or customize Maestro functionality, ore perform integrations.
 
 ### Target Audience
 
@@ -55,7 +55,7 @@ You should refer to this guide if you:
 * For the detailed information on the CLI commands, their parameters and usage,  refer to M3-CLI Reference Guide.
 * For the information on Maestro platform administering, to M3 Admin User Guide.
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 1. Architecture Overview
 
@@ -67,7 +67,7 @@ The sequence diagram is displayed below:
 
 ![](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/sequence_diagram.png)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 2. Commands Definition File
 
@@ -245,7 +245,7 @@ Examples:
 """
 ```
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 3. Related Commands Section in "full-help" Contents
 
@@ -309,7 +309,7 @@ Define a unidirectional relation between commands by adding the name of the othe
 With this configuration, `first_command` will appear in the list of related commands of `second_command`. 
 However, `second_command` will not be in the list of related commands of `first_command`.
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 4. Default Command Parameter Values
 
@@ -343,7 +343,7 @@ parameters in the `default.cr` file:
 Default parameter values from the `m3.properties` file take precedence 
 over values from the `default.cr` file.
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 5. Integration Request/Response
 
@@ -357,14 +357,14 @@ with the appropriate properties:
 
 **2. To modify CLI input, create a method inside your script named `create_custom_request` that receives one parameter, `request`:**
 
-```py
+```python
 def create_custom_request(request):
     return request
 ```
 
 **3. To modify CLI output, create a method inside your script named `create_custom_response` that receives `request` and `response` parameters:**
 
-```py
+```python
 def create_custom_response(request, response):
     return response
 ```
@@ -374,7 +374,7 @@ def create_custom_response(request, response):
 **4. After successful plugin creation, add the appropriate attributes to the command description in the file `commands_def.json`:**
 `"integration_request": true` or `"integration_response": true`
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 6. Nullable Boolean Fields
 
@@ -400,7 +400,7 @@ section of the `commands_def.json` file:
 In the example above, if the value of the `active` field is `false`, the value in
 the table column will not be hidden.
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 7. Command Output Formatting
 
@@ -424,7 +424,7 @@ To add custom formatting to a response attribute, add the `headers_customization
 - The `disable_numparse` setting disables automatic conversion of string values to numbers.
 - The `prevent_list_formatting` setting disables automatic alignment of list values to a column.
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # 8. Interactive Options
 

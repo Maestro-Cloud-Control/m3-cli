@@ -1,4 +1,3 @@
-import imghdr
 import math
 import os
 import re
@@ -8,6 +7,7 @@ from pathlib import Path
 
 import jsonschema
 from jsonschema import ValidationError
+from PIL import Image, UnidentifiedImageError
 
 from m3cli.utils.decorators import human_readable_list
 from m3cli.utils.logger import get_logger
@@ -45,6 +45,19 @@ VALIDATION_KEY = 'validation'
 ALIAS_KEY = 'alias'
 REQUIRED_KEY = 'required'
 SECURE_KEY = 'secure'
+
+
+def _detect_image_format(file_path) -> str | None:
+    """
+    Detect the actual image format by reading the file header.
+    Returns lowercase format name (e.g., 'png', 'jpeg') or None if not an image.
+    Replaces the removed `imghdr` module (Python 3.13+).
+    """
+    try:
+        with Image.open(str(file_path)) as img:
+            return img.format.lower() if img.format else None
+    except (OSError, UnidentifiedImageError):
+        return None
 
 
 class ValidationService:
@@ -381,14 +394,15 @@ class ValidationService:
             if file_suffix not in allowed_extensions:
                 errors.append('The file must have one of these extensions — '
                               + ', '.join(allowed_extensions))
-            elif file_suffix in SUPPORTED_IMAGE_TYPES and \
-                    imghdr.what(path) != file_suffix[1:]:
-                types = set(allowed_extensions) \
-                    .intersection(SUPPORTED_IMAGE_TYPES)
-                errors.append(
-                    f'The "{path}" image is corrupted. Please, provide a '
-                    f'valid image of one of these types: '
-                    f'{", ".join((t[1:].upper() for t in types))}')
+            elif file_suffix in SUPPORTED_IMAGE_TYPES:
+                detected_format = _detect_image_format(path)
+                if detected_format != file_suffix[1:]:
+                    types = set(allowed_extensions) \
+                        .intersection(SUPPORTED_IMAGE_TYPES)
+                    errors.append(
+                        f'The "{path}" image is corrupted. Please, provide a '
+                        f'valid image of one of these types: '
+                        f'{", ".join((t[1:].upper() for t in types))}')
         return errors
 
     @staticmethod

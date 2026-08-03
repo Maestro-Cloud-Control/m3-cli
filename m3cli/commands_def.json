@@ -5000,15 +5000,6 @@
         "tenant": {
           "parent": "tenant"
         },
-        "inactive": {
-          "alias": "N",
-          "api_param_name": "inactive",
-          "help": "A flag. If specified, the inactive regions are shown",
-          "required": false,
-          "validation": {
-            "type": "bool"
-          }
-        },
         "include-hidden": {
           "alias": "H",
           "api_param_name": "includeHidden",

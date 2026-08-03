@@ -1,7 +1,7 @@
 
 ## Table of Contents
 
-- [Introduction](#introduction)
+- [Preface](#preface)
 1. [Setup Guide](#m3-cli-setup-guide)
    - [Install](#tool-installation)
    - [Update & Healthcheck](#tool-update)
@@ -16,9 +16,9 @@
 
 We're here to help you every step of the way. If you encounter any issues or have any questions, don't hesitate to reach out to our [support team](#support).
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
-## Introduction
+## Preface
 
 ### About This Guide
 
@@ -37,7 +37,7 @@ The guide is designed for Maestro users who aim to reach Maestro functionality v
 * For the information on Maestro platform administering, to M3 Admin User Guide.
 
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # M3-CLI Setup Guide
 
@@ -45,7 +45,7 @@ The guide is designed for Maestro users who aim to reach Maestro functionality v
 
 ### Pre-requisites
 
-Before you start with the installation of `M3-CLI`, ensure you have **Python 3.10+**, **pip** and **venv** installed on your system. If not, follow the guides provided below:
+Before you start with the installation of `M3-CLI`, ensure you have **Python 3.14**, **pip** and **venv** installed on your system. If not, follow the guides provided below:
 
 - [Python3 Installation Guide for Windows](https://www.python.org/downloads/windows/)
 - [Python3 Installation Guide for Linux](https://docs.python-guide.org/starting/install3/linux/#installing-python-3-on-linux)
@@ -123,7 +123,7 @@ pip list
 
 **2. Install the update, using the latest CLI version as m3-cli parameter, for example:**
 ```console
-pip install m3-cli==3.150.0
+pip install m3-cli==3.170.0
 ```
 
 #### Example:
@@ -132,18 +132,18 @@ pip install m3-cli==3.150.0
 (venv) C:\Maestro3\m3-cli>pip list                
 Package            Version
 ------------------ --------
-attrs              23.2.0
+attrs              26.1.0
 ...
-m3-cli             3.101.10
+m3-cli             3.150.0
 ...
-(venv) C:\Maestro3\m3-cli>pip install m3-cli==3.150.0
+(venv) C:\Maestro3\m3-cli>pip install m3-cli==3.170.0
 ...
 Installing collected packages: m3-cli
   Attempting uninstall: m3-cli
-    Found existing installation: m3-cli 3.101.10
-    Uninstalling m3-cli-3.101.10:
-      Successfully uninstalled m3-cli-3.101.10
-Successfully installed m3-cli-3.150.0
+    Found existing installation: m3-cli 3.150.0
+    Uninstalling m3-cli-3.150.0:
+      Successfully uninstalled m3-cli-3.150.0
+Successfully installed m3-cli-3.170.0
 ```
 
 **3. Verify the installation:**
@@ -166,7 +166,7 @@ pip list
 
 **3. Install the update, using the latest CLI version as m3-cli parameter, for example:**
 ```console
-pip install m3-cli==3.150.0
+pip install m3-cli==3.170.0
 ```
 
 #### Example:
@@ -175,21 +175,21 @@ pip install m3-cli==3.150.0
 (.venv) user@localhost:~/maestro3/m3-cli$ pip list                
 Package            Version
 ------------------ --------
-attrs              23.2.0
+attrs              26.1.0
 ...
-m3-cli             3.101.10
+m3-cli             3.150.0
 ...
 
-(.venv) user@localhost:~/maestro3/m3-cli$ pip install m3-cli==3.150.0
-Collecting m3-cli==3.150.0
-  Downloading m3_cli-3.150.0-py3-none-any.whl (245 kB)
+(.venv) user@localhost:~/maestro3/m3-cli$ pip install m3-cli==3.170.0
+Collecting m3-cli==3.170.0
+  Downloading m3_cli-3.170.0-py3-none-any.whl (245 kB)
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 245.8/245.8 kB 2.1 MB/s eta 0:00:00
 Installing collected packages: m3-cli
   Attempting uninstall: m3-cli
-    Found existing installation: m3-cli 3.101.10
-    Uninstalling m3-cli-3.101.10:
-      Successfully uninstalled m3-cli-3.101.10
-Successfully installed m3-cli-3.150.0
+    Found existing installation: m3-cli 3.150.0
+    Uninstalling m3-cli-3.150.0:
+      Successfully uninstalled m3-cli-3.150.0
+Successfully installed m3-cli-3.170.0
 ```
 
 **4. Verify the installation:**
@@ -205,17 +205,17 @@ If the `M3-CLI` version is outdated, the `health-check` command will return:
 ```console
 (venv) C:\Maestro3\m3-cli>m3 health-check               
 ================================================================================
-You are using an outdated version of m3-cli (3.101.10). Version 3.150.0 is now available. 
-Please use the next link to download cli for Linux - https://mcc.cloud.epam.com/cli/3.101.10/m3-cli-x86_64.AppImage
-To upgrade cli on macOS run the following command: pip install https://mcc.cloud.epam.com/cli/3.101.10/m3-cli-3.101.10.zip
-For Windows run: pip install https://mcc.cloud.epam.com/cli/3.101.10/m3-cli-3.101.10.zip
+You are using an outdated version of m3-cli (3.150.0). Version 3.170.0 is now available. 
+Please use the next link to download cli for Linux - https://mcc.cloud.epam.com/cli/3.150.0/m3-cli-x86_64.AppImage
+To upgrade cli on macOS run the following command: pip install https://mcc.cloud.epam.com/cli3.150.0/m3-cli-3.150.0.zip
+For Windows run: pip install https://mcc.cloud.epam.com/cli/3.150.0/m3-cli-3.150.0.zip
 ================================================================================
 
 Response:
 +-------------------+---------+-------------+------------+---------------------+
 | Server Available  | Mails   | Ownership   | Terraform  | Cli Latest Version  |
 +===================+=========+=============+============+=====================+
-| True              | True    | True        | True       | 3.150.0             |
+| True              | True    | True        | True       | 3.170.0             |
 +-------------------+---------+-------------+------------+---------------------+
 ```
 
@@ -227,7 +227,7 @@ Response:
 +-------------------+---------+-------------+------------+---------------------+
 | Server Available  | Mails   | Ownership   | Terraform  | Cli Latest Version  |
 +===================+=========+=============+============+=====================+
-| True              | True    | True        | True       | 3.150.0             |
+| True              | True    | True        | True       | 3.170.0             |
 +-------------------+---------+-------------+------------+---------------------+
 ```
 
@@ -249,10 +249,10 @@ pip uninstall m3-cli
 #### Example:
 ```console
 (venv) C:\Maestro3_tests\m3-cli-test-updating>pip uninstall m3-cli         
-Found existing installation: m3-cli 3.150.0
-Uninstalling m3-cli-3.150.0:
+Found existing installation: m3-cli 3.170.0
+Uninstalling m3-cli-3.170.0:
   Would remove:
-    c:\maestro3_tests\m3-cli-test-updating\venv\lib\site-packages\m3_cli-3.150.0.dist-info\*
+    c:\maestro3_tests\m3-cli-test-updating\venv\lib\site-packages\m3_cli-3.170.0.dist-info\*
     c:\maestro3_tests\m3-cli-test-updating\venv\lib\site-packages\m3cli\*
     c:\maestro3_tests\m3-cli-test-updating\venv\m3cli\access_meta.json
     c:\maestro3_tests\m3-cli-test-updating\venv\m3cli\bash_m3cli_complete.sh
@@ -261,7 +261,7 @@ Uninstalling m3-cli-3.150.0:
     c:\maestro3_tests\m3-cli-test-updating\venv\m3cli\zsh_m3cli_complete.sh
     c:\maestro3_tests\m3-cli-test-updating\venv\scripts\m3.exe
 Proceed (Y/n)? y
-  Successfully uninstalled m3-cli-3.150.0
+  Successfully uninstalled m3-cli-3.170.0
 ```
 
 #### Linux/Mac
@@ -279,11 +279,11 @@ pip uninstall m3-cli
 #### Example:
 ```console
 (.venv) user@localhost:~/maestro3_tests/m3-cli-test-updating$ pip uninstall m3-cli         
-Found existing installation: m3-cli 3.150.0
-Uninstalling m3-cli-3.150.0:
+Found existing installation: m3-cli 3.170.0
+Uninstalling m3-cli-3.170.0:
   Would remove:
-    /home/user/maestro3_tests/m3-cli-test-updating/.venv/lib/python3.10/site-packages/m3_cli-3.150.0.dist-info/*
-    /home/user/maestro3_tests/m3-cli-test-updating/.venv/lib/python3.10/site-packages/m3cli/*
+    /home/user/maestro3_tests/m3-cli-test-updating/.venv/lib/python3.14/site-packages/m3_cli-3.170.0.dist-info/*
+    /home/user/maestro3_tests/m3-cli-test-updating/.venv/lib/python3.14/site-packages/m3cli/*
     /home/user/maestro3_tests/m3-cli-test-updating/.venv/m3cli/access_meta.json
     /home/user/maestro3_tests/m3-cli-test-updating/.venv/m3cli/bash_m3cli_complete.sh
     /home/user/maestro3_tests/m3-cli-test-updating/.venv/m3cli/commands_def.json
@@ -291,14 +291,14 @@ Uninstalling m3-cli-3.150.0:
     /home/user/maestro3_tests/m3-cli-test-updating/.venv/m3cli/zsh_m3cli_complete.sh
     /home/user/maestro3_tests/m3-cli-test-updating/.venv/bin/m3
 Proceed (Y/n)? y
-  Successfully uninstalled m3-cli-3.150.0
+  Successfully uninstalled m3-cli-3.170.0
 ```
 
 > **Tip:** Uninstalling `M3-CLI` does not delete all libraries that were installed with `M3-CLI`. For complete removal, delete the `venv` (Windows) or `.venv` (Linux/Mac) directory.
 
 [Contents](#table-of-contents)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # Usage Guide
 
@@ -356,7 +356,7 @@ Before obtaining your credentials, you need the Maestro3 base URL - the web addr
 
 ---
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 #### Generating Access Credentials
 
@@ -370,7 +370,7 @@ To obtain your credentials, log in to the Maestro3 UI and follow these steps:
 
 ![](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/generate_creds_1.png)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 **3. Specify the expiration time for the credentials:**
 
@@ -380,14 +380,14 @@ To obtain your credentials, log in to the Maestro3 UI and follow these steps:
 
 ![](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/generate_creds_3.png)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 ### Optional Configuration
 
 The following environment variables can be used to override the default values that `M3-CLI` uses:
 
 * `M3CLI_CONFIGURATION_FOLDER_PATH`: Specifies the path to the directory containing files with command and parameter definitions (`commands_def.json`, `commands_help.py`). Default value: internal application path.
-* `M3SDK_VERSION`: Specifies the SDK version to use. Default version: `3.150.0`.
+* `M3SDK_VERSION`: Specifies the SDK version to use. Default version: `3.170.0`.
 * `M3CLI_DEBUG`: Set to `True` to enable debug mode. Default value: `False`.
 * `LOG_PATH`: Specifies a custom path to store the `M3-CLI` log file.
 
@@ -405,7 +405,7 @@ The root help displays data about all available commands:
 
 ![](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_0.png)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 ### Command Help
 
@@ -425,7 +425,7 @@ Use the `--full-help` flag to get all available options:
 
 ![](https://raw.githubusercontent.com/Maestro-Cloud-Control/m3-cli/main/pics/usage_sample_2.png)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 **JSON output mode:**
 
@@ -437,7 +437,7 @@ Use the `--full-help` flag to get all available options:
 
 > **Tip:** The `--verbose` parameter writes the command result to the terminal.
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 ## Common Use Cases
 
@@ -483,7 +483,7 @@ Response:
 +-------------------+---------+-------------+------------+---------------------+
 | Server Available  | Mails   | Ownership   | Terraform  | Cli Latest Version  |
 +===================+=========+=============+============+=====================+
-| True              | True    | True        | True       | 3.150.0             |
+| True              | True    | True        | True       | 3.170.0             |
 +-------------------+---------+-------------+------------+---------------------+
 ```
 
@@ -1508,7 +1508,7 @@ m3 describe-events \
 
 [Contents](#table-of-contents)
 
-{{ pagebreak }}
+[//]: # ({{ pagebreak }})
 
 # Support
 
@@ -1516,7 +1516,7 @@ m3 describe-events \
 
 When reporting an issue, please provide as much detail as possible, including:
 
-1. **Python version:** The `M3-CLI` tool supports `Python 3.10+`
+1. **Python version:** The `M3-CLI` tool supports `Python 3.14`
 2. **Clear description:** A concise description of the issue
 3. **Steps to reproduce:** Detailed steps to reproduce the issue
 4. **Error messages:** Any error messages or logs that can help us understand the problem
@@ -1545,7 +1545,7 @@ Our team is here to help you, and we will do our best to resolve your issue as q
 
 - **Company:** EPAM
 - **Tool:** M3-CLI
-- **Supported Python Versions:** 3.10+
+- **Supported Python Versions:** 3.14
 - **Support Contact:** SupportSyndicateTeam@epam.com
 
 ---

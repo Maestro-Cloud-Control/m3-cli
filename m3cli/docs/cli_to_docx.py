@@ -5,7 +5,10 @@ from pathlib import Path
 from m3cli.docs.commons import create_logger
 from m3cli.docs.commons.commands_table import add_table_md
 from m3cli.docs.cli_to_md import generate_documentation
-from m3cli.docs.commons.m3_preprocessor import style_headers, merge_mds
+from m3cli.docs.commons.m3_preprocessor import (
+    style_headers,
+    merge_mds,
+)
 from m3cli.docs.md_to_docx import convert_md_to_docx
 from m3cli.docs.commons.title_page_docx import add_page_to_docx
 from m3cli.docs.commons.last_page import add_cli_last_page

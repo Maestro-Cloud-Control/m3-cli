@@ -1,19 +1,10 @@
 from docx import Document
-from docx.enum.text import WD_BREAK
 from docx.shared import Pt, RGBColor, Inches
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from m3cli.docs.commons import create_logger
 
 _LOG = create_logger()
-
-
-def add_page_breaks(doc):
-    for para in doc.paragraphs:
-        if '{{ pagebreak }}' in para.text:
-            para.clear()  # Clear the paragraph text
-            run = para.add_run()  # Add a page break
-            run.add_break(WD_BREAK.PAGE)
 
 
 def set_normal_text_style(doc):
@@ -97,7 +88,6 @@ def set_cell_borders(cell):
 def apply_custom_styles(docx_file):
     doc = Document(docx_file)
 
-    add_page_breaks(doc)
     set_normal_text_style(doc)
     create_code_block_style(doc)
     set_table_styles(doc)
