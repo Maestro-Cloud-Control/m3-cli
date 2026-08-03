@@ -4,6 +4,208 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.170.0] - 2026-05-27
+* Migrate minimum supported Python version from 3.10 to 3.14:
+  * Set `requires-python = ">=3.14"` in `pyproject.toml`
+  * Add `isolated_build = true` to `tox.ini`
+  * Replace `[testenv:py310]` with `[testenv:py314]` (with explicit `basepython = python3.14`) in `tox.ini`
+  * Update `tox.ini` `envlist` from `py310,lint` to `py314,lint`
+* Replace removed stdlib module `imghdr` (dropped in Python 3.13) with Pillow-based image detection in `validation_service.py`:
+  * Remove `import imghdr`
+  * Add `from PIL import Image, UnidentifiedImageError`
+  * Add module-level helper `_detect_image_format(file_path)` that opens the file with `PIL.Image` to detect the actual image format
+  * Update `check_file_type()` to call `_detect_image_format()` instead of `imghdr.what()`
+* Add project classifiers to `pyproject.toml`:
+  * `Programming Language :: Python :: 3.10` through `3.14`
+  * `License :: OSI Approved :: Apache Software License`
+  * `Operating System :: OS Independent`
+* Relax pinned dependency versions to compatible ranges in `pyproject.toml` and `requirements.txt` (allows patch/minor upgrades without file edits):
+  * `click==8.3.1` -> `click>=8.3,<9`
+  * `requests==2.33.1` -> `requests>=2.33,<3`
+  * `tabulate==0.10.0` -> `tabulate>=0.10,<1`
+  * `cryptography==46.0.6` -> `cryptography>=46,<50`
+  * `jsonschema==4.26.0` -> `jsonschema>=4.26,<5`
+  * `PyYAML==6.0.3` -> `PyYAML>=6,<7`
+  * `Pillow==12.2.0` -> `Pillow>=12,<13`
+  * `packaging==26.0` -> `packaging>=26,<27`
+  * `beautifulsoup4==4.14.3` -> `beautifulsoup4>=4.14,<5`
+* Relax pinned development dependency versions to compatible ranges in `requirements-dev.txt`:
+  * `pytest==9.0.2` -> `pytest>=9,<10`
+  * `pytest-cov==7.1.0` -> `pytest-cov>=7,<8`
+  * `pyflakes==3.4.0` -> `pyflakes>=3.3,<4`
+  * `flake8==7.3.0` -> `flake8>=7.2,<8`
+  * `tox==4.52.0` -> `tox>=4.52,<5`
+
+## [4.164.5] - 2026-05-22
+* Remove deprecated parameter `--inactive` from the command `describe-regions`
+
+## [4.164.4] - 2026-04-10
+* Fix CLI argument parser misinterpreting parameter values starting with `-` as parameter keys (e.g., `--token -JG_...`)
+
+## [4.164.3] - 2026-03-31
+* Add `describe-platform-service-variables` command
+* Update project dependencies and build configuration:
+  * Updated direct dependencies:
+    * `click` from 7.1.2 to 8.3.1
+    * `requests` from 2.31.0 to 2.33.1
+    * `tabulate` from 0.9.0 to 0.10.0
+    * `cryptography` from 41.0.3 to 46.0.6
+    * `jsonschema` from 3.2.0 to 4.26.0
+    * `PyYAML` from 6.0.1 to 6.0.3
+    * `Pillow` from 10.0.0 to 12.1.1
+    * `packaging` from 25.0 to 26.0
+    * `beautifulsoup4` from 4.10.0 to 4.14.3
+  * Updated development dependencies:
+    * `pytest` from 6.2.5 to 7.4.4
+    * `pytest-cov` from 3.0.0 to 4.1.0
+    * `flake8` from 4.0.1 to 7.3.0
+    * `pyflakes` from 2.4.0 to 3.4.0
+    * `tox` from 3.24.5 to 4.52.0
+  * Removed pinned transitive dependencies from `requirements.txt`
+    (now resolved automatically by pip):
+    * `attrs` — was transitive dependency of `jsonschema` 3.x
+    * `cffi` — no longer required by `cryptography` 42+ (pure Rust backend)
+    * `pycparser` — was transitive dependency of `cffi`
+    * `chardet` — replaced by `charset-normalizer` in `requests` 2.26+
+    * `certifi`, `idna`, `urllib3` — transitive dependencies of `requests`
+    * `pyrsistent` — was transitive dependency of `jsonschema` 3.x
+    * `pyparsing`, `six`, `soupsieve` — no longer required directly
+  * Fixed `pyproject.toml` build configuration:
+    * Removed `setuptools` from runtime `dependencies`
+      (build-time tool only)
+    * Fixed `[project.urls]` table format
+    * Migrated deprecated `data-files` to `package-data`
+  * Commented out `pika` dependency pending AMQP transport implementation
+
+## [4.164.2] - 2026-04-02
+* Replace `print`/`input`/`getpass` with Click equivalents (`click.echo`, `click.prompt`, `click.confirm`) in `_set_credentials_interactively` and `get_user_access` for consistent output capture and cross-platform encoding handling
+
+## [4.164.1] - 2026-03-30
+* Fix excessive blank lines and stray `Output:` text in `m3 --help` general command listing
+* Replace intrusive version-check warning banner with a plain tip message when CLI version info is unavailable
+* Remove trailing periods from warning messages for consistency
+* Remove decorative separator line from `--full-help` command output
+* Replace `finally` block in `perform_version_check` with sequential flow to fix output ordering and spurious warnings on re-raised exceptions
+* Fix `check_credentials_in_file` crashing on corrupted credentials file (unhandled `JSONDecodeError`)
+* Fix `__write_credentials_to_file` raising `SyntaxError` on corrupted credentials file, making recovery via `m3 access` impossible
+* Fix `load_parameters_from_json` raising `SyntaxError` on corrupted credentials file, blocking all CLI commands including `m3 access`
+* Fix `load_file_contents` raising `FileExistsError` instead of `FileNotFoundError` for missing files
+* Fix potential resource leak in `open_creds_file` by using `pathlib` (`Path.mkdir`, `Path.touch`)
+* Change `__load_creds_contents` file mode from `r+` to `r` (read-only)
+* Fix `handle_variables` type hint from `str | None` to `dict | None` to match actual usage
+* Properly validate all parameters passed into the command
+* Remove the redundant library `chardet>=5.2` from `requirements.txt`
+
+## [4.164.0] - 2026-03-27
+* Add the `VMWARE` value for the `--cloud` parameter in the commands:
+  * `create-key`, `import-key`, `describe-regions`, `manage-key`,
+  * `describe-events`, `describe-keys`, `publish-platform-service`,
+  * `domain_parameters: 'cloud'`
+
+## [4.161.0] - 2026-02-12
+* Fix `budgets-report` not displaying budget data by using correct date range parameters for filtering
+
+## [4.158.3] - 2026-01-15
+* Change from ` to ' for consistency
+
+## [4.158.2] - 2026-01-15
+* Update docs according to the technical reviewer's recommendations
+* Update `create-recommendation-settings`, `update-recommendation-settings` and `remove-recommendation-settings`
+
+## [4.158.1] - 2026-01-08
+* Add the parameters `--from`, `--to` to the `budget-report` command
+* Update the `budget-report` command by changing the `tenantNames` list to the `tenantGroup` string
+
+## [4.158.0] - 2025-12-01
+* Improve error messages for invalid CLI parameter names and values to provide clearer guidance
+
+## [4.154.10] - 2025-11-24
+* Fix full view output formatting for all commands:
+  * Prevent line wrapping in long string values (URLs, content) by setting YAML dump width to infinite
+  * Fix key-value separator replacement to only replace YAML separators, not colons within actual content values
+  * Consolidate YAML formatting logic to avoid code duplication
+* Add support for wrapper format with message notes
+* Add type hints for better code maintainability
+
+## [4.154.9] - 2025-11-21
+* Update `describe-script` command:
+  * Add client-side validation to ensure `--presigned-url` flag is only used with `--full` view type and `--script` parameter
+  * Improve help message when content is accessed via presigned URL
+  * Update exception handling to use ValueError instead of AssertionError
+
+## [4.154.8] - 2025-11-20
+* Update `resource-type` parameter in `create/describe/update/remove-recommendation-settings` commands to automatically convert values to uppercase
+
+## [4.154.7] - 2025-11-19
+* Add client-side validation for CLI parameter names and values to prevent non-English character input:
+  * Parameter names (keys) restricted to English letters (A-Z, a-z) and hyphen (-)
+  * Parameter values restricted to standard English keyboard characters (printable ASCII)
+  * Early validation provides clear error messages indicating character position and suggesting English keyboard layout
+  * Prevents confusing backend errors from Cyrillic or other non-ASCII characters
+
+## [4.154.6] - 2025-11-19
+* Change `describe-schedules` command to use the default value `scheduleGroup: "ALL"` instead of `filterByUserAccess: true`
+
+## [4.154.5] - 2025-11-14
+* Update `describe-schedules` command:
+  * Add client-side validation to ensure `--schedule-name` parameter is only used when `--region` parameter is specified
+  * Update help text for `--schedule-name` parameter to indicate it requires `--region` parameter
+
+## [4.154.4]
+* Add client-side validation for `--disabled-until` parameter in `create-recommendation-settings` and `update-recommendation-settings` commands to ensure the date is in the future and within 30 days from today
+* Add shared `validate_disabled_until_date()` validation function to provide early feedback before backend request
+
+## [4.154.3]
+* Update `describe-script` command to send `presignedUrl` instead of `withPresignedUrl`
+* Update `describe-schedules` command to send default value `filterByUserAccess = True`
+* Adjust the `create/update/remove-recommendation-settings` commands according to the QA and Java BE recommendations
+
+## [4.154.2]
+* Update the `create/update/remove-recommendation-settings` commands:
+  * Add validation that `-R` and `-SRE` flags cannot be used simultaneously
+* Update the `remove-recommendation-settings` command's parameter `--type-to-id` to `--recommendation-id` (changed from map to list format)
+
+## [4.154.1]
+* Add `Instance Name` to `m3 din` command `--table` view output
+
+## [4.154.0]
+* Update `describe-script` command:
+  * Add `--presigned-url` flag
+  * Add validation: `--presigned-url` flag now requires `--full` view type
+  * Improve empty response handling
+  * Remove `null` values from output
+
+## [4.150.2]
+* Update the `create-instance-quota`, `delete-instance-quota`, and `delete-storage-quota` commands
+to display messages from the backend by removing `"none": true` from the `output_configuration` metadata
+* Add `update-recommendation-settings` command to update `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Add `describe-recommendation-settings` command to describe `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Add `remove-recommendation-settings` command to describe `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Update `upload-script` command to remove fields with `None` values from `--full` output
+* Update `describe-user-permissions` command to display additional message as `Note` in table view (below table), full view (at bottom), and JSON view (as last array element)
+
+## [4.150.1]
+* Add `create-recommendation-settings` command to configure `Rightsizer` and `Syndicate Rule Engine` recommendation settings
+* Update the `create-storage-quota` command to display messages from the backend by removing `"none": true` from the `output_configuration` metadata
+
+## [4.150.0]
+* Update `describe-keys` command by hiding `privatePart` and unhiding `email`
+* Add `native-shapes` flag for `describe-shapes` command
+* Update the `describe-keys` command to make the `--tenant` parameter required
+* Update the `describe-instances` command to convert `creationDateTimestamp` from a Unix timestamp to a human-readable datetime format
+* Update the `describe-insights` command to reflect BE changes
+* Update the `budgets-report` command to sort the action plan in ascending order
+* Add `--schedule-name` parameter to the `describe-schedules` command and include a `Cron` column in the table view
+* Add `--group-name` parameter to the `describe-user-permissions` command
+
+## [4.146.1] - 2025-08-20
+* Remove deprecated files:
+  * `hourly-report-softline.py`
+  * `resource-report-softline.py`
+  * `subtotal-report-softline.py`
+  * `total-report-softline.py`
+  * `commands_def_backup.py`
+
 ## [4.146.0] - 2025-08-12
 * Update `report` command `budgets` value for `type` parameter:
   * Add validation for unsupported parameters: 

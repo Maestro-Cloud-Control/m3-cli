@@ -61,7 +61,7 @@
     "cloud": {
       "alias": "c",
       "api_param_name": "cloud",
-      "help": "The cloud. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE]",
+      "help": "The cloud. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
       "required": true,
       "validation": {
         "type": "string",
@@ -71,7 +71,8 @@
           "GOOGLE",
           "NUTANIX",
           "OPEN_STACK",
-          "VSPHERE"
+          "VSPHERE",
+          "VMWARE"
         ]
       },
       "case": "upper"
@@ -100,7 +101,7 @@
       }
     },
     "describe-insights": {
-      "api_action": "GET_RESOURCE_INSIGHTS",
+      "api_action": "DESCRIBE_RECOMMENDATIONS",
       "alias": "dins",
       "help": "Describes insights for an instance in specific region for a specific tenant",
       "help_file": true,
@@ -159,8 +160,9 @@
       "output_configuration": {
         "response_table_headers": [
           "Category",
-          "Risk status",
-          "Risk priority"
+          "Rist index",
+          "Solution",
+          "Source"
         ]
       }
     },
@@ -361,6 +363,7 @@
         "nullable": true,
         "response_table_headers": [
           "instanceId",
+          "instanceName",
           "state",
           "privateIpAddress",
           "keyName",
@@ -497,7 +500,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud name. Specifies which cloud the template belongs to. Allowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE]",
+          "help": "The cloud name. Specifies which cloud the template belongs to. Allowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -507,7 +510,8 @@
               "GOOGLE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -535,6 +539,7 @@
               "NUTANIX",
               "OPEN_STACK",
               "VSPHERE",
+              "VMWARE",
               "ALL"
             ]
           },
@@ -1105,6 +1110,39 @@
       },
       "output_configuration": {
         "response_table_headers": []
+      }
+    },
+    "describe-platform-service-variables": {
+      "api_action": "DESCRIBE_PLATFORM_SERVICE_ENTRY_SECRETS",
+      "help": "Provides a list of configuration variables associated with a platform service",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "alias": "dplvars",
+      "groups": [
+        "platform-service-management"
+      ],
+      "parameters": {
+        "service-id": {
+          "parent": "service-id",
+          "required": true
+        },
+        "all": {
+          "alias": "A",
+          "api_param_name": "all",
+          "help": "A flag. If specified, returns all service variables. By default, only the variables intended for email delivery are displayed",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "stackId",
+          "parameter",
+          "value"
+        ]
       }
     },
     "describe-platform-service-stacks": {
@@ -1831,6 +1869,7 @@
       "help": "Describes the schedules set to instances in your tenant",
       "help_file": true,
       "alias": "dsch",
+      "integration_request": true,
       "integration_response": true,
       "groups": [
         "schedule-management",
@@ -1867,6 +1906,15 @@
               "All my instances in region"
             ]
           }
+        },
+        "schedule-name": {
+          "alias": "schname",
+          "api_param_name": "scheduleName",
+          "help": "The name of the schedule. Can be used only with --region parameter",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
         }
       },
       "output_configuration": {
@@ -1879,7 +1927,8 @@
           "scheduleType",
           "instances",
           "tag",
-          "description"
+          "description",
+          "cron"
         ],
         "headers_customization": {
           "instances": {
@@ -2368,7 +2417,7 @@
           "alias": "y",
           "api_param_name": "year",
           "help": "Year. Format (yyyy). Use with 'month' for a 1-month range",
-          "required": true,
+          "required": false,
           "validation": {
             "type": "string"
           }
@@ -2377,9 +2426,27 @@
           "alias": "m",
           "api_param_name": "month",
           "help": "Month. Format (mm). Use with 'year' for a 1-month range",
-          "required": true,
+          "required": false,
           "validation": {
             "type": "string"
+          }
+        },
+        "from": {
+          "alias": "from",
+          "api_param_name": "from",
+          "help": "Start date. Format (dd.mm.yyyy). Use with 'to' for a custom range",
+          "required": false,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "to": {
+          "alias": "to",
+          "api_param_name": "to",
+          "help": "End date. Format (dd.mm.yyyy). Use with 'from' for a custom range",
+          "required": false,
+          "validation": {
+            "type": "date"
           }
         },
         "region": {
@@ -2393,7 +2460,7 @@
           "case": "upper"
         },
         "tag": {
-          "alias": "",
+          "alias": "tag",
           "api_param_name": "tag",
           "help": "Collects only records with a specified tag. Use the following format: tag=value",
           "required": false,
@@ -3128,6 +3195,7 @@
       "help": "Describes the script files uploaded to Maestro and available for the specific tenant",
       "help_file": true,
       "alias": "dscript",
+      "integration_request": true,
       "integration_response": true,
       "groups": [
         "init-script-management"
@@ -3138,6 +3206,15 @@
         },
         "cloud": {
           "parent": "cloud"
+        },
+        "presigned-url": {
+          "alias": "purl",
+          "api_param_name": "presignedUrl",
+          "help": "A flag. Allows user to download script by presigned URL. Works only with `--full` flag",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         },
         "script": {
           "alias": "scname",
@@ -3429,7 +3506,7 @@
           "alias": "tn",
           "api_param_name": "tenantName",
           "help": "The tenant name",
-          "required": false,
+          "required": true,
           "validation": {
             "type": "string"
           },
@@ -3438,7 +3515,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud to which the key is applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud to which the key is applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -3447,7 +3524,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -3520,7 +3598,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud name where the key will be imported.  \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud name where the key will be imported.  \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -3529,7 +3607,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -3617,7 +3696,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE]",
+          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -3629,7 +3708,8 @@
               "HARDWARE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4471,7 +4551,6 @@
         }
       },
       "output_configuration": {
-        "none": true,
         "response_table_headers": []
       }
     },
@@ -4524,7 +4603,6 @@
         }
       },
       "output_configuration": {
-        "none": true,
         "response_table_headers": []
       }
     },
@@ -4579,7 +4657,6 @@
         }
       },
       "output_configuration": {
-        "none": true,
         "response_table_headers": []
       }
     },
@@ -4634,7 +4711,6 @@
         }
       },
       "output_configuration": {
-        "none": true,
         "response_table_headers": []
       }
     },
@@ -4662,7 +4738,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud name where the key will be applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud name where the key will be applied. \nAllowed values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": false,
           "validation": {
             "type": "string",
@@ -4671,7 +4747,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4775,7 +4852,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. Allowed_values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK]",
+          "help": "The cloud. Allowed_values: [AWS, AZURE, GOOGLE, NUTANIX, OPEN_STACK, VMWARE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -4784,7 +4861,8 @@
               "AZURE",
               "GOOGLE",
               "NUTANIX",
-              "OPEN_STACK"
+              "OPEN_STACK",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4922,15 +5000,6 @@
         "tenant": {
           "parent": "tenant"
         },
-        "inactive": {
-          "alias": "N",
-          "api_param_name": "inactive",
-          "help": "A flag. If specified, the inactive regions are shown",
-          "required": false,
-          "validation": {
-            "type": "bool"
-          }
-        },
         "include-hidden": {
           "alias": "H",
           "api_param_name": "includeHidden",
@@ -4943,7 +5012,7 @@
         "cloud": {
           "alias": "c",
           "api_param_name": "cloud",
-          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE]",
+          "help": "The cloud. \nAllowed values: [AWS, AZURE, ENTERPRISE, GOOGLE, HARDWARE, NUTANIX, OPEN_STACK, VSPHERE, VMWARE]",
           "required": true,
           "validation": {
             "type": "string",
@@ -4955,7 +5024,8 @@
               "HARDWARE",
               "NUTANIX",
               "OPEN_STACK",
-              "VSPHERE"
+              "VSPHERE",
+              "VMWARE"
             ]
           },
           "case": "upper"
@@ -4973,6 +5043,7 @@
     "describe-shapes": {
       "api_action": "LIST_REGION_SHAPES",
       "alias": "dsh",
+      "integration_request": true,
       "integration_response": true,
       "help": "Describes the shapes available for your tenant",
       "help_file": true,
@@ -4991,10 +5062,20 @@
         },
         "region": {
           "parent": "region"
+        },
+        "native-shapes": {
+          "alias": "ns",
+          "api_param_name": "nativeShapes",
+          "help": "Flag. If specified, shows cloud-native instance types instead of Maestro3 standardized shapes",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
         }
       },
       "output_configuration": {
         "response_table_headers": [
+          "nativeInstanceType",
           "name",
           "shape",
           "cpuCount",
@@ -5676,6 +5757,15 @@
         "cloud": {
           "parent": "cloud"
         },
+        "group-name": {
+          "alias": "gname",
+          "api_param_name": "groupName",
+          "help": "The name of the permission group",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
         "environment": {
           "alias": "env",
           "api_param_name": "env",
@@ -6162,6 +6252,539 @@
           "total"
         ],
         "nullable": true
+      }
+    },
+    "create-recommendation-settings": {
+      "api_action": "UPDATE_RECOMMENDATION_SETTINGS",
+      "alias": "crset",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "help": "Create recommendation settings for cost optimization",
+      "groups": [],
+      "parameters": {
+        "tenant": {
+          "parent": "tenant"
+        },
+        "cloud": {
+          "alias": "c",
+          "api_param_name": "cloud",
+          "help": "Cloud provider. Allowed values: AWS, AZURE, GOOGLE",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          },
+          "case": "upper"
+        },
+        "disabled-until": {
+          "alias": "du",
+          "api_param_name": "disabledUntil",
+          "help": "Date until which recommendations are disabled. Format: dd.mm.yyyy",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "rightsizer": {
+          "alias": "R",
+          "api_param_name": "R",
+          "help": "Enable Rightsizer recommendations. Cannot be used together with -SRE",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "syndicate-rule-engine": {
+          "alias": "SRE",
+          "api_param_name": "SRE",
+          "help": "Enable Syndicate Rule Engine recommendations. Cannot be used together with -R",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "type": {
+          "alias": "t",
+          "api_param_name": "type",
+          "help": "Recommendation filter type (required when using -SRE flag). Pass several values in the following format: TAG_FILTER, RESOURCE, NRID",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "TAG_FILTER",
+              "RESOURCE",
+              "NRID"
+            ],
+            "type": "list"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "regionName",
+          "help": "Region name (required for -R flag and -SRE with --type RESOURCE)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-type": {
+          "alias": "rt",
+          "help": "Resource type (required for -R flag and -SRE with --type RESOURCE). Allowed value: INSTANCE",
+          "api_param_name": "resourceType",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "INSTANCE"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-id": {
+          "alias": "rid",
+          "api_param_name": "resourceId",
+          "help": "Resource identifier (required for -R flag and -SRE with --type RESOURCE)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "native-resource-id": {
+          "alias": "nrid",
+          "api_param_name": "nativeResourceId",
+          "help": "Native resource identifier (ARN for AWS, Resource ID for Azure, or Project ID for GCP. Required for -SRE with --type NRID)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "alias": "cat",
+          "api_param_name": "categories",
+          "help": "Recommendation categories (required for -R flag). Pass several values in the following format: SCHEDULES,SHUT_DOWN,SCALING,SHAPE,SPLITTING",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "SCHEDULES",
+              "SHUT_DOWN",
+              "SCALING",
+              "SHAPE",
+              "SPLITTING"
+            ],
+            "type": "list"
+          }
+        },
+        "tag": {
+          "alias": "tag",
+          "api_param_name": "tags",
+          "help": "Tags (required for -SRE with --type TAG_FILTER). Pass several values in the following format: key1:val1,key2:val2",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
+      }
+    },
+    "update-recommendation-settings": {
+      "api_action": "UPDATE_RECOMMENDATION_SETTINGS",
+      "alias": "urset",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "help": "Update recommendation settings for cost optimization",
+      "groups": [],
+      "parameters": {
+        "tenant": {
+          "parent": "tenant"
+        },
+        "cloud": {
+          "alias": "c",
+          "api_param_name": "cloud",
+          "help": "Cloud provider. Allowed values: AWS, AZURE, GOOGLE",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          },
+          "case": "upper"
+        },
+        "disabled-until": {
+          "alias": "du",
+          "api_param_name": "disabledUntil",
+          "help": "Date until which recommendations are disabled. Format: dd.mm.yyyy",
+          "required": true,
+          "validation": {
+            "type": "date"
+          }
+        },
+        "rightsizer": {
+          "alias": "R",
+          "api_param_name": "R",
+          "help": "Update Rightsizer recommendations. Cannot be used together with -SRE",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "syndicate-rule-engine": {
+          "alias": "SRE",
+          "api_param_name": "SRE",
+          "help": "Update Syndicate Rule Engine recommendations. Cannot be used together with -R",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "recommendation-id": {
+          "alias": "recid",
+          "api_param_name": "recId",
+          "help": "Recommendation ID (required when using -SRE flag)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "alias": "t",
+          "api_param_name": "type",
+          "help": "Recommendation filter type (required when using -SRE flag). Allowed values: TAG_FILTER, RESOURCE, NRID",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "TAG_FILTER",
+              "RESOURCE",
+              "NRID"
+            ],
+            "type": "string"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "regionName",
+          "help": "Region name (required for -R flag and -SRE flag with RESOURCE type)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-type": {
+          "alias": "rt",
+          "help": "Resource type (required for -R flag and -SRE flag with RESOURCE type). Allowed value: INSTANCE",
+          "api_param_name": "resourceType",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "INSTANCE"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-id": {
+          "alias": "rid",
+          "api_param_name": "resourceId",
+          "help": "Resource identifier (required for -R flag and -SRE flag with RESOURCE type)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "native-resource-id": {
+          "alias": "nrid",
+          "api_param_name": "nativeResourceId",
+          "help": "Native resource identifier (ARN for AWS, Resource ID for Azure, or Project ID for GCP. Required for -SRE flag with --type NRID)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "alias": "cat",
+          "api_param_name": "categories",
+          "help": "Recommendation categories (required for -R flag). Pass several values in the following format: SCHEDULES,SHUT_DOWN,SCALING,SHAPE,SPLITTING",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "SCHEDULES",
+              "SHUT_DOWN",
+              "SCALING",
+              "SHAPE",
+              "SPLITTING"
+            ],
+            "type": "list"
+          }
+        },
+        "tag": {
+          "alias": "tag",
+          "api_param_name": "tags",
+          "help": "Tags (required for -SRE flag with TAG_FILTER type). Pass several values in the following format: key1:val1,key2:val2",
+          "required": false,
+          "validation": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
+      }
+    },
+    "describe-recommendation-settings": {
+      "api_action": "DESCRIBE_RECOMMENDATION_SETTINGS",
+      "alias": "drset",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "help": "Describe recommendation settings for cost optimization",
+      "groups": [],
+      "parameters": {
+        "tenant": {
+          "parent": "tenant"
+        },
+        "cloud": {
+          "alias": "c",
+          "api_param_name": "cloud",
+          "help": "Cloud provider. Allowed values: AWS, AZURE, GOOGLE",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          },
+          "case": "upper"
+        },
+        "rightsizer": {
+          "alias": "R",
+          "api_param_name": "R",
+          "help": "Describe Rightsizer recommendations",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "syndicate-rule-engine": {
+          "alias": "SRE",
+          "api_param_name": "SRE",
+          "help": "Describe Syndicate Rule Engine recommendations",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "regionName",
+          "help": "Region name (required for -R flag and -SRE flag with RESOURCE type)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-type": {
+          "alias": "rt",
+          "help": "Resource type (required for -R flag and -SRE flag with RESOURCE type). Allowed value: INSTANCE",
+          "api_param_name": "resourceType",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "INSTANCE"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-id": {
+          "alias": "rid",
+          "api_param_name": "resourceId",
+          "help": "Resource identifier (required for -R flag and -SRE flag with RESOURCE type)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "alias": "cat",
+          "api_param_name": "categories",
+          "help": "Recommendation categories (required for -R flag). Pass several values in the following format: SCHEDULES,SHUT_DOWN,SCALING,SHAPE,SPLITTING",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "SCHEDULES",
+              "SHUT_DOWN",
+              "SCALING",
+              "SHAPE",
+              "SPLITTING"
+            ],
+            "type": "list"
+          }
+        },
+        "type": {
+          "alias": "t",
+          "api_param_name": "type",
+          "help": "Recommendation filter type (required when using -SRE flag). Pass several values in the following format: TAG_FILTER, RESOURCE, NRID (NRID: ARN for AWS, Resource ID for Azure, or Project ID for GCP)",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "TAG_FILTER",
+              "RESOURCE",
+              "NRID"
+            ],
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": [
+          "source",
+          "cloud",
+          "tenantName",
+          "regionName",
+          "resourceId",
+          "resourceType",
+          "disabledUntil",
+          "category",
+          "id",
+          "type"
+        ]
+      }
+    },
+    "remove-recommendation-settings": {
+      "api_action": "UPDATE_RECOMMENDATION_SETTINGS",
+      "alias": "rrset",
+      "help_file": true,
+      "integration_response": true,
+      "integration_request": true,
+      "help": "Remove recommendation settings for cost optimization",
+      "groups": [],
+      "parameters": {
+        "tenant": {
+          "parent": "tenant"
+        },
+        "cloud": {
+          "alias": "c",
+          "api_param_name": "cloud",
+          "help": "Cloud provider. Allowed values: AWS, AZURE, GOOGLE",
+          "required": true,
+          "validation": {
+            "type": "string",
+            "allowed_values": [
+              "AWS",
+              "AZURE",
+              "GOOGLE"
+            ]
+          },
+          "case": "upper"
+        },
+        "rightsizer": {
+          "alias": "R",
+          "api_param_name": "R",
+          "help": "Remove Rightsizer recommendations. Cannot be used together with -SRE",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "syndicate-rule-engine": {
+          "alias": "SRE",
+          "api_param_name": "SRE",
+          "help": "Remove Syndicate Rule Engine recommendations. Cannot be used together with -R",
+          "required": false,
+          "validation": {
+            "type": "bool"
+          }
+        },
+        "recommendation-id": {
+          "alias": "recid",
+          "api_param_name": "recId",
+          "help": "Recommendation IDs. Pass several values in the following format: ID1, ID2, ID3, ...",
+          "required": false,
+          "validation": {
+            "type": "list"
+          }
+        },
+        "region": {
+          "alias": "r",
+          "api_param_name": "regionName",
+          "help": "Region name (required for -R flag)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-type": {
+          "alias": "rt",
+          "help": "Resource type (required for -R flag). Allowed value: INSTANCE",
+          "api_param_name": "resourceType",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "INSTANCE"
+            ],
+            "type": "string"
+          },
+          "case": "upper"
+        },
+        "resource-id": {
+          "alias": "rid",
+          "api_param_name": "resourceId",
+          "help": "Resource identifier (required for -R flag)",
+          "required": false,
+          "validation": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "alias": "cat",
+          "api_param_name": "categories",
+          "help": "Recommendation categories (required for -R flag). Pass several values in the following format: SCHEDULES,SHUT_DOWN,SCALING,SHAPE,SPLITTING",
+          "required": false,
+          "validation": {
+            "allowed_values": [
+              "SCHEDULES",
+              "SHUT_DOWN",
+              "SCALING",
+              "SHAPE",
+              "SPLITTING"
+            ],
+            "type": "list"
+          }
+        }
+      },
+      "output_configuration": {
+        "response_table_headers": []
       }
     }
   },

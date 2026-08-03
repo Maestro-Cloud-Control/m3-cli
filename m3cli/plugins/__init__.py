@@ -67,3 +67,44 @@ def parse_and_set_date_range(parameters) -> None:
 
     parameters['from'] = from_date
     parameters['to'] = to_date
+
+
+def validate_disabled_until_date(
+        timestamp: float | None = None,
+) -> None:
+    """
+    Validate that disabledUntil timestamp is in the future and within one month.
+
+    :param timestamp: Unix timestamp in milliseconds (as float or int)
+    :raises ValueError: If date is invalid, not in the future, or beyond one month
+    """
+    if not timestamp:
+        return  # Optional parameter
+
+    try:
+        # Convert milliseconds timestamp to datetime
+        disabled_date = datetime.fromtimestamp(timestamp / 1000).date()
+    except (ValueError, TypeError, OSError) as e:
+        raise ValueError(
+            f"Invalid timestamp: '{timestamp}'. Error: {str(e)}"
+        )
+
+    # Get today's date
+    today = datetime.now().date()
+
+    # Check if date is in the future
+    if disabled_date <= today:
+        raise ValueError(
+            f"The '--disabled-until' date must be in the future. "
+            f"Provided: '{disabled_date.strftime('%d.%m.%Y')}'. "
+            f"Today: '{today.strftime('%d.%m.%Y')}'"
+        )
+
+    # Check if date is within one month from today
+    one_month_later = today + timedelta(days=30)
+    if disabled_date > one_month_later:
+        raise ValueError(
+            f"The '--disabled-until' date must be within one month from today. "
+            f"Provided: '{disabled_date.strftime('%d.%m.%Y')}'. "
+            f"Maximum allowed: '{one_month_later.strftime('%d.%m.%Y')}'"
+        )

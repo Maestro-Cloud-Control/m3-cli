@@ -7,6 +7,7 @@ import json
 import datetime
 
 from m3cli.services.request_service import BaseRequest
+from m3cli.plugins import parse_and_set_date_range
 
 
 def compute_month_epoch_ms(year, month):
@@ -21,32 +22,33 @@ def create_custom_request(
         view_type: str | None = None,
 ) -> BaseRequest:
     params = request.parameters
+    parse_and_set_date_range(params)
+
     if params.get('URL'):
         raise AssertionError(
-            'The flag `--url` is not supported for this report type'
+            "The flag '--url' is not supported for this report type"
         )
     if params.get('reportFormat'):
         raise AssertionError(
-            'The flag `--report` is not supported for this report type'
+            "The flag '--report' is not supported for this report type"
         )
     if params.get('instanceId'):
         raise AssertionError(
-            'The parameter `--instance-id` is not supported for this report type'
+            "The parameter '--instance-id' is not supported for this report type"
         )
     if params.get('onlyAdjustments'):
         raise AssertionError(
-            'The flag `--adjustment` is not supported for this report type'
+            "The flag '--adjustment' is not supported for this report type"
         )
     if params.get('day'):
         raise AssertionError(
-            'The parameter `--day` is not supported for this report type'
+            "The parameter '--day' is not supported for this report type"
         )
 
     if not params.get('criteria'):
         params['criteria'] = 'ALL'
     if not params.get('compressEachQuota'):
         params['compressEachQuota'] = False
-    params['tenantNames'] = [params.pop('tenantGroup')]
     if 'region' in params:
         params['regionName'] = params.pop('region')
     if params.get('year'):
@@ -86,25 +88,36 @@ def create_custom_response(
         return response
     if isinstance(response, dict) and response.get('message') \
             and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
     params = getattr(request, 'parameters', None)
+
+    # Apply tag filtering EARLY on raw response before any view processing
+    if params and params.get('tag'):
+        desired_tag = params['tag']
+        response = [item for item in response if item.get('tag') == desired_tag]
+
     if view_type in ('json', 'table', 'full'):
-        year = \
-            int(params.get('year')) if params and params.get('year') else None
-        month = \
-            int(params.get('month')) if params and params.get('month') else None
-        month_epoch_ms = \
-            compute_month_epoch_ms(year, month) if year and month else None
+        # Now --full will return already filtered data
+        if view_type == 'full':
+            return [{"budget": item} for item in response]
+
+        from_date_int = int(params['from'])
+        to_date_int = int(params['to'])
 
         table_rows = []
         for item in response:
-            month_usages = item.get('monthUsages', [])
+            # Process monthly usages
+            month_usages = item.get('monthUsages') or []
+            month_usages = [
+                usage for usage in month_usages
+                if from_date_int <= usage["month"] < to_date_int
+            ]
             month_usage = None
-            if month_epoch_ms:
-                for usage in month_usages:
-                    if int(usage.get("month", 0)) == month_epoch_ms:
-                        month_usage = usage
-                        break
+            if month_usages:
+                month_usage = max(
+                    month_usages,
+                    key=lambda u: int(u.get('month') or 0)
+                )
 
             if month_usage:
                 percent_used = month_usage.get('percentUsed')
@@ -117,9 +130,14 @@ def create_custom_response(
             else:
                 utilization = monthly_budget = current_chargeback = ''
 
-            daily_usages = item.get('dailyUsages', [])
+            # Process daily usages
+            daily_usages = item.get('dailyUsages') or []
+            daily_usages = [
+                usage for usage in daily_usages
+                if from_date_int <= usage["date"] < to_date_int
+            ]
             daily_usage = None
-            if isinstance(daily_usages, list) and daily_usages:
+            if daily_usages:
                 daily_usage = max(
                     daily_usages,
                     key=lambda d: int(d.get('date') or 0)
@@ -138,12 +156,15 @@ def create_custom_response(
 
             thresholds = item.get('thresholds', [])
             actions = item.get('actions', [])
-            threshold_strs = [
-                f"{int(th['value'])} %" for th in thresholds if 'value' in th
-            ]
+            threshold_values = sorted(
+                int(th['value']) for th in thresholds if 'value' in th
+            )
             action_plan = None
-            if thresholds:
-                action_plan = f"Notify on ({', '.join(threshold_strs)})"
+            if threshold_values:
+                action_plan = (
+                    f"Notify on "
+                    f"({', '.join(f'{v} %' for v in threshold_values)})"
+                )
                 show_action_plan = [a for a in actions if a != 'NOTHING']
                 if show_action_plan:
                     action_plan += ", " + ", ".join(show_action_plan)
@@ -165,12 +186,6 @@ def create_custom_response(
                 row["actionPlan"] = action_plan
             table_rows.append(row)
 
-            if params and params.get('tag'):
-                desired_tag = params['tag']
-                table_rows = [
-                    row for row in table_rows if row.get('tag') == desired_tag
-                ]
-
         def get_sort_key(row):
             # Try monthly utilization first, then daily
             utilization = row.get('monthlyUtilization %', '') \
@@ -186,9 +201,6 @@ def create_custom_response(
                     return float('inf')  # Invalid values go to end
             else:
                 return float('inf')  # Empty values go to end
-
-        if view_type == 'full':
-            return [{"budget": item} for item in response]
 
         return sorted(
             table_rows,

@@ -29,7 +29,7 @@
 
 
 check-installation:
-  image: python:3.10
+  image: python:3.14
   stage: test
   <<: *only-default
   <<: *before-script-default
@@ -51,13 +51,13 @@ lint:
         - ./**
 
 # Uses in sonar.gitlab-ci.yml
-tests-py310:
+tests-py314:
   <<: *only-default
   <<: *before-script-default
   stage: test
   script:
     - *tox-execution-test-script
-    - tox -e py310
+    - tox -e py314
   coverage: '/TOTAL.*\s([.\d]+)%/'
   artifacts:
     paths:

@@ -48,7 +48,7 @@ def create_md_table(output_file, commands, content):
             file.write("| --- | --- |\n")
             for command, description, header in commands:
                 file.write(f"| [{command}](#{header}) | {description} |\n")
-            file.write("\n{{ pagebreak }}\n\n" + content)
+            file.write("\n[//]: # ({{ pagebreak }})\n\n" + content)
     except Exception as e:
         _LOG.error(f"Error writing to file {output_file}: {e}")
         raise

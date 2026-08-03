@@ -8,12 +8,13 @@ import json
 from m3cli.plugins.utils.plugin_utilities import processing_report_format
 from m3cli.utils.utilities import timestamp_to_iso
 from m3cli.plugins import parse_and_set_date_range
+from m3cli.services.request_service import BaseRequest
 
 
 def create_custom_request(
         request,
         view_type: str | None = None,
-):
+) -> BaseRequest:
     """ Transform 'resource-report' command parameters from the Human
     readable format to appropriate for M3 SDK API request.
 
@@ -32,7 +33,7 @@ def create_custom_request(
     params = request.parameters
     if params.get('onlyAdjustments'):
         raise AssertionError(
-            "The flag `--adjustment` is not supported for this report type"
+            "The flag '--adjustment' is not supported for this report type"
         )
     params['target'] = {
         'tenantGroup': params.pop('tenantGroup'),
@@ -70,7 +71,7 @@ def create_custom_response(
         return response
 
     if response.get('message') and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
 
     response_processed = []
     grand_total = response.get('grandTotal')

@@ -4,28 +4,50 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "m3-cli"
-version = "4.146.0"
+version = "4.170.0"
 authors = [
     {name = "maestrocloudcontrol", email = "support@maestrocontrol.cloud"}
 ]
 description = "The Maestro3 Command Line Interface (CLI) is a unified tool to manage your Maestro services and resources"
 readme = {file = "README.md", content-type = "text/markdown"}
 keywords = ["Maestro3", "Command Line Interface", "CLI", "CLOUD"]
-urls = {Homepage = "https://github.com/Maestro-Cloud-Control/m3-cli"}
+requires-python = ">=3.14,<4"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
 
 dependencies = [
-    "setuptools==68.2.1",
-    "click==7.1.2",
-    "requests==2.31.0",
-    "tabulate==0.9.0",
-    "pika==1.0.0b1",
-    "cryptography==41.0.3",
-    "jsonschema==3.2.0",
-    "pyyaml==6.0.1",
-    "Pillow==10.0.0",
-    "packaging==25.0",
-    "beautifulsoup4==4.10.0",
+    "click>=8.3,<9",
+    "requests>=2.33,<3",
+    "tabulate>=0.10,<1",
+    "cryptography>=46,<50",
+    "jsonschema>=4.26,<5",
+    "pyyaml>=6,<7",
+    "Pillow>=12,<13",
+    "packaging>=26,<27",
+    "beautifulsoup4>=4.14,<5",
 ]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=9,<10",
+    "pytest-cov>=7,<8",
+]
+lint = [
+    "pyflakes>=3.3,<4",
+    "flake8>=7.2,<8",
+]
+dev = [
+    "m3-cli[test,lint]",
+    "tox>=4.52,<5",
+]
+
+[project.urls]
+Homepage = "https://github.com/Maestro-Cloud-Control/m3-cli"
 
 [project.entry-points.console_scripts]
 m3 = "m3cli.m3:m3"
@@ -33,13 +55,13 @@ m3 = "m3cli.m3:m3"
 [tool.setuptools]
 include-package-data = true
 
-[tool.setuptools.data-files]
+[tool.setuptools.package-data]
 "m3cli" = [
-    "m3cli/commands_def.json",
-    "m3cli/m3cli_complete/bash_m3cli_complete.sh",
-    "m3cli/m3cli_complete/zsh_m3cli_complete.sh",
-    "m3cli/m3cli_complete/m3cli_complete.py",
-    "m3cli/m3cli_complete/access_meta.json",
+    "commands_def.json",
+    "m3cli_complete/bash_m3cli_complete.sh",
+    "m3cli_complete/zsh_m3cli_complete.sh",
+    "m3cli_complete/m3cli_complete.py",
+    "m3cli_complete/access_meta.json",
 ]
 
 [tool.setuptools.packages.find]

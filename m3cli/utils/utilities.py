@@ -3,7 +3,6 @@ import os
 import sys
 from datetime import datetime, date, timezone, timedelta
 from decimal import Decimal
-from getpass import getpass
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +36,36 @@ TIP_MESSAGE_FOR_ACCESS = (
     '  m3 access --access_key <ACCESS_KEY> --secret_key <SECRET_KEY> '
     '--api_address <API_ADDRESS>'
 )
+# ============================================================================
+# ALLOWED CHARACTERS CONFIGURATION
+# ============================================================================
+
+# Strict validation for CLI parameter names (keys)
+ALLOWED_PARAMETER_CHARS = set(
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'  # A-Z
+    'abcdefghijklmnopqrstuvwxyz'  # a-z
+    '-'  # hyphen
+)
+
+# Permissive validation for CLI parameter values
+# Allows all printable ASCII characters (space through tilde)
+ALLOWED_VALUE_CHAR_MIN = 0x0020  # Space (32)
+ALLOWED_VALUE_CHAR_MAX = 0x007E  # Tilde (126)
+
+# What's included in printable ASCII (0x20-0x7E):
+#   - Space
+#   - A-Z, a-z (letters)
+#   - 0-9 (digits)
+#   - Punctuation: ! " # $ % & ' ( ) * + , - . /
+#   - Symbols: : ; < = > ? @
+#   - Brackets: [ \ ] ^ _ ` { | } ~
+#
+# What's NOT allowed:
+#   - Control characters (tab, newline, etc.)
+#   - Non-ASCII: Cyrillic (й, ф, с, А), Unicode symbols (†, ©, €), emojis
+
+# For explicit reference, here's the full set (for documentation only):
+# ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
 
 
 def inherit_dict(root_dict, child_dict):
@@ -45,29 +74,34 @@ def inherit_dict(root_dict, child_dict):
 
 
 def _set_credentials_interactively(credentials_path: str) -> bool:
-    print('Please enter your Maestro CLI credentials')
-    m3sdk_access_key = input('M3 SDK Access key: ')
+    click.echo('Please enter your Maestro CLI credentials')
+    m3sdk_access_key = click.prompt('M3 SDK Access key')
     if sys.platform.startswith(WINDOWS_SYSTEM):
-        print('Use right-click anywhere in the body of the window to paste '
-              'M3 SDK Secret key instead of using Ctrl+V')
-    m3sdk_secret_key = getpass('M3 SDK Secret key: ')
+        click.echo(
+            'Use right-click anywhere in the body of the window to paste '
+            'M3 SDK Secret key instead of using Ctrl+V'
+        )
+    m3sdk_secret_key = click.prompt('M3 SDK Secret key', hide_input=True)
+
     key_len = len(m3sdk_secret_key.encode('utf-8'))
     if key_len not in (16, 24, 32):
-        print(SECRET_KEY_ERROR)
-        print(TIP_MESSAGE_FOR_ACCESS)
+        click.echo(SECRET_KEY_ERROR)
+        click.echo(TIP_MESSAGE_FOR_ACCESS)
         return False
 
-    print(f'Default API link: {DEFAULT_API_ADDRESS}')
-    api_link = input(
-        'Press Enter to use the default API link above, or paste a custom '
-        'API link: '
+    click.echo(f'Default API link: {DEFAULT_API_ADDRESS}')
+    api_link = click.prompt(
+        'Press Enter to use the default API link above, or paste a custom API link',
+        default='',
+        show_default=False,
     ).strip()
+
     if api_link == '':
         m3sdk_api_address = DEFAULT_API_ADDRESS
-        print(f'Using default API link: {DEFAULT_API_ADDRESS}')
+        click.echo(f'Using default API link: {DEFAULT_API_ADDRESS}')
     else:
         m3sdk_api_address = api_link
-        print(f'Using custom API link: {m3sdk_api_address}')
+        click.echo(f'Using custom API link: {m3sdk_api_address}')
 
     os.environ[ACCESS_KEY] = m3sdk_access_key
     os.environ[SECRET_KEY] = m3sdk_secret_key
@@ -78,9 +112,9 @@ def _set_credentials_interactively(credentials_path: str) -> bool:
         secret_key=m3sdk_secret_key,
         api_address=m3sdk_api_address,
     )
-    print("Credentials have been successfully saved")
-    print(f"Location: {credentials_path}")
-    print(TIP_MESSAGE_FOR_ACCESS)
+    click.echo("Credentials have been successfully saved")
+    click.echo(f"Location: {credentials_path}")
+    click.echo(TIP_MESSAGE_FOR_ACCESS)
     return True
 
 
@@ -110,14 +144,18 @@ def __write_credentials_to_file(
         with open(credentials_path, 'r') as file:
             try:
                 data = json.load(file)
-            except json.decoder.JSONDecodeError:
-                raise SyntaxError(
-                    f'{credentials_path} contains invalid JSON'
+            except json.JSONDecodeError:
+                click.echo(
+                    f'WARNING: {credentials_path} contains invalid JSON. '
+                    f'Non-credential settings (e.g. last_visit) will be lost'
                 )
+                data = {}
     with open(credentials_path, 'w') as file:
-        data.update({ACCESS_KEY: access_key,
-                     SECRET_KEY: secret_key,
-                     ADDRESS: api_address})
+        data.update({
+            ACCESS_KEY: access_key,
+            SECRET_KEY: secret_key,
+            ADDRESS: api_address,
+        })
         file.write(json.dumps(data))
 
 
@@ -161,7 +199,10 @@ def get_user_access() -> bool:
 def check_credentials_in_file(file_path):
     if os.path.isfile(file_path):
         with open(file_path, 'r') as file:
-            data = json.load(file)
+            try:
+                data = json.load(file)
+            except json.JSONDecodeError:
+                return False
             if data.get(ACCESS_KEY) and data.get(SECRET_KEY) and \
                     data.get(ADDRESS):
                 return True
@@ -170,13 +211,9 @@ def check_credentials_in_file(file_path):
 
 def open_creds_file():
     #  no ./.creds folder
-    if not os.path.exists(M3_CLI_RESOURCES_PATH):
-        os.mkdir(M3_CLI_RESOURCES_PATH)
-        open(CREDENTIALS_FILE_PATH, 'w').close()
+    Path(M3_CLI_RESOURCES_PATH).mkdir(exist_ok=True)
     #  no ./.creds/default.cr file
-    if not os.path.exists(CREDENTIALS_FILE_PATH):
-        open(CREDENTIALS_FILE_PATH, 'w').close()
-
+    Path(CREDENTIALS_FILE_PATH).touch(exist_ok=True)
     return CREDENTIALS_FILE_PATH
 
 
@@ -189,8 +226,7 @@ def check_update():
     data = __load_creds_contents(creds_file)
     latest_version = data.get(CLI_LATEST_VERSION)
     if not latest_version:
-        return 'Please run command "m3 health-check" to check the ' \
-               'latest version of m3cli.'
+        return None
 
     current_version = get_current_cli_version()
     if version.parse(latest_version) > version.parse(current_version):
@@ -204,8 +240,12 @@ def get_current_cli_version():
     return lib_version('m3-cli')
 
 
-def perform_version_check(invoked_command, is_help_invoked,
-                          view_type, detailed):
+def perform_version_check(
+        invoked_command: str,
+        is_help_invoked: bool,
+        view_type: str,
+        detailed: bool,
+):
     """
     Updates the latest version and distribution links of m3cli in the
     /.creds/default.cr file. If there is no such file, it will be created.
@@ -216,12 +256,18 @@ def perform_version_check(invoked_command, is_help_invoked,
     """
     creds_file = open_creds_file()
     data = __load_creds_contents(creds_file)
-    health_check_explicitly = (not is_help_invoked
-                               and invoked_command == HEALTH_CHECK_CMD_NAME)
+    health_check_explicitly = \
+        not is_help_invoked and invoked_command == HEALTH_CHECK_CMD_NAME
+    health_check_attempted = False
+    result = None
+
     try:
         if health_check_explicitly or __should_perform_health_check(data):
-            return execute_health_check(view_type=view_type,
-                                        detailed=detailed)
+            health_check_attempted = True
+            result = execute_health_check(
+                view_type=view_type,
+                detailed=detailed,
+            )
     except ConnectionError:
         data.update({
             SERVER_UNAVAILABLE_TIMESTAMP: datetime.timestamp(datetime.now())
@@ -229,26 +275,37 @@ def perform_version_check(invoked_command, is_help_invoked,
         with open(creds_file, 'w') as write_file:
             json.dump(data, write_file)
         from m3cli.utils.decorators import decorate_as_warning
-        click.echo(decorate_as_warning(
-            'Server is temporary unavailable. '
-            'Could not retrieve available updates. The version of CLI you '
-            'use may be outdated.'))
+        click.echo(
+            decorate_as_warning(
+                'Server is temporary unavailable. Could not retrieve available '
+                'updates. The version of CLI you use may be outdated'
+            )
+        )
     except AssertionError as e:
         if health_check_explicitly:
-            raise e
+            raise  # exits the function — nothing below runs
         from m3cli.utils.decorators import decorate_as_warning
         click.echo(decorate_as_warning(
             f'WARNING. Can not check the latest m3-cli updates. '
             f'Reason: "{e}" while performing a health-check. '
-            f'{os.linesep}Please contact Maestro Support Team.'
+            f'{os.linesep}Please contact Maestro Support Team'
         ))
-    finally:
-        data = __load_creds_contents(creds_file)
-        if not data.get(SERVER_UNAVAILABLE_TIMESTAMP):
-            from m3cli.utils.decorators import check_version
-            outdated_cli_warning = check_version()
-            if outdated_cli_warning:
-                click.echo(outdated_cli_warning)
+
+    # Sequential flow: only reached when no exception propagated
+    data = __load_creds_contents(creds_file)
+    if not data.get(SERVER_UNAVAILABLE_TIMESTAMP):
+        from m3cli.utils.decorators import check_version
+        outdated_cli_warning = check_version()
+        if outdated_cli_warning:
+            click.echo(outdated_cli_warning)
+        elif not health_check_attempted \
+                and not data.get(CLI_LATEST_VERSION):
+            click.echo(
+                'Tip: Run "m3 health-check" to check for available CLI '
+                'updates'
+            )
+
+    return result
 
 
 def execute_health_check(view_type, detailed):
@@ -262,7 +319,7 @@ def execute_health_check(view_type, detailed):
 
 
 def __load_creds_contents(creds_file):
-    with open(creds_file, "r+") as file:
+    with open(creds_file, "r") as file:
         try:
             data = json.load(file)
         except json.decoder.JSONDecodeError:
@@ -311,7 +368,7 @@ def __write_json_to_file(filename, data):
 
 def load_file_contents(file_path):
     if not os.path.isfile(file_path):
-        raise FileExistsError(f'File {file_path} is absent.')
+        raise FileNotFoundError(f'File {file_path} is absent')
     try:
         with open(file_path, 'r') as f:
             contents = f.read()
@@ -394,6 +451,9 @@ def get_var_type_value_file(value: Any) -> tuple[str, Any]:
             return 'BOOL', value
         case int(value):
             return 'NUMBER', value
+        # Currently, float is not supported, but it may be in the future.
+        # case float(value):
+        #     return 'NUMBER', value
         case _:
             raise AssertionError(
                 "Unsupported variable type, please contact the administrator. "
@@ -402,7 +462,7 @@ def get_var_type_value_file(value: Any) -> tuple[str, Any]:
 
 
 def handle_variables(
-        variables: str | None,
+        variables: dict | None,
         path_to_file: str | None,
 ) -> dict:
     if variables and path_to_file:
@@ -445,3 +505,111 @@ def format_floats_in_data(data):
         return str(data)
     else:
         return data
+
+
+def is_valid_parameter_char(
+        char: str,
+) -> bool:
+    """Check if character is allowed in CLI parameter names."""
+    return char in ALLOWED_PARAMETER_CHARS
+
+
+def is_valid_value_char(
+        char: str,
+) -> bool:
+    """
+    Check if character is allowed in CLI parameter values.
+    Allows all printable ASCII characters (space to tilde).
+    This is the fastest approach for checking a contiguous range.
+    """
+    code = ord(char)
+    return ALLOWED_VALUE_CHAR_MIN <= code <= ALLOWED_VALUE_CHAR_MAX
+
+
+def validate_parameter_keys(
+        parameters: dict | None = None,
+) -> None:
+    """
+    Validate all parameter keys contain only allowed English characters.
+    Raises AssertionError if invalid characters found.
+
+    Note: By the time this runs, @dynamic_dispatcher has already processed args:
+    - Short params keep their dash: {'-c': 'value'}
+    - Long params lose their dashes: {'cloud': 'value'} (not '--cloud')
+    """
+    if not parameters:
+        return
+
+    all_errors = []
+
+    for key in parameters.keys():
+        if isinstance(key, str):
+            # Determine the original parameter format
+            if key.startswith('-'):
+                # Short param: key is already '-c' or '-du'
+                context = f"parameter '{key}'"
+                position_offset = 0
+            else:
+                # Long param: dispatcher stripped '--', key is 'cloud' or 'сloud'
+                context = f"parameter '--{key}'"
+                position_offset = 2  # Account for '--' prefix in error message
+
+            # Validate characters and collect errors
+            for i, char in enumerate(key):
+                if not is_valid_parameter_char(char):
+                    error_msg = (
+                        f"Invalid character '{char}' at position "
+                        f"{i + 1 + position_offset} in {context}. Only English "
+                        f"letters (A-Z, a-z) and hyphen (-) are allowed"
+                    )
+                    all_errors.append(error_msg)
+
+    if all_errors:
+        error_message = (
+            "CLI parameters contain invalid characters:\n" +
+            "\n".join(f"  • {error}" for error in all_errors) +
+            "\n\nPlease, ensure you're using English keyboard layout"
+        )
+        raise AssertionError(error_message)
+
+
+def validate_parameter_values(
+        parameters: dict | None = None,
+) -> None:
+    """
+    Validate all parameter values contain only printable ASCII characters.
+    Raises AssertionError if invalid characters found.
+    """
+    if not parameters:
+        return
+
+    all_errors = []
+
+    for key, value in parameters.items():
+        if not isinstance(value, str) or not value:
+            continue
+
+        # Get parameter name for error context
+        if isinstance(key, str):
+            param_name = key if key.startswith('-') else f"--{key}"
+        else:
+            param_name = str(key)
+
+        # Validate each character (stop at first invalid to avoid spam)
+        for i, char in enumerate(value):
+            if not is_valid_value_char(char):
+                error_msg = (
+                    f"Invalid character '{char}' at position {i + 1} "
+                    f"in value for {param_name}: '{value}'. "
+                    "Only English letters (A-Z, a-z), numbers (0-9), and "
+                    "symbols are allowed"
+                )
+                all_errors.append(error_msg)
+                break  # Only report first invalid char per value
+
+    if all_errors:
+        raise AssertionError(
+            "CLI parameter values contain invalid characters:\n" +
+            "\n".join(f"  • {error}" for error in all_errors) +
+            "\n\nPlease, ensure you're using English keyboard layout"
+        )

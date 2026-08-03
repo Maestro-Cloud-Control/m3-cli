@@ -427,7 +427,7 @@ class TestValidationServiceCheckBool(TestValidationServiceCheck):
 
     def test_check_bool_not_boolean(self):
         """Method:
-         `m3cli.services.validation_service.ValidationService.check_bool in
+         m3cli.services.validation_service.ValidationService.check_bool in
          version 3.55.3 concludes any given value to be boolean.
          Should be corrected.
          """

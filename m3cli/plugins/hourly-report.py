@@ -9,12 +9,13 @@ from datetime import datetime, timedelta
 
 from m3cli.services.validation_service import ValidationService
 from m3cli.plugins.utils.plugin_utilities import processing_report_format
+from m3cli.services.request_service import BaseRequest
 
 
 def create_custom_request(
         request,
         view_type: str | None = None,
-):
+) -> BaseRequest:
     """ Transform 'hourly-report' command parameters from the Human
     readable format to appropriate for M3 SDK API request.
 
@@ -96,5 +97,5 @@ def create_custom_response(
     except json.decoder.JSONDecodeError:
         return response
     if response.get('message') and response.get('s3ReportLink'):
-        return f"{response.get('message')} Link: `{response.get('s3ReportLink')}`"
+        return f"{response.get('message')} Link: '{response.get('s3ReportLink')}'"
     return response

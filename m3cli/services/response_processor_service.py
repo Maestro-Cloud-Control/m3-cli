@@ -7,11 +7,12 @@ from tabulate import tabulate
 from collections.abc import KeysView
 
 from m3cli.services.request_service import mask_params
-from m3cli.services.response_utils import contains_empty_data, \
-    contains_string_data, \
-    contains_dict_data
-from m3cli.utils.decorators import FULL_VIEW, JSON_VIEW, TABLE_VIEW, \
-    SECURED_VALUES
+from m3cli.services.response_utils import (
+    contains_empty_data, contains_string_data, contains_dict_data,
+)
+from m3cli.utils.decorators import (
+    FULL_VIEW, JSON_VIEW, TABLE_VIEW, SECURED_VALUES,
+)
 from m3cli.utils.logger import get_logger
 from m3cli.utils.utilities import format_floats_in_data
 
@@ -76,13 +77,13 @@ def _configure_table_response(responses, response_table_headers: list):
         for val in response_table_headers:
             title_headers[val] = _camel_to_title(val)
             response_table_headers[
-                response_table_headers.index(val)] = _camel_to_title(
-                val)
+                response_table_headers.index(val)] = _camel_to_title(val)
         for header, custom_header_name in title_headers.items():
             responses = _change_header_display_name(
                 responses=responses,
                 header=header,
-                custom_header=custom_header_name)
+                custom_header=custom_header_name,
+            )
 
     return responses, response_table_headers
 
@@ -211,9 +212,12 @@ def _build_multiple_table(response, response_table_headers):
         headers_config = table_config.get(HEADERS_CUSTOMIZATION, {})
         headers = table_config.get(HEADERS_FIELD)
         display_name = table_config.get(TABLE_DISPLAY_NAME_FIELD)
-        table = _build_single_table(responses=response_item, headers=headers,
-                                    display_name=display_name,
-                                    headers_config=headers_config)
+        table = _build_single_table(
+            responses=response_item,
+            headers=headers,
+            display_name=display_name,
+            headers_config=headers_config,
+        )
         tables.append(table)
     return tables
 
@@ -378,8 +382,8 @@ class ResponseProcessorService:
             #  for non batch requests
             return json.dumps({'error': str(e)})
 
-        if self.cmd_def.get('output_configuration') and self.cmd_def.get(
-                'output_configuration').get('none'):
+        if self.cmd_def.get('output_configuration') \
+                and self.cmd_def.get('output_configuration').get('none'):
             return 'The command has been executed successfully'
         return response.get(DATA_FIELD)
 
@@ -396,8 +400,7 @@ class ResponseProcessorService:
         if response.get(ERROR_FILED):
             raise AssertionError(response.get(ERROR_FILED))
         if response.get(STATUS) == 'FAILED':
-            raise AssertionError(
-                'The service has failed to handle the request')
+            raise AssertionError('The service has failed to handle the request')
 
     def prettify_response(self, response: list):
         response = ResponseProcessorService.format_response(response=response)
@@ -409,7 +412,8 @@ class ResponseProcessorService:
         view_printer = self.available_view_types.get(self.view)
         if not view_printer:
             raise AssertionError(
-                f'The view type {self.view} is not currently supported')
+                f'The view type {self.view} is not currently supported'
+            )
         return view_printer(
             responses=response,
             detailed=self.detailed,
@@ -432,16 +436,35 @@ class ResponseProcessorService:
 
     def __full_view(
             self,
-            responses,
-            detailed=None,
-            nullable=None,
+            responses: list[dict],
+            detailed: bool | None = None,
+            nullable = None,
             custom_full_view: bool = False,
             mutated_yaml: bool = False,
-    ):
+    ) -> str:
+        # Handle the special wrapper format (generic for any command)
+        message_note = None
+        if isinstance(responses, list) and len(responses) == 1 \
+                and isinstance(responses[0], dict) \
+                and '_table_data' in responses[0]:
+            wrapper = responses[0]
+            message_note = wrapper.get('_message')
+            data = wrapper.get('_table_data')
+            # Just use the clean data
+            responses = data if isinstance(data, list) else [data]
+
         if custom_full_view:
             return "\n\n" + general_full_view(responses)
-        elif mutated_yaml:
-            yaml_str = yaml.dump(responses)
+
+        # Common YAML dump configuration (no line wrapping)
+        yaml_str = yaml.dump(
+            responses,
+            width=float('inf'),
+            default_flow_style=False,
+            allow_unicode=True,
+        )
+
+        if mutated_yaml:
             lines = yaml_str.split('\n')
             # Remove list markers from top-level items
             processed_lines = [
@@ -457,12 +480,26 @@ class ResponseProcessorService:
                     if final_lines and final_lines[-1] != '':
                         final_lines.append('')
                 final_lines.append(line)
-            # Format key-value pairs
-            formatted_response = '\n'.join(final_lines).replace(': ', ' = ')
-            return f'\n\n{formatted_response}'
-        else:
-            formatted_response = yaml.dump(responses)
-            return f'\n\n{formatted_response}'.replace(': ', ' = ')
+            yaml_str = '\n'.join(final_lines)
+
+        # Replace key: value with key = value (only the YAML separator, not in content)
+        lines = yaml_str.split('\n')
+        formatted_lines = []
+        for line in lines:
+            # Only process lines with key-value pairs (not section headers)
+            if ': ' in line and not line.strip().endswith(':'):
+                # Replace only the FIRST ': ' (the YAML separator)
+                formatted_lines.append(line.replace(': ', ' = ', 1))
+            else:
+                formatted_lines.append(line)
+
+        result = '\n\n' + '\n'.join(formatted_lines)
+
+        # Add message as a note if present
+        if message_note:
+            result += f"\n\nNote: {message_note.strip()}"
+
+        return result
 
     def __json_view(
             self,
@@ -472,6 +509,21 @@ class ResponseProcessorService:
             custom_full_view: bool = False,
             mutated_yaml: bool = False,
     ) -> json:
+        # Handle the special wrapper format (only for commands using the new pattern)
+        if isinstance(responses, list) and len(responses) == 1 \
+                and isinstance(responses[0], dict) \
+                and '_table_data' in responses[0]:
+            wrapper = responses[0]
+            message = wrapper.get('_message')
+            data = wrapper.get('_table_data')
+
+            # Return clean data without wrapper
+            responses = data if isinstance(data, list) else [data]
+
+            # Add message as a Note item at the end
+            if message and responses:
+                responses.append({'Note': message.strip()})
+
         responses = self.__remove_none(responses, nullable)
         # It is possible to take empty data after removing none values,
         # need to check
@@ -511,14 +563,13 @@ class ResponseProcessorService:
             response_items = []
             for res_headers in response_table_headers:
                 headers = res_headers.get('headers')
-                response_processed = self._single_json_view(responses,
-                                                            headers)
+                response_processed = self._single_json_view(responses, headers)
                 response_items.append(response_processed)
             return json.dumps(response_items, indent=4) if \
                 response_items else json.dumps(responses, indent=4)
         else:
-            response_processed = self._single_json_view(responses,
-                                                        response_table_headers)
+            response_processed = \
+                self._single_json_view(responses, response_table_headers)
             return json.dumps(response_processed, indent=4) if \
                 response_processed else json.dumps(responses, indent=4)
 
@@ -538,12 +589,12 @@ class ResponseProcessorService:
             if isinstance(each_item, list):
                 for each in each_item:
                     response_processed.append(
-                        {k: v for (k, v) in each.items()
-                         if k in headers})
+                        {k: v for (k, v) in each.items() if k in headers}
+                    )
             else:
                 response_processed.append(
-                    {k: v for (k, v) in each_item.items()
-                     if k in headers})
+                    {k: v for (k, v) in each_item.items() if k in headers}
+                )
         return response_processed
 
     def __table_view(
@@ -556,6 +607,20 @@ class ResponseProcessorService:
     ):
         # Format all float values to avoid scientific notation
         responses = format_floats_in_data(responses)
+
+        # Check for special message metadata (generic for any command)
+        message_note = None
+        if (isinstance(responses, list) and len(responses) == 1 and
+                isinstance(responses[0], dict) and '_table_data' in responses[
+                    0]):
+            # Extract the message and actual data
+            wrapper = responses[0]
+            message_note = wrapper.get('_message')
+            responses = wrapper.get('_table_data')
+            # Ensure responses is a list
+            if not isinstance(responses, list):
+                responses = [responses] if responses else []
+
         responses = self.__unmap_response(responses)
         responses = self.__remove_none(responses, nullable)
         # It is possible to take empty data after removing none values,
@@ -570,10 +635,14 @@ class ResponseProcessorService:
             return responses[0].get('message')
 
         output_conf = self.cmd_def.get('output_configuration')
-        tables = _process_table_headers(responses=responses,
-                                        output_conf=output_conf)
+        tables = \
+            _process_table_headers(responses=responses, output_conf=output_conf)
         if tables:
-            return self.__compose_table(tables)
+            table_output = self.__compose_table(tables)
+            if message_note:
+                message_note = message_note.strip()
+                table_output += f"\n\nNote: {message_note}"
+            return table_output
         else:
             if isinstance(responses, list):
                 return responses[0] if len(responses) == 1 else responses
@@ -585,14 +654,15 @@ class ResponseProcessorService:
 
     def __remove_none(self, obj, retain_zeros=False):
         if isinstance(obj, (list, tuple, set)):
-            return type(obj)(self.__remove_none(x, retain_zeros)
-                             for x in obj if x is not None)
+            return type(obj)(
+                self.__remove_none(x, retain_zeros)
+                for x in obj if x is not None
+            )
         elif isinstance(obj, dict):
             return {
                 k: self.__remove_none(v, retain_zeros)
                 for k, v in obj.items()
-                if (k and v
-                    or retain_zeros and isinstance(v, (int, float)))
+                if (k and v or retain_zeros and isinstance(v, (int, float)))
             }
         else:
             return obj
@@ -601,6 +671,7 @@ class ResponseProcessorService:
         output_configuration = self.cmd_def.get('output_configuration', {})
         unmap_key = output_configuration.get('unmap_key')
         if unmap_key:
-            return [each[unmap_key] for each in response
-                    if each.get(unmap_key)]
+            return [
+                each[unmap_key] for each in response if each.get(unmap_key)
+            ]
         return response

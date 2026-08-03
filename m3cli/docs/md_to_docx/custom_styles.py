@@ -1,19 +1,10 @@
 from docx import Document
-from docx.enum.text import WD_BREAK
 from docx.shared import Pt, RGBColor, Inches
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from m3cli.docs.commons import create_logger
 
 _LOG = create_logger()
-
-
-def add_page_breaks(doc):
-    for para in doc.paragraphs:
-        if '{{ pagebreak }}' in para.text:
-            para.clear()  # Clear the paragraph text
-            run = para.add_run()  # Add a page break
-            run.add_break(WD_BREAK.PAGE)
 
 
 def set_normal_text_style(doc):
@@ -38,21 +29,24 @@ def create_border_element():
     return border
 
 
-def create_code_block_style(doc):
+def create_code_block_style(
+        doc: Document,
+) -> None:
     try:
         styles = doc.styles
         if 'Code Block' not in styles:
             code_style = styles.add_style('Code Block', 1)
             code_style.font.name = 'Consolas'
-            code_style.font.size = Pt(11)
+            code_style.font.size = Pt(10)
             code_style.font.color.rgb = RGBColor(0, 0, 0)
             code_style.paragraph_format.left_indent = Pt(10)
             code_style.paragraph_format.right_indent = Pt(10)
             code_style.paragraph_format.space_before = Pt(5)
             code_style.paragraph_format.space_after = Pt(5)
-            p = code_style.paragraph_format
-            p_element = p._element
-            p_element.get_or_add_pPr().append(create_border_element())
+            # No shading, no borders - white background
+            # p = code_style.paragraph_format
+            # p_element = p._element
+            # p_element.get_or_add_pPr().append(create_border_element())
     except Exception as e:
         _LOG.error(f"Failed to create code block style: {e}")
 
@@ -94,7 +88,6 @@ def set_cell_borders(cell):
 def apply_custom_styles(docx_file):
     doc = Document(docx_file)
 
-    add_page_breaks(doc)
     set_normal_text_style(doc)
     create_code_block_style(doc)
     set_table_styles(doc)
@@ -113,52 +106,43 @@ def apply_custom_styles(docx_file):
         if style.name == 'Normal':
             for run in para.runs:
                 run.font.name = 'Arial'
-                run.font.size = Pt(12)
+                run.font.size = Pt(10)
                 run.font.color.rgb = RGBColor(0, 0, 0)
 
-        if style.name == 'Heading 1':
+        elif style.name == 'Heading 1':
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(20)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(70, 69, 71)
 
-        if style.name in 'Heading 2':
+        elif style.name == 'Heading 2':
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(16)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(26, 156, 176)
 
-        if style.name in 'Heading 3':
+        elif style.name == 'Heading 3':
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(12)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(44, 196, 201)
 
-        if style.name == 'Heading 4':
+        elif style.name in ('Heading 4', 'Heading 5', 'Heading 6'):
             for run in para.runs:
                 run.font.name = 'Arial'
                 run.font.size = Pt(10)
                 run.font.bold = True
                 run.font.color.rgb = RGBColor(0, 0, 0)
 
-        if style.name == 'Heading 5':
-            for run in para.runs:
-                run.font.name = 'Arial'
-                run.font.size = Pt(10)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-
-        if style.name == 'Heading 6':
-            for run in para.runs:
-                run.font.name = 'Arial'
-                run.font.size = Pt(10)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-
-        if 'code' in para.style.name.lower():
+        # Handle code blocks - apply both style AND run-level formatting
+        elif 'code' in style.name.lower() or 'source' in style.name.lower():
             para.style = doc.styles['Code Block']
+            for run in para.runs:
+                run.font.name = 'Consolas'
+                run.font.size = Pt(10)  # This overrides Pandoc's 11pt
+                run.font.color.rgb = RGBColor(0, 0, 0)
 
     doc.save(docx_file)

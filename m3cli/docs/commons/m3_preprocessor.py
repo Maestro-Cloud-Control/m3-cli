@@ -5,6 +5,13 @@ from m3cli.docs.commons import create_logger
 _LOG = create_logger()
 
 
+def replace_page_breaks_md(md_text: str) -> str:
+    page_break = '```{=openxml}\n<w:p><w:r><w:br w:type="page"/></w:r></w:p>\n```'
+    for marker in ("[//]: # ({{ pagebreak }})", "{{ pagebreak }}"):
+        md_text = md_text.replace(marker, page_break)
+    return md_text
+
+
 def style_headers(old_md_file, new_md_file):
     try:
         with open(old_md_file, 'r') as file:
@@ -16,31 +23,31 @@ def style_headers(old_md_file, new_md_file):
         _LOG.error(f"Error reading file {old_md_file}: {e}")
         raise
 
-    # Replace `*m3 text*` with `# m3 text`
+    # Replace '*m3 text*' with '# m3 text'
     text = re.sub(
         r'^\*(m3.+)\*$',  # pattern
         r'# \1',  # replacement
         text,
         flags=re.MULTILINE,
     )
-    # Replace `Text:` with `### Text:`
+    # Replace 'Text:' with '### Text:'
     text = re.sub(
         r'^(Description:|Examples?:|Related commands:).*$',
         r'### \1',
         text,
         flags=re.MULTILINE,
     )
-    # Replace `Text: text` with `**Text:** text`
+    # Replace 'Text: text' with '**Text:** text'
     text = re.sub(
         r'^(Parameters:|Usage:)(.*)$',
         r'**\1**\2',
         text,
         flags=re.MULTILINE,
     )
-    # Add {{ pagebreak }}
+    # Add [//]: # ({{ pagebreak }})
     text = re.sub(
         r'\n# m3',  # pattern
-        r'\n{{ pagebreak }}\n\n# m3',  # replacement
+        r'\n[//]: # ({{ pagebreak }})\n\n# m3',  # replacement
         text,
         flags=re.MULTILINE,
     )

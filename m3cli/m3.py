@@ -19,7 +19,9 @@ from m3cli.services.validation_service import ValidationService
 from m3cli.utils import HEALTH_CHECK_CMD_NAME
 from m3cli.utils.decorators import (cli_response, dynamic_dispatcher)
 from m3cli.utils.logger import exception_handler_formatter
-from m3cli.utils.utilities import perform_version_check
+from m3cli.utils.utilities import (
+    perform_version_check, validate_parameter_keys, validate_parameter_values,
+)
 
 sys.excepthook = exception_handler_formatter
 
@@ -28,12 +30,14 @@ CONTEXT_SETTINGS = dict(allow_extra_args=True, ignore_unknown_options=True)
 
 @cli_response(no_output=True)
 def init_commands_service():
-    cmd_service = CommandsService(m3cli_path=get_root_dir_path(),
-                                  validation_service=ValidationService())
+    cmd_service = CommandsService(
+        m3cli_path=get_root_dir_path(),
+        validation_service=ValidationService(),
+    )
     return cmd_service
 
 
-def print_version(ctx, value):
+def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
 
@@ -78,6 +82,10 @@ def m3(
         detailed: bool = False,
         raw_response: bool = False,
 ):
+    # Validate parameter keys and vales for non-English characters
+    validate_parameter_keys(parameters)
+    validate_parameter_values(parameters)
+
     health_check_response = perform_version_check(
         invoked_command=command,
         is_help_invoked=help or full_help,
@@ -89,10 +97,14 @@ def m3(
         _pretty_errors = '\n'.join(errors)
         raise AssertionError(f'Invalid commands meta. \n{_pretty_errors}')
     if help:
+        # `--help` flag -> `SHORT_HELP_STRING`
         click.echo(CMD_SERVICE.get_help(command=command, compact=True))
         return
     if full_help or not command and not parameters:
+        # `--full-help` flag -> compact=False (default)
         click.echo(CMD_SERVICE.get_help(command=command))
+        #  └─ command is set    -> `GENERAL_HELP_STRING`
+        #  └─ command is None   -> `GENERAL_HELP_STRING_NO_PARAMS`
         return
 
     if command == HEALTH_CHECK_CMD_NAME:
@@ -115,8 +127,11 @@ def execute_command(
         raw_response: bool = False,
 ):
     # Forming an incoming request from cli
-    requests = BaseRequest(command=command,
-                           parameters=parameters, method=POST)
+    requests = BaseRequest(
+        command=command,
+        parameters=parameters,
+        method=POST,
+    )
     cmd_def, errors = CMD_SERVICE.validate_request(request=requests)
     if errors:
         _pretty_errors = '\n'.join(errors)
@@ -126,11 +141,14 @@ def execute_command(
     requests = CMD_SERVICE.resolve_parameters_case(requests)
     requests, is_batch = CMD_SERVICE.resolve_parameters_batch_processing(
         cmd_def=cmd_def,
-        request=requests)
+        request=requests,
+    )
 
-    plugin_service = PluginService(m3cli_path=get_root_dir_path(),
-                                   cmd_def=cmd_def,
-                                   command_name=cmd_def.get('name'))
+    plugin_service = PluginService(
+        m3cli_path=get_root_dir_path(),
+        cmd_def=cmd_def,
+        command_name=cmd_def.get('name'),
+    )
 
     requests_list = []
     for req in requests:
@@ -150,7 +168,6 @@ def execute_command(
             interactive_options_service.process_request(requests_list)
     except click.exceptions.Exit:
         return
-
     # Initializing the connection to the server in SdkClient
     request_mapping, responses = SdkClient().execute(request=requests_list)
     if raw_response:
@@ -159,7 +176,7 @@ def execute_command(
     response_service = ResponseProcessorService(
         cmd_def=cmd_def,
         view_type=view_type,
-        detailed=detailed
+        detailed=detailed,
     )
     fail_safe = is_batch
     applied_responses = []
@@ -188,7 +205,8 @@ def check_required_parameters(request):
         incoming_command_name = request.command
         raise AssertionError(
             f'The command meta for \'{incoming_command_name}\' does not have '
-            f'the required \'api_action\' attribute.')
+            f'the required \'api_action\' attribute.'
+        )
 
 
 def build_plugin_data(

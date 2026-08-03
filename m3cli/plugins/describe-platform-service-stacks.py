@@ -7,7 +7,7 @@ from m3cli.utils.utilities import timestamp_to_iso
 def create_custom_request(request):
     params = request.parameters
     if params.get('serviceName') and params.get('serviceId'):
-        raise AssertionError("The `--service` and `--service-id` parameters "
+        raise AssertionError("The '--service' and '--service-id' parameters "
                              "cannot be specified together")
 
     return request

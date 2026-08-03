@@ -6,10 +6,12 @@ appropriate for M3 SDK API request.
 import json
 from typing import Dict, Any, List
 
+from m3cli.services.request_service import BaseRequest
+
 
 def create_custom_request(
-        request: Dict[str, Any],
-) -> Dict[str, Any]:
+        request: BaseRequest,
+) -> BaseRequest:
     """
     Transforms the command parameters if necessary for M3 SDK API request.
 
@@ -20,7 +22,7 @@ def create_custom_request(
 
 
 def create_custom_response(
-        request: Dict[str, Any],
+        request: BaseRequest,
         response: str,
 ) -> List[Dict[str, Any]]:
     """

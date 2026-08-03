@@ -12,13 +12,13 @@ prepare_release:
     - source version.env
     - echo "CURRENT VERSION=$RELEASE_VERSION"
 
+    - echo "Fetching previous version..."
+    - git fetch --tags
+    - PREVIOUS_VERSION=$(git tag --sort=-creatordate | head -1 | sed 's/^v//')
+    - echo "PREVIOUS_VERSION=$PREVIOUS_VERSION"
+
     - echo "Creating a new tag version"
     - 'curl --request POST --header "PRIVATE-TOKEN: $CI_TOKEN" --url "$CI_API_V4_URL/$CI_PROJECT_ID/repository/tags?tag_name=v$RELEASE_VERSION&ref=$CI_COMMIT_BRANCH&message=Release%20$RELEASE_VERSION"'
-    - sleep 10
-
-    - echo "Fetching previous version..."
-    - PREVIOUS_VERSION=$(git fetch && git tag --sort=-creatordate | sed -n '2p' | sed 's/^v//')
-    - echo "PREVIOUS_VERSION=$PREVIOUS_VERSION"
 
     - echo "Fetching release notes..."
     - |
@@ -54,7 +54,7 @@ release_job:
     - if: $CI_COMMIT_BRANCH == "master"
   script:
     - echo "Creating release"
-    - RELEASE_VERSION=$(cat setup.cfg | awk -F"version = " {'print $2'} | sed -e 's|["'\'' '^',]||g' | xargs)
+    - RELEASE_VERSION=$(cat pyproject.toml | awk -F"version = " {'print $2'} | sed -e 's|["'\'' '^',]||g' | xargs)
     - echo "Release notes:"
     - echo "$RELEASE_NOTES"
   release:

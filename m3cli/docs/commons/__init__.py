@@ -1,5 +1,23 @@
 import logging
 import logging.handlers
+from m3cli.docs.commons.last_page import add_cli_last_page, add_last_page_to_docx
+from m3cli.docs.commons.last_page import (
+    add_last_page_to_docx,
+    add_cli_last_page,
+    get_cli_version,
+)
+from m3cli.docs.commons.page_numbers import add_page_numbers, PAGE_NUMBER_FORMATS, ALIGNMENT_MAP
+from m3cli.docs.commons.page_header import add_page_header
+
+__all__ = [
+    'add_last_page_to_docx',
+    'add_cli_last_page',
+    'get_cli_version',
+    'add_page_numbers',
+    'PAGE_NUMBER_FORMATS',
+    'ALIGNMENT_MAP',
+    'add_page_header',
+]
 
 # Singleton pattern implementation
 _logger_instance = None
